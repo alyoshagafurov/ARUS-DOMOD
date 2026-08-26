@@ -42,9 +42,13 @@ export function HomeHero({ collection }: HomeHeroProps) {
           ratio="auto"
           priority
           zoomOnHover={false}
-          // Модель стоит в правой части кадра. На телефоне кадр во всю
-          // ширину и обрезка мягче, на десктопе колонка узкая — сдвиг сильнее.
-          imageClassName="object-[64%_center] lg:object-[72%_center]"
+          // Невеста занимает правые две трети кадра (в исходнике 1334×1179 её
+          // фигура это x 580–1290), поэтому центрированный object-cover резал
+          // бы её пополам. Сдвиг вправо считан по коробке, а не подобран:
+          // на телефоне видно 878px исходника из 1334, на xl — 1045px.
+          // По вертикали 40%: между lg и xl кадр ещё во всю ширину и
+          // обрезается сверху, а голова лежит у самого верхнего края.
+          imageClassName="object-[80%_40%] xl:object-[78%_center]"
           sizes="(min-width: 1280px) 56vw, 100vw"
           className="h-full rounded-none"
         />
