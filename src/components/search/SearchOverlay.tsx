@@ -176,7 +176,7 @@ export function SearchOverlay({
               type="search"
               autoComplete="off"
               placeholder="Образ, раздел или артикул"
-              className="t-h2 w-full bg-transparent outline-none placeholder:text-ink-muted"
+              className="t-h2 h-11 w-full bg-transparent outline-none placeholder:text-ink-muted"
             />
           </div>
         </form>
@@ -256,9 +256,11 @@ export function SearchOverlay({
                   <button
                     type="button"
                     onClick={submit}
-                    className="t-label motion-underline mt-10 text-ink-accent"
+                    className="tap-row mt-8 w-fit text-ink-accent"
                   >
-                    Показать все {total}
+                    <span className="t-label motion-underline">
+                      Показать все {total}
+                    </span>
                   </button>
                 ) : null}
               </>
