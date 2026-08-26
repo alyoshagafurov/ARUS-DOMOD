@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import type { OrnamentMotif } from "@/components/ornament/Ornament";
+import { HoverFrame } from "@/components/ui/HoverFrame";
 import {
   FabricPlate,
   type PlateTone,
@@ -106,26 +107,36 @@ export function Media({
         )}
       </div>
 
+      {/*
+        Второй кадр — тот, что проступает при наведении. Он вынесен в
+        HoverFrame: там устройство спрашивают напрямую, есть ли курсор, и на
+        телефоне кадр не рендерится вовсе. Почему ни `hidden`, ни <picture>,
+        ни хитрый `sizes` этого не дают — расписано в самом HoverFrame.
+
+        Тканая плита остаётся всем: она рисуется CSS и в сеть не ходит.
+      */}
       {showSecondLayer ? (
+        /*
+         * Два слоя, а не один: проявление и наезд не могут жить на одном
+         * элементе. `.motion-zoom` объявляет transition сокращённой формой,
+         * та сбрасывает transition-property до одного transform — и
+         * `transition-opacity`, стоящий рядом, переставал действовать.
+         * Второй кадр возникал рывком вместо растворения.
+         */
         <div
           className={cn(
             "absolute inset-0 opacity-0 transition-opacity",
             "duration-[var(--dur-slow)] ease-[var(--ease-quiet)]",
             "group-hover:opacity-100 group-focus-within:opacity-100",
-            zoomOnHover && "motion-zoom",
           )}
         >
-          {secondary ? (
-            <Image
-              src={secondary.url}
-              alt={secondary.alt}
-              fill
-              sizes={sizes}
-              className="object-cover"
-            />
-          ) : (
-            <FabricPlate seed={seed} tone={tone} variant="detail" />
-          )}
+          <div className={cn("absolute inset-0", zoomOnHover && "motion-zoom")}>
+            {secondary ? (
+              <HoverFrame image={secondary} sizes={sizes} />
+            ) : (
+              <FabricPlate seed={seed} tone={tone} variant="detail" />
+            )}
+          </div>
         </div>
       ) : null}
     </div>

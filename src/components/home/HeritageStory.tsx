@@ -62,7 +62,9 @@ export function HeritageStory() {
                 image={heritageImage}
                 ratio="editorial"
                 zoomOnHover={false}
-                sizes="100vw"
+                /* Кадр внутри Container и живёт только до lg: 100vw просил бы
+                   ступень на размер больше, чем нужно. */
+                sizes="(min-width: 640px) 90vw, 88vw"
               />
             </Reveal>
 
