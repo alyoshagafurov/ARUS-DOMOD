@@ -1,0 +1,6 @@
+/* Порядок обязателен: сначала Tailwind, затем токены (в них @theme),
+   затем базовый и орнаментальный слои. */
+@import "tailwindcss";
+@import "../styles/tokens.css";
+@import "../styles/base.css";
+@import "../styles/ornament.css";

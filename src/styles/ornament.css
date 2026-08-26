@@ -1,0 +1,90 @@
+/* =========================================================================
+   ARUS DOMOD — орнаментальный слой («ҳошия», тканая кайма).
+   Мотивы взяты из чакана, атласа и сюзане и сведены к четырём тайлам.
+
+   Реализация через CSS mask, а не background-image: маска красится
+   `currentColor`, поэтому орнамент автоматически подхватывает цвет текста
+   секции и переключается вместе с день/ночь без второго набора ассетов.
+
+   ЗАКОН ПРОЕКТА: не больше одного орнамента на смысловую зону экрана,
+   орнамент всегда монохромный, всегда aria-hidden и никогда не лежит
+   под основным текстом.
+   ========================================================================= */
+
+@layer components {
+  .ornament {
+    background-color: currentColor;
+    opacity: var(--ornament-opacity);
+    pointer-events: none;
+    -webkit-mask-image: var(--ornament-src);
+    mask-image: var(--ornament-src);
+    -webkit-mask-size: var(--ornament-size);
+    mask-size: var(--ornament-size);
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+  }
+
+  .ornament[data-strength="strong"] {
+    opacity: var(--ornament-opacity-strong);
+  }
+
+  .ornament[data-strength="full"] {
+    opacity: 1;
+  }
+
+  /* Полоса-кайма: тянется по горизонтали на всю ширину родителя */
+  .ornament--band {
+    display: block;
+    width: 100%;
+    height: var(--ornament-band-h);
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+    -webkit-mask-size: auto 100%;
+    mask-size: auto 100%;
+  }
+
+  /* Вертикальная кайма — краевой акцент на широких экранах */
+  .ornament--rail {
+    display: block;
+    height: 100%;
+    width: var(--ornament-band-h);
+    -webkit-mask-repeat: repeat-y;
+    mask-repeat: repeat-y;
+    -webkit-mask-size: 100% auto;
+    mask-size: 100% auto;
+  }
+
+  /* Заливка области: подложка пустых состояний и плейсхолдеров изображений */
+  .ornament--field {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* --- Мотивы ---------------------------------------------------------- */
+
+  /* Чорхона — ступенчатый ромб крестовой вышивки чакан */
+  .ornament--chorkhona {
+    --ornament-src: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 2h4v4h-4zM6 6h4v4H6zm8 0h4v4h-4zM2 10h4v4H2zm8 0h4v4h-4zm8 0h4v4h-4zM6 14h4v4H6zm8 0h4v4h-4zm-4 4h4v4h-4z'/%3E%3C/svg%3E");
+    --ornament-size: 24px 24px;
+  }
+
+  /* Дандона — зубчатая треугольная кайма по краю атласа */
+  .ornament--dandona {
+    --ornament-src: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 14'%3E%3Cpath d='M8 0l8 14H0z'/%3E%3C/svg%3E");
+    --ornament-size: 16px 14px;
+  }
+
+  /* Мавҷ — волна-зигзаг межполосного шва */
+  .ornament--mavj {
+    --ornament-src: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cpath d='M0 10L6 2l6 8 6-8 6 8' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
+    --ornament-size: 24px 12px;
+  }
+
+  /* Гул — розетка сюзане */
+  .ornament--gul {
+    --ornament-src: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='2.4'/%3E%3Ccircle cx='10' cy='3.2' r='1.5'/%3E%3Ccircle cx='10' cy='16.8' r='1.5'/%3E%3Ccircle cx='3.2' cy='10' r='1.5'/%3E%3Ccircle cx='16.8' cy='10' r='1.5'/%3E%3Ccircle cx='5.2' cy='5.2' r='1.1'/%3E%3Ccircle cx='14.8' cy='5.2' r='1.1'/%3E%3Ccircle cx='5.2' cy='14.8' r='1.1'/%3E%3Ccircle cx='14.8' cy='14.8' r='1.1'/%3E%3C/svg%3E");
+    --ornament-size: 20px 20px;
+  }
+}

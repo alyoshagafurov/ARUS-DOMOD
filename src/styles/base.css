@@ -1,0 +1,372 @@
+/* =========================================================================
+   ARUS DOMOD — базовый слой.
+   Только элементные стили, типографические классы, фокус и движение.
+   Никаких компонентов: они живут в src/components.
+   ========================================================================= */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-body);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Фон наследует поверхность секции — так работает чередование день/ночь */
+  [data-surface] {
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Убираем «мышиный» фокус, но оставляем клавиатурный */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  img,
+  picture,
+  video,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border-hairline);
+  }
+}
+
+/* =========================================================================
+   Типографические роли. Каждый текст на сайте обязан быть одной из ролей —
+   произвольные size/leading в разметке запрещены.
+   ========================================================================= */
+@layer components {
+  .t-display-1,
+  .t-display-2,
+  .t-h1,
+  .t-h2,
+  .t-h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  .t-display-1 {
+    font-size: var(--text-display-1);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .t-display-2 {
+    font-size: var(--text-display-2);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .t-h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+  }
+
+  .t-h2 {
+    font-size: var(--text-h2);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+  }
+
+  .t-h3 {
+    font-size: var(--text-h3);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-heading);
+  }
+
+  .t-lead {
+    font-size: var(--text-body-lg);
+    line-height: var(--leading-body);
+    color: var(--text-secondary);
+    text-wrap: pretty;
+  }
+
+  .t-body {
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+  }
+
+  .t-body-sm {
+    font-size: var(--text-body-sm);
+    line-height: var(--leading-body);
+  }
+
+  .t-caption {
+    font-size: var(--text-caption);
+    line-height: var(--leading-tight);
+    color: var(--text-muted);
+  }
+
+  /* Микро-заголовок: единственный уместный caps в макете */
+  .t-label {
+    font-family: var(--font-sans);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .t-label-wide {
+    font-family: var(--font-sans);
+    font-size: var(--text-label);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  /* Цена: табличные цифры, чтобы колонки карточек не «плясали» */
+  .t-price {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .t-measure {
+    max-width: var(--container-text);
+    text-wrap: pretty;
+  }
+}
+
+/* =========================================================================
+   Движение. Три примитива, больше в фундаменте не нужно.
+   ========================================================================= */
+@layer utilities {
+  /* Появление при скролле — управляется <Reveal /> через data-revealed */
+  .motion-reveal {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    transition:
+      opacity var(--dur-slow) var(--ease-quiet),
+      transform var(--dur-slow) var(--ease-quiet);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .motion-reveal[data-revealed="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Появление при загрузке — только для первого экрана, где ждать скролла
+     нечего. Чистый CSS: у hero не должно быть ни кадра пустоты. */
+  @keyframes arus-enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes arus-veil {
+    from {
+      opacity: 0;
+      transform: scale(1.04);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .motion-enter {
+    animation: arus-enter var(--dur-slow) var(--ease-quiet) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  /* Кадр не «включается», а проявляется — как ткань на свету */
+  .motion-veil {
+    animation: arus-veil var(--dur-veil) var(--ease-quiet) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  /* Появление панели: снизу на телефоне, справа на широком экране.
+     Закрытие без анимации намеренно — уход панели пользователь уже не
+     разглядывает, а AnimatePresence ради него тянуть незачем. */
+  @keyframes arus-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 12%, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes arus-slide {
+    from {
+      opacity: 0;
+      transform: translate3d(14%, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes arus-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .motion-drawer {
+    animation: arus-rise var(--dur-base) var(--ease-quiet) both;
+  }
+
+  @media (min-width: 64rem) {
+    .motion-drawer {
+      animation-name: arus-slide;
+    }
+  }
+
+  .motion-fade {
+    animation: arus-fade var(--dur-fast) var(--ease-quiet) both;
+  }
+
+  /* Медленный наезд на изображение товара */
+  .motion-zoom {
+    transition: transform var(--dur-veil) var(--ease-quiet);
+  }
+
+  .group:hover .motion-zoom,
+  .group:focus-visible .motion-zoom {
+    transform: scale(var(--zoom-hover));
+  }
+
+  /* Подчёркивание, которое растёт от левого края */
+  .motion-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size var(--dur-base) var(--ease-quiet);
+  }
+
+  .motion-underline:hover,
+  .motion-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /*
+   * Зона нажатия строчной ссылки в списках — подвал, меню, хлебные крошки.
+   *
+   * Растёт только область касания: текст остаётся своей роли, поэтому
+   * шрифтовая композиция подвала не меняется. Палец получает полные 44px,
+   * курсор — прежнюю плотную строку, отсюда снятие min-height на широком
+   * экране.
+   *
+   * Подчёркивание при этом обязано остаться под текстом: у .motion-underline
+   * оно рисуется по нижнему краю фонового бокса, и в растянутой строке
+   * уехало бы на 13px вниз. Поэтому подчёркивается вложенный span, а строка
+   * лишь передаёт ему наведение и фокус.
+   */
+  .tap-row {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .tap-row:hover .motion-underline,
+  .tap-row:focus-visible .motion-underline {
+    background-size: 100% 1px;
+  }
+
+  @media (min-width: 64rem) {
+    .tap-row {
+      min-height: 0;
+    }
+  }
+
+  /*
+   * Иконка в шапке и подобные ей кнопки без подписи.
+   *
+   * Сама иконка мелкая — рамки у неё нет намеренно, иначе шапка
+   * превращается в ряд квадратов. Нажимаемость показывается движением:
+   * при наведении и удержании под иконкой проступает тихая подложка.
+   *
+   * Подложка выводится из currentColor, а не из токена поверхности: над
+   * прозрачной шапкой поверх фотографии плотный квадрат читался бы как
+   * плашка, а полупрозрачная примесь одинаково тиха и на дне, и на ночи.
+   */
+  .tap-icon {
+    border-radius: 2px;
+    transition:
+      background-color var(--dur-fast) var(--ease-quiet),
+      color var(--dur-fast) var(--ease-quiet);
+  }
+
+  .tap-icon:hover {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+  }
+
+  .tap-icon:active {
+    background-color: color-mix(in srgb, currentColor 15%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .motion-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
