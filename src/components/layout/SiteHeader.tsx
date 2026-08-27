@@ -8,7 +8,6 @@ import { SearchOverlay } from "@/components/search/SearchOverlay";
 
 import { Logo } from "@/components/brand/Logo";
 import { MobileNav } from "@/components/layout/MobileNav";
-import { OrnamentBand } from "@/components/ornament/Ornament";
 import { BagIcon, HeartIcon, SearchIcon } from "@/components/ui/icons";
 import { useCartCount } from "@/lib/cart";
 import { useFavoriteCount } from "@/lib/favorites";
@@ -37,10 +36,15 @@ const iconBox = "tap-icon h-11 w-11 shrink-0 items-center justify-center";
 /**
  * Шапка сайта.
  *
- * Два состояния. Наверху страницы с тёмным hero она прозрачная и живёт внутри
- * кадра — отдельной полосы нет. После прокрутки уезжает вверх на высоту
- * бегущей строки (чистый transform, без анимации высоты), меняет поверхность
- * на bone и подшивается тонкой ҳошия. Тени нет ни в одном состоянии.
+ * Два состояния, и оба бирюзовые. Наверху страницы с полем логотипа шапка
+ * прозрачна и растворяется в нём: цвет тот же, отдельной полосы нет. После
+ * прокрутки уезжает вверх на высоту бегущей строки (чистый transform, без
+ * анимации высоты), садится на глубокую бирюзу и подшивается золотой
+ * волосяной линией. Тени нет ни в одном состоянии.
+ *
+ * Светлой шапка не становится никогда: кремовая полоса посреди бирюзового
+ * сайта читается как чужой элемент, а знак в ней перестаёт быть частью
+ * страницы.
  *
  * Состояние держится в React, а не в data-атрибуте: вместе с фоном обязана
  * переключиться и поверхность (data-surface), от которой зависит цвет текста,
@@ -80,7 +84,9 @@ export function SiteHeader() {
   }, []);
 
   const compact = scrolled;
-  const barSurface = overlay && !compact ? "night" : "day";
+  /* Прозрачная шапка лежит на поле логотипа, поэтому и поверхность у неё
+     та же: иначе иконки и пункты меню считали бы себя на другом фоне. */
+  const barSurface = overlay && !compact ? "green" : "night";
 
   return (
     <>
@@ -129,9 +135,9 @@ export function SiteHeader() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="t-label motion-underline text-ink-secondary hover:text-ink"
+                  className="tap-row text-ink-secondary hover:text-ink"
                 >
-                  {link.label}
+                  <span className="t-label motion-underline">{link.label}</span>
                 </Link>
               ))}
             </nav>
@@ -153,7 +159,7 @@ export function SiteHeader() {
                     ? `Избранное, ${favoriteCount} шт.`
                     : "Избранное"
                 }
-                className={cn(iconBox, "relative hidden sm:inline-flex")}
+                className={cn(iconBox, "relative inline-flex")}
               >
                 <HeartIcon />
                 {favoriteCount > 0 ? (
@@ -186,12 +192,12 @@ export function SiteHeader() {
             </div>
           </div>
 
-          {/* Ҳошия проявляется только в прокрученном состоянии — вместо тени */}
-          <OrnamentBand
-            motif="dandona"
-            height={6}
+          {/* Золотая волосяная линия — вместо тени и вместо тканой ленты.
+              Проявляется только в прокрученном состоянии. */}
+          <span
+            aria-hidden="true"
             className={cn(
-              "absolute inset-x-0 bottom-0 transition-opacity",
+              "hoshiya-line absolute inset-x-0 bottom-0 transition-opacity",
               "duration-[var(--dur-base)] ease-[var(--ease-quiet)]",
               compact ? "opacity-100" : "opacity-0",
             )}

@@ -122,7 +122,7 @@ export function CategoryNavigation({ categories }: CategoryNavigationProps) {
                         "group-focus-visible:translate-y-0 group-focus-visible:opacity-100",
                       )}
                     >
-                      <span className="t-h2 text-[var(--bone-50)]">
+                      <span className="t-h2 text-[var(--shir-50)]">
                         {category.titleTg}
                       </span>
                     </span>

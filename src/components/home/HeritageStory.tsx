@@ -16,8 +16,12 @@ const pillars = [
  * экрана, текст стоит правой колонкой — противоположно hero, чтобы страница
  * не читалась как чередование одинаковых блоков.
  *
- * Орнамент здесь ровно один — кайма чорхона по краям секции. Третьего
- * декоративного элемента у блока быть не должно.
+ * Поверхность — поле логотипа: между двумя глубокими соседями секция
+ * приподнимается, и разворот получает собственный вес.
+ *
+ * Декоративных элементов здесь два, и оба структурные: волосяная кайма по
+ * краям секции и разомкнутая тоқча вокруг кадра. Тканых лент нет — их роль
+ * забрала золотая линия.
  */
 const heritageImage = photo(
   "heritage-tajik-bride-editorial",
@@ -26,7 +30,7 @@ const heritageImage = photo(
 
 export function HeritageStory() {
   return (
-    <Section surface="night" edge="both" edgeMotif="chorkhona">
+    <Section surface="muted" edge="both" className="overflow-hidden">
       {/*
         Кадр во всю высоту секции, вне контейнера — сетка нарушена намеренно.
 
@@ -44,6 +48,12 @@ export function HeritageStory() {
           sizes="42vw"
           className="h-full rounded-none"
         />
+        {/* Ниша разомкнута влево — туда кадр и уходит за край окна */}
+        <span
+          aria-hidden="true"
+          data-open="left"
+          className="toqcha inset-y-10 left-0 right-8"
+        />
       </div>
 
       <Container className="relative">
@@ -58,14 +68,23 @@ export function HeritageStory() {
 
             {/* На мобильном кадр встаёт в поток, а не исчезает */}
             <Reveal className="mt-10 lg:hidden" delay={60}>
-              <Media
-                image={heritageImage}
-                ratio="editorial"
-                zoomOnHover={false}
-                /* Кадр внутри Container и живёт только до lg: 100vw просил бы
-                   ступень на размер больше, чем нужно. */
-                sizes="(min-width: 640px) 90vw, 88vw"
-              />
+              <div className="relative">
+                <Media
+                  image={heritageImage}
+                  ratio="editorial"
+                  zoomOnHover={false}
+                  /* Кадр внутри Container и живёт только до lg: 100vw просил
+                     бы ступень на размер больше, чем нужно. */
+                  sizes="(min-width: 640px) 90vw, 88vw"
+                />
+                {/* На узкой колонке ниша разрывается вниз: боковой разрыв
+                    там просто не читается. */}
+                <span
+                  aria-hidden="true"
+                  data-open="bottom"
+                  className="toqcha -left-3 -right-3 -top-3 bottom-10"
+                />
+              </div>
             </Reveal>
 
             <Reveal delay={100}>

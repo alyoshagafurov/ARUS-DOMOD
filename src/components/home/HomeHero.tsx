@@ -1,138 +1,134 @@
 import type { CSSProperties } from "react";
 
-import { OrnamentBand } from "@/components/ornament/Ornament";
+import { Container } from "@/components/layout/Container";
+import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
+import { site } from "@/lib/config/site";
 import { photo } from "@/lib/photos";
-import type { Collection } from "@/types/catalog";
-
-interface HomeHeroProps {
-  collection?: Collection;
-}
 
 const delay = (ms: number) => ({ "--enter-delay": `${ms}ms` }) as CSSProperties;
 
 /**
- * Первый экран — кампания, а не баннер.
+ * Первый экран — логотип, увеличенный до размера окна.
  *
- * Кадр ткани занимает больше половины ширины, уходит за правый край и вверх
- * под шапку: сетка намеренно нарушена. Текст стоит узкой колонкой на свободном
- * поле слева и не спорит с изображением за внимание.
+ * Порядок разложен прямо со знака: поле бирюзы → кадр в нише → полоса
+ * тишины → имя дома → чем он занимается. В логотипе между знаком и словом
+ * лежит 11% высоты пустоты; здесь она такая же и служит композицией, а не
+ * отступом.
  *
- * Разделение включается только с 1280px. Ниже текстовой колонке физически
- * не хватает места рядом с кадром — на 1024 заголовок начинал заезжать на
- * ткань, поэтому там композиция перестраивается в вертикальный разворот:
- * кадр во всю ширину сверху, текст под ним. Это не «сжатый десктоп».
+ * Кадр живёт в ТОҚЧА — нише из золотой волосяной линии, РАЗОМКНУТОЙ с одной
+ * стороны: рамка смещена наружу сверху и слева, а справа её нет вовсе, и
+ * фотография уходит за границу. Это прямая цитата венка со знака — он тоже
+ * открыт, и шлейф невесты пересекает его край.
+ *
+ * Затемняющих подложек здесь нет ни одной. Текст не лежит поверх кадра, а
+ * стоит рядом на чистой бирюзе; шапка тоже не заезжает на фотографию —
+ * секция начинается ниже её высоты, поэтому градиент ради читаемости
+ * не потребовался.
+ *
+ * На телефоне это не сжатый десктоп: композиция вертикальная и идёт ровно в
+ * порядке логотипа. На широком экране колонки расходятся, кадр встаёт справа
+ * и продолжается за край окна.
  */
-export function HomeHero({ collection }: HomeHeroProps) {
-  const number = collection?.title ?? "Коллекция 01";
-
+export function HomeHero() {
   return (
     <section
-      data-surface="night"
-      className="relative isolate overflow-hidden xl:min-h-[100svh]"
+      data-surface="green"
+      className="relative isolate overflow-hidden pb-[var(--space-section-y)] pt-[calc(var(--header-h)+1rem)] lg:pt-[calc(var(--header-h)+3rem)]"
     >
-      {/* Кадр: на мобильном — сверху во всю ширину, на десктопе — правое поле */}
-      <div className="motion-veil relative h-[62svh] min-h-[380px] w-full xl:absolute xl:inset-y-0 xl:right-0 xl:h-full xl:w-[56%]">
-        <Media
-          image={photo(
-            "hero-tajik-royal-bride",
-            "Невеста в свадебном образе ARUS DOMOD",
-          )}
-          ratio="auto"
-          priority
-          zoomOnHover={false}
-          // Невеста занимает правые две трети кадра (в исходнике 1334×1179 её
-          // фигура это x 580–1290), поэтому центрированный object-cover резал
-          // бы её пополам. Сдвиг вправо считан по коробке, а не подобран:
-          // на телефоне видно 878px исходника из 1334, на xl — 1045px.
-          // По вертикали 40%: между lg и xl кадр ещё во всю ширину и
-          // обрезается сверху, а голова лежит у самого верхнего края.
-          imageClassName="object-[80%_40%] xl:object-[78%_center]"
-          sizes="(min-width: 1280px) 56vw, 100vw"
-          className="h-full rounded-none"
-        />
+      {/* Растительный дамаск — грунт поля, а не рисунок поверх него */}
+      <OrnamentField motif="damask" />
 
-        {/* Подложка под шапкой: на светлом участке кадра пункты меню
-            и иконки иначе не читаются. Служебная, не декоративная. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-40"
-          style={{
-            backgroundImage:
-              "linear-gradient(to bottom, rgba(16,13,11,0.72) 0%, rgba(16,13,11,0.38) 45%, transparent 100%)",
-          }}
-        />
-      </div>
+      <Container className="relative">
+        <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-[var(--gutter)]">
+          {/* --- КАДР В НИШЕ ---------------------------------------------
+              На телефоне идёт первым: у логотипа знак тоже стоит над словом,
+              и фотография остаётся главным содержанием первого экрана. */}
+          <div className="order-1 lg:order-2 lg:col-span-7 lg:col-start-6 lg:-mr-[var(--gutter)]">
+            <div className="motion-veil relative">
+              <Media
+                image={photo(
+                  "hero-tajik-royal-bride",
+                  "Невеста в свадебном образе ARUS DOMOD",
+                )}
+                ratio="auto"
+                priority
+                zoomOnHover={false}
+                /* Невеста занимает правые две трети кадра (в исходнике
+                   1334×1179 её фигура это x 580–1290), поэтому
+                   центрированный object-cover резал бы её пополам. Точка
+                   обрезки сохранена с проверенной версии. */
+                imageClassName="object-[80%_40%] xl:object-[78%_center]"
+                sizes="(min-width: 1024px) 58vw, 92vw"
+                className="h-[40svh] min-h-[280px] rounded-none lg:h-[74svh] lg:min-h-[520px]"
+              />
 
-      {/* Волосяной шов между текстовым полем и кадром */}
-      <span
-        aria-hidden="true"
-        className="absolute inset-y-0 left-[44%] hidden w-px bg-hairline xl:block"
-      />
-
-      <div className="relative mx-auto flex w-full max-w-[var(--container-max)] flex-col justify-center px-[var(--gutter)] pb-20 pt-14 xl:min-h-[100svh] xl:pb-32 xl:pt-[calc(var(--header-h)+5rem)]">
-        {/* Вертикальный лейбл по левой кромке — как кромка ткани */}
-        <span
-          aria-hidden="true"
-          className="t-label-wide absolute left-2 top-1/2 hidden -translate-y-1/2 rotate-180 text-ink-muted [writing-mode:vertical-rl] 2xl:block"
-        >
-          {number} — 2026
-        </span>
-
-        <div className="max-w-[34rem] xl:max-w-[28rem] 2xl:max-w-[34rem]">
-          <p
-            className="motion-enter t-label text-ink-secondary"
-            style={delay(80)}
-          >
-            ARUS DOMOD · {number}
-          </p>
-
-          <h1
-            className="motion-enter t-display-2 mt-7 text-balance"
-            style={delay(160)}
-          >
-            Наследие,
-            <br />
-            которое надевают
-          </h1>
-
-          <p
-            className="motion-enter t-lead mt-8 max-w-[36ch]"
-            style={delay(260)}
-          >
-            Королевские наряды для невест и женихов. Продажа и прокат в
-            национальном стиле.
-          </p>
-
-          <div
-            className="motion-enter mt-11 flex flex-wrap items-center gap-3"
-            style={delay(340)}
-          >
-            <Button href="/catalog" variant="inverse" size="lg">
-              Смотреть коллекцию
-            </Button>
-            <Button href="/about" variant="secondary" size="lg">
-              О бренде
-            </Button>
+              {/* Тоқча: рамка вынесена НАРУЖУ кадра с трёх сторон — только
+                  так волосяная линия видна на бирюзе, а не теряется в
+                  фотографии. Справа её нет вовсе: туда кадр и уходит. */}
+              <span
+                aria-hidden="true"
+                data-open="right"
+                className="toqcha -bottom-3 -left-3 -top-3 right-10 sm:-bottom-4 sm:-left-4 sm:-top-4 sm:right-16"
+              />
+            </div>
           </div>
 
-          <p
-            className="motion-enter t-caption mt-14 flex items-center gap-4"
-            style={delay(440)}
-          >
-            <span className="h-px w-10 bg-strong" aria-hidden="true" />
-            Коллекция 01 · съёмка сезона
-          </p>
-        </div>
-      </div>
+          {/* --- СЛОВО ---------------------------------------------------- */}
+          <div className="order-2 pt-6 lg:order-1 lg:col-span-5 lg:pt-0">
+            <p
+              className="motion-enter t-label-wide text-ink-accent"
+              style={delay(60)}
+            >
+              Для самых красивых невест
+            </p>
 
-      {/* Ҳошия закрывает первый экран и передаёт страницу дальше */}
-      <OrnamentBand
-        motif="dandona"
-        height={12}
-        className="absolute inset-x-0 bottom-0 rotate-180"
-      />
+            <h1
+              className="motion-enter t-display-1 mt-4 leading-[0.94] tracking-[0.02em] lg:mt-5"
+              style={delay(140)}
+            >
+              ARUS <br />
+              DOMOD
+            </h1>
+
+            {/* Волосяная линия вместо отбивки: единственный разделитель системы */}
+            <span
+              aria-hidden="true"
+              className="motion-enter hoshiya-line mt-5 max-w-[7rem] lg:mt-7 lg:max-w-[calc(100%+var(--gutter))]"
+              style={delay(200)}
+            />
+
+            <p
+              className="motion-enter t-h3 mt-5 font-sans font-medium tracking-normal lg:mt-7"
+              style={delay(240)}
+            >
+              Свадебные образы для невест.
+            </p>
+
+            <p
+              className="motion-enter t-lead mt-3 max-w-[34ch]"
+              style={delay(300)}
+            >
+              Каталог образов для покупки и проката.
+            </p>
+
+            <div className="motion-enter mt-7 lg:mt-9" style={delay(380)}>
+              <Button href="/catalog" size="lg">
+                Смотреть образы
+              </Button>
+            </div>
+
+            <p
+              className="motion-enter t-caption mt-8 flex items-center gap-3"
+              style={delay(460)}
+            >
+              <span aria-hidden="true" className="h-px w-8 bg-strong" />
+              {site.positioning} · {site.city}
+            </p>
+          </div>
+        </div>
+      </Container>
     </section>
   );
 }

@@ -1,6 +1,5 @@
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/motion/Reveal";
-import { OrnamentBand } from "@/components/ornament/Ornament";
 import { Media } from "@/components/ui/Media";
 import { photo } from "@/lib/photos";
 
@@ -14,7 +13,20 @@ import { photo } from "@/lib/photos";
  *
  * Секция держит собственную высоту и центрирует содержимое по вертикали:
  * узкой полосой она читалась не как раздел, а как разделитель, и следующий
- * блок начинался вплотную.
+ * блок начинался вплотную. Воздуха здесь больше, чем у соседей, — это
+ * полоса тишины перед финалом, и она обязана дышать.
+ *
+ * По краю полотна идёт замкнутая ҳошия — единственное место на странице,
+ * где кайма не разомкнута: тоқча обрамляет кадр, а здесь кадром служит вся
+ * секция целиком, как поле под знаком в логотипе.
+ *
+ * Поверхность здесь светлая, и это решает не вкус, а сама фотография:
+ * архивный текстиль почти весь кремовый, поэтому светлый текст на нём
+ * пропадал. На day-поверхности заголовок становится глубокой бирюзой
+ * (15.03:1 к кремовому полю кадра), а акцентная строка — бирюзой логотипа
+ * (9.36:1). Золотом её набрать нельзя: на светлом оно даёт 2.18:1.
+ *
+ * Это единственная светлая пауза на всей главной.
  *
  * Ширина строки подобрана под пустое поле кадра: шире — и текст заезжает
  * на ковровый орнамент справа, где тёмная краска съедает контраст.
@@ -25,8 +37,9 @@ import { photo } from "@/lib/photos";
 export function BrandStatement() {
   return (
     <section
-      className="relative isolate flex min-h-[64svh] items-center overflow-hidden
-        py-[calc(var(--space-section-y)*1.4)] lg:min-h-[72svh]"
+      data-surface="day"
+      className="relative isolate flex min-h-[72svh] items-center overflow-hidden
+        py-[calc(var(--space-section-y)*1.6)] lg:min-h-[82svh]"
     >
       {/* Кадр в отдельной обёртке: у <Media> в базе свой `relative`, и две
           утилиты position одного веса разрешаются порядком в CSS. */}
@@ -47,6 +60,9 @@ export function BrandStatement() {
         />
       </div>
 
+      {/* Замкнутая кайма по краю полотна — пропорция снята с логотипа */}
+      <span aria-hidden="true" className="hoshiya-frame" />
+
       <Container width="narrow" className="relative">
         <Reveal>
           <p className="t-display-2 max-w-[11ch]">
@@ -57,10 +73,10 @@ export function BrandStatement() {
         </Reveal>
 
         <Reveal delay={120}>
-          <OrnamentBand
-            motif="mavj"
-            height={12}
-            className="mt-12 max-w-[14rem]"
+          <span
+            aria-hidden="true"
+            className="hoshiya-line mt-12 max-w-[9rem]"
+            data-strength="strong"
           />
         </Reveal>
       </Container>
