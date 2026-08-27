@@ -64,7 +64,9 @@ export function SiteFooter() {
             </p>
           </div>
 
-          <div className="grid gap-10 sm:grid-cols-3">
+          {/* Две ячейки, а не три: колонка «Дом» ушла вместе с мёртвыми
+              ссылками на /about и /contacts. */}
+          <div className="grid gap-10 sm:grid-cols-2">
             {footerNav.map((column) => (
               <nav key={column.title} aria-label={column.title}>
                 <h2 className="t-label text-ink-muted">{column.title}</h2>

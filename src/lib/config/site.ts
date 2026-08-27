@@ -44,12 +44,19 @@ export interface NavLink {
   external?: boolean;
 }
 
+/**
+ * В навигации стоят только существующие маршруты.
+ *
+ * «О бренде» (/about) и «Контакты» (/contacts) сняты: страниц под ними нет,
+ * оба адреса отдавали 404. Заглушек вместо них не заводим — содержимого от
+ * клиента нет, а придуманная страница о бренде была бы выдумкой о нём.
+ * Пункты вернутся вместе с самими страницами отдельной фазой.
+ */
 export const primaryNav: NavLink[] = [
   { href: "/catalog", label: "Коллекции" },
   { href: "/catalog/libos", label: "Платья", labelTg: "Либос" },
   { href: "/catalog/zewar", label: "Украшения", labelTg: "Зевар" },
   { href: "/catalog/lavozimot", label: "Аксессуары", labelTg: "Лавозимот" },
-  { href: "/about", label: "О бренде" },
 ];
 
 export const utilityNav: NavLink[] = [
@@ -65,13 +72,6 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { href: "/catalog/libos", label: "Платья" },
       { href: "/catalog/zewar", label: "Украшения" },
       { href: "/catalog/lavozimot", label: "Аксессуары" },
-    ],
-  },
-  {
-    title: "Дом",
-    links: [
-      { href: "/about", label: "О бренде" },
-      { href: "/contacts", label: "Контакты" },
       { href: "/favorites", label: "Избранное" },
     ],
   },
