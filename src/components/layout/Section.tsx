@@ -1,9 +1,6 @@
 import type { ReactNode } from "react";
 
-import {
-  OrnamentBand,
-  type OrnamentMotif,
-} from "@/components/ornament/Ornament";
+import type { OrnamentMotif } from "@/components/ornament/Ornament";
 import { cn } from "@/lib/cn";
 
 type SectionSurface = "day" | "night" | "muted";
@@ -19,14 +16,21 @@ const rhythmClass: Record<SectionRhythm, string> = {
 interface SectionProps {
   children: ReactNode;
   /**
-   * Поверхность секции. Чередование day/night — не тёмная тема, а ритм:
-   * так же чередуются полосы атласа. Значение проставляет data-surface,
-   * от которого зависят ВСЕ семантические токены внутри.
+   * Поверхность секции. Средой служит бирюза логотипа, поэтому:
+   * `night` — глубокая бирюза (значение по умолчанию), `muted` — поле
+   * логотипа на ступень светлее, `day` — редкая светлая пауза.
+   * Значение проставляет data-surface, от которого зависят ВСЕ
+   * семантические токены внутри.
    */
   surface?: SectionSurface;
   rhythm?: SectionRhythm;
-  /** Тканая кайма по краям секции — фирменный приём «ҳошия» */
+  /** Золотая волосяная кайма по краям секции — приём «ҳошия» */
   edge?: SectionEdge;
+  /**
+   * @deprecated Мотив краю больше не нужен: границу держит линия, а не
+   * тканая лента. Проп оставлен, чтобы страницы вне текущей фазы
+   * собирались без правок.
+   */
   edgeMotif?: OrnamentMotif;
   id?: string;
   className?: string;
@@ -34,10 +38,9 @@ interface SectionProps {
 
 export function Section({
   children,
-  surface = "day",
+  surface = "night",
   rhythm = "section",
   edge = "none",
-  edgeMotif = "dandona",
   id,
   className,
 }: SectionProps) {
@@ -47,29 +50,22 @@ export function Section({
   return (
     <section
       id={id}
-      data-surface={surface === "muted" ? "day" : surface}
-      className={cn(
-        "relative isolate w-full",
-        surface === "muted" && "bg-muted",
-        rhythmClass[rhythm],
-        className,
-      )}
+      data-surface={surface === "muted" ? "green" : surface}
+      className={cn("relative isolate w-full", rhythmClass[rhythm], className)}
     >
       {showTop ? (
-        <OrnamentBand
-          motif={edgeMotif}
-          height={10}
-          className="absolute inset-x-0 top-0"
+        <span
+          aria-hidden="true"
+          className="hoshiya-line absolute inset-x-0 top-0"
         />
       ) : null}
 
       {children}
 
       {showBottom ? (
-        <OrnamentBand
-          motif={edgeMotif}
-          height={10}
-          className="absolute inset-x-0 bottom-0 rotate-180"
+        <span
+          aria-hidden="true"
+          className="hoshiya-line absolute inset-x-0 bottom-0"
         />
       ) : null}
     </section>

@@ -35,48 +35,59 @@ interface PlateColors {
   thread: string;
 }
 
+/**
+ * Тона перезаземлены на «Фирӯзу».
+ *
+ * Прежние ступени (bone / ink / madder / nil / sabz) удалены вместе со старой
+ * палитрой, и плита осталась бы без цвета вовсе. Имена тонов сохранены:
+ * их передают карточки каталога и подборок — страницы вне текущей фазы,
+ * — а вот значения теперь берутся из бирюзово-золотого набора логотипа.
+ *
+ * Это по-прежнему единственное место (кроме <Tag>), где берутся сырые
+ * ступени: плита изображает фотографию, а не элемент интерфейса.
+ */
 const tones: Record<PlateTone, PlateColors> = {
   madder: {
-    ground: "var(--madder-800)",
-    band: "var(--madder-700)",
-    deep: "var(--madder-900)",
+    ground: "var(--firuza-800)",
+    band: "var(--firuza-700)",
+    deep: "var(--firuza-950)",
     light: "var(--zar-300)",
-    thread: "var(--bone-100)",
+    thread: "var(--shir-100)",
   },
   ink: {
-    ground: "var(--ink-800)",
-    band: "var(--ink-700)",
-    deep: "var(--ink-900)",
-    light: "var(--madder-700)",
-    thread: "var(--bone-100)",
+    ground: "var(--firuza-900)",
+    band: "var(--firuza-800)",
+    deep: "var(--firuza-950)",
+    light: "var(--zar-500)",
+    thread: "var(--shir-100)",
   },
   nil: {
-    ground: "var(--nil-800)",
-    band: "var(--nil-600)",
-    deep: "var(--nil-900)",
+    ground: "var(--firuza-950)",
+    band: "var(--firuza-700)",
+    deep: "#021917",
     light: "var(--zar-500)",
-    thread: "var(--bone-100)",
+    thread: "var(--shir-100)",
   },
   sabz: {
-    ground: "var(--sabz-700)",
-    band: "var(--sabz-500)",
-    deep: "var(--ink-700)",
+    ground: "var(--firuza-700)",
+    band: "var(--firuza-600)",
+    deep: "var(--firuza-900)",
     light: "var(--zar-300)",
-    thread: "var(--bone-100)",
+    thread: "var(--shir-100)",
   },
   zar: {
-    ground: "var(--zar-600)",
-    band: "var(--zar-500)",
-    deep: "var(--zar-700)",
-    light: "var(--ink-900)",
-    thread: "var(--ink-900)",
+    ground: "var(--zar-700)",
+    band: "var(--zar-600)",
+    deep: "var(--zar-800)",
+    light: "var(--shir-100)",
+    thread: "var(--firuza-950)",
   },
   bone: {
-    ground: "var(--bone-200)",
-    band: "var(--bone-300)",
-    deep: "var(--bone-400)",
-    light: "var(--madder-700)",
-    thread: "var(--madder-700)",
+    ground: "var(--shir-200)",
+    band: "var(--shir-300)",
+    deep: "var(--shir-400)",
+    light: "var(--firuza-800)",
+    thread: "var(--firuza-800)",
   },
 };
 
@@ -125,10 +136,13 @@ const weaveTexturePale =
  * ни было.
  */
 const jacquardScale: Record<OrnamentMotif, number> = {
-  chorkhona: 60,
+  damask: 78,
   gul: 68,
-  mavj: 40,
-  dandona: 44,
+  // Снятая геометрия чакана: имена ещё приходят со страниц вне текущей фазы
+  // и в CSS ведут на дамаск, поэтому и раппорт у них дамасковый.
+  chorkhona: 78,
+  mavj: 78,
+  dandona: 78,
 };
 
 /**

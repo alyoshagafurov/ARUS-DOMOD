@@ -10,7 +10,7 @@ const toneClass: Record<TagTone, string> = {
   accent: "bg-accent text-accent-contrast",
   // Золото светлое на любой поверхности, поэтому текст на нём всегда тёмный —
   // это единственное место, где цвет берётся из сырой палитры, а не из семантики.
-  gold: "bg-gold text-[var(--ink-900)]",
+  gold: "bg-gold text-[var(--firuza-950)]",
   outline: "border border-strong text-ink",
 };
 

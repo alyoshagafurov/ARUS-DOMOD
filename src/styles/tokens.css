@@ -1,147 +1,175 @@
 /* =========================================================================
-   ARUS DOMOD — Design tokens
+   ARUS DOMOD — Design tokens · концепция «ФИРӮЗА»
+
    Единственный источник правды для цвета, типографики, ритма и движения.
-   Палитра выведена из таджикского текстиля: чакан (крестовая вышивка),
-   атлас/адрас, сюзане и ковровые каймы.
-   Правило: компоненты используют ТОЛЬКО семантические токены (--color-*),
-   сырые ступени палитры (--bone-*, --madder-* …) — только внутри этого файла.
+
+   ПАЛИТРА ВЫВЕДЕНА ИЗ ЛОГОТИПА, а не из исследования текстиля. Каждая
+   ступень ниже имеет пиксельное происхождение в /logo.png (1448×1086):
+   бирюза — медиана 136 472 «зелёных» пикселей, золото — медиана 19 011
+   «золотых», светлая точка узора и теневое золото сняты оттуда же.
+
+   Так устранена причина, по которой прежняя версия не могла быть принята:
+   в шапке стоял бирюзово-золотой знак, а под ним лежал кремово-красный
+   сайт. Красного в логотипе нет ни пикселя.
+
+   Правило прежнее: компоненты используют ТОЛЬКО семантические токены,
+   сырые ступени (--firuza-*, --zar-*, --shir-*) — только внутри этого файла.
    ========================================================================= */
 
 :root {
-  /* ---------- Сырая палитра ------------------------------------------- */
+  /* ---------- Сырая палитра -------------------------------------------- */
 
-  /* Bone — небелёный хлопок, основа чакана */
-  --bone-50: #faf7f1;
-  --bone-100: #f3eee4;
-  --bone-200: #e8e0d2;
-  --bone-300: #d8cdb9;
-  --bone-400: #bcaf97;
+  /* Фирӯза — бирюза логотипа и куполов. Основная среда сайта. */
+  --firuza-950: #03211f; /* углублённое поле — основная поверхность */
+  --firuza-900: #043330;
+  --firuza-800: #054745; /* ПОЛЕ ЛОГОТИПА, снято дословно */
+  --firuza-700: #0a5551;
+  --firuza-600: #1e6a67; /* самая светлая точка узора на фоне логотипа */
+  --firuza-500: #35827e;
+  --firuza-300: #7fb0ac;
+  --firuza-100: #d8e8e6;
 
-  /* Ink — плотный чёрный грунт атласа */
-  --ink-900: #100d0b;
-  --ink-800: #1a1613;
-  --ink-700: #2a241f;
-  --ink-600: #4a423a;
-  --ink-500: #6e6459;
-  --ink-400: #928779;
+  /* Зар — латунь знака. Оттенок 37°, а не 51°: это латунь, не жёлтый. */
+  --zar-800: #6e5220;
+  --zar-700: #a87c33; /* теневое золото знака */
+  --zar-600: #c08a2c;
+  --zar-500: #da9929; /* МЕДИАНА ЗОЛОТА ЗНАКА */
+  --zar-300: #e8c275; /* блик золота */
+  --zar-100: #f3e3be;
 
-  /* Madder — марена: красное поле ковра и полосы атласа */
-  --madder-900: #4e0f0c;
-  --madder-800: #6b1611;
-  --madder-700: #8a1e15;
-  --madder-600: #a5261a;
-  --madder-500: #c0392a;
-  --madder-400: #d4574a;
-  --madder-200: #e8c6be;
-  --madder-50: #f7e9e5;
+  /* Шир — светлые кремовые поверхности. Тон снят со среднего света съёмки:
+     десять отобранных кадров дают оттенок 13–30°, кремово-янтарный. */
+  --shir-50: #fbf8f1;
+  --shir-100: #f6f1e7;
+  --shir-200: #ebe2d2;
+  --shir-300: #d9cdb6;
+  --shir-400: #b3a68b;
 
-  /* Zar — латунь и золотая нить сюзане */
-  --zar-700: #8a6420;
-  --zar-600: #a87b29;
-  --zar-500: #c29a44;
-  --zar-300: #dfc488;
-  --zar-100: #f2e5c7;
+  /* Текст на тёмном — тёплый кремовый, а не белый */
+  --cream: #f2eadb;
 
-  /* Nil — индиго ковровой каймы */
-  --nil-900: #141c2e;
-  --nil-800: #1e2a44;
-  --nil-600: #33456b;
+  /* ---------- Семантика: бирюзовая среда (по умолчанию) -----------------
+     Постоянной средой сайта служит бирюза логотипа. Светлая поверхность —
+     редкое исключение (корзина, оформление, полоса разделов), а не
+     половина макета. */
+  --surface-page: var(--firuza-950);
+  --surface-raised: var(--firuza-800);
+  --surface-muted: var(--firuza-900);
+  --surface-sunken: #021917;
+  --surface-invert: var(--shir-100);
 
-  /* Sabz — приглушённый оливково-шалфейный из полос атласа */
-  --sabz-700: #4c5741;
-  --sabz-500: #7c8467;
-  --sabz-200: #c3c8b4;
+  --text-primary: var(--cream);
+  --text-secondary: rgba(242, 234, 219, 0.72);
+  /* 0.58, а не 0.5: с учётом альфа-композитинга поверх глубокой бирюзы
+     половинная прозрачность даёт 4.44:1 и не проходит AA для 13px. */
+  --text-muted: rgba(242, 234, 219, 0.58);
+  --text-invert: var(--firuza-950);
+  --text-accent: var(--zar-500); /* 6.90:1 на глубоком — полноценный текст */
 
-  /* ---------- Семантика: дневная поверхность (по умолчанию) ------------ */
-  --surface-page: var(--bone-50);
-  --surface-raised: #fffcf6;
-  --surface-muted: var(--bone-100);
-  --surface-sunken: var(--bone-200);
-  --surface-invert: var(--ink-900);
+  /* Единственная линия системы — золотой волос. Ни теней, ни серых бордеров. */
+  --border-hairline: rgba(218, 153, 41, 0.22);
+  --border-strong: rgba(218, 153, 41, 0.46);
+  --border-accent: var(--zar-500);
 
-  --text-primary: var(--ink-900);
-  --text-secondary: var(--ink-600);
-  --text-muted: var(--ink-500);
-  --text-invert: var(--bone-100);
-  --text-accent: var(--madder-700);
-
-  --border-hairline: rgba(16, 13, 11, 0.12);
-  --border-strong: rgba(16, 13, 11, 0.26);
-  --border-accent: var(--madder-700);
-
-  --accent: var(--madder-700);
-  --accent-hover: var(--madder-800);
-  --accent-quiet: var(--madder-50);
-  --accent-contrast: var(--bone-50);
+  --accent: var(--zar-500);
+  --accent-hover: var(--zar-300);
+  --accent-quiet: rgba(218, 153, 41, 0.12);
+  --accent-contrast: var(--firuza-950); /* тёмный текст на золоте — 6.90:1 */
 
   --gold: var(--zar-500);
-  --gold-quiet: var(--zar-100);
+  --gold-quiet: rgba(218, 153, 41, 0.14);
 
-  --state-success: #4c6b4a;
-  --state-warning: var(--zar-700);
-  --state-danger: var(--madder-500);
-  --state-info: var(--nil-800);
+  --state-success: #7fb08a;
+  --state-warning: var(--zar-300);
+  --state-danger: #e08578;
+  --state-info: var(--firuza-300);
 
-  --focus-ring: var(--madder-600);
+  --focus-ring: var(--zar-300);
 
-  /* ---------- Орнамент ------------------------------------------------- */
-  --ornament-opacity: 0.16;
-  --ornament-opacity-strong: 0.34;
+  /* ---------- Ҳошия: золотая волосяная кайма ----------------------------
+     Пропорция снята с логотипа: кант отступает от края на 2.07% ширины при
+     толщине 0.55% — отношение примерно 1 к 3.8. На вебе это 1px при
+     отступе, растущем вместе с полем страницы. */
+  --hoshiya-line: 1px;
+  --hoshiya-inset: clamp(0.75rem, 2.4vw, 1.75rem);
+  --hoshiya-color: var(--border-hairline);
+  --hoshiya-color-strong: var(--border-strong);
+
+  /* ---------- Орнамент --------------------------------------------------
+     Потолок измерен: размах светлоты растительного дамаска в логотипе —
+     7.6 процентных пункта. Кремовый (L90) поверх глубокого (L7) даёт
+     размах 83 п.п., поэтому 7.6 / 83 ≈ 0.09 — это предел непрозрачности.
+     Под текстом и на телефоне держим ещё тише. */
+  --ornament-opacity: 0.07;
+  --ornament-opacity-strong: 0.1;
   --ornament-stroke: 1;
   --ornament-band-h: 14px;
+  --ornament-tile: 78px;
 
-  /* ---------- Типографика ---------------------------------------------- */
+  /* ---------- Типографика -----------------------------------------------
+     Надпись ARUS.DOMOD.TJ в логотипе — антиква дидо. Дидо с таджикскими
+     глифами на Google Fonts нет ни одной (замер в браузере: Playfair и
+     Bodoni Moda не содержат ӯ ҳ ҷ қ ғ ӣ вовсе), поэтому взят витринный крой
+     Cormorant — самое контрастное из лиц с полным покрытием. Подробности
+     замера — в шапке src/app/layout.tsx.
+     Golos остаётся интерфейсной: она тиха и полна по кириллице. */
   --font-display: var(--font-cormorant), "Iowan Old Style", Georgia, serif;
-  --font-sans: var(--font-golos), ui-sans-serif, system-ui, "Helvetica Neue",
-    Arial, sans-serif;
+  --font-sans:
+    var(--font-golos), ui-sans-serif, system-ui, "Helvetica Neue", Arial,
+    sans-serif;
 
-  --text-display-1: clamp(2.75rem, 9vw, 7rem);
-  --text-display-2: clamp(2.25rem, 6vw, 4.75rem);
-  --text-h1: clamp(1.875rem, 4.2vw, 3rem);
-  --text-h2: clamp(1.5rem, 3vw, 2.125rem);
-  --text-h3: clamp(1.125rem, 1.9vw, 1.4rem);
+  /* У витринного Cormorant очко мельче текстового, поэтому кегли крупнее
+     тела остались высокими, а трекинг ушёл плотнее: так лицо звучит
+     couture, а не «свадебный блог». */
+  --text-display-1: clamp(2.5rem, 8vw, 6rem);
+  --text-display-2: clamp(2rem, 5.4vw, 4rem);
+  --text-h1: clamp(1.75rem, 4vw, 2.75rem);
+  --text-h2: clamp(1.375rem, 2.8vw, 2rem);
+  --text-h3: clamp(1.0625rem, 1.8vw, 1.3rem);
   --text-body-lg: 1.125rem;
   --text-body: 1rem;
   --text-body-sm: 0.9375rem;
   --text-caption: 0.8125rem;
   --text-label: 0.75rem;
 
-  --leading-display: 0.94;
-  --leading-heading: 1.12;
-  --leading-body: 1.65;
-  --leading-tight: 1.3;
+  --leading-display: 0.96;
+  --leading-heading: 1.14;
+  --leading-body: 1.68;
+  --leading-tight: 1.32;
 
-  --tracking-display: -0.02em;
-  --tracking-heading: -0.01em;
+  --tracking-display: -0.03em;
+  --tracking-heading: -0.015em;
   --tracking-body: 0em;
-  --tracking-label: 0.16em;
-  --tracking-wide: 0.28em;
+  --tracking-label: 0.18em;
+  --tracking-wide: 0.3em;
 
-  /* ---------- Ритм и раскладка -----------------------------------------
-     Шкала намеренно сдержаннее первой редакции: при отборе на живой съёмке
-     кадры и заголовки оказались крупнее, чем нужно, — один экран вмещал
-     полторы карточки. Воздух остался, но перестал быть самоцелью. */
+  /* ---------- Ритм и раскладка ------------------------------------------
+     Воздуха стало больше: тишина — элемент композиции. В логотипе между
+     знаком и словом лежит 11% высоты чистой пустоты. */
   --gutter: clamp(1.25rem, 4vw, 3rem);
-  --space-section-y: clamp(3rem, 7vw, 6.5rem);
+  --space-section-y: clamp(3.5rem, 8vw, 7.5rem);
   --space-block-y: clamp(2rem, 4vw, 3.5rem);
+  --space-silence: clamp(1.5rem, 5vw, 3.5rem);
   --container-max: 1440px;
   --container-narrow: 1120px;
   --container-text: 68ch;
   --header-h: 68px;
 
-  /* ---------- Радиусы: одежда режется, а не скругляется ---------------- */
+  /* ---------- Радиусы ---------------------------------------------------
+     Углы каймы в логотипе острые, поэтому кадры не скругляются вовсе.
+     2px остаётся у чипов и кнопок, капсула — только у фильтров. */
   --radius-none: 0px;
   --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-pill: 999px;
 
-  /* ---------- Тени: редко; основная «высота» — волосяная линия --------- */
+  /* ---------- Тени: редко; основная «высота» — волосяная линия ---------- */
   --shadow-hairline: 0 0 0 1px var(--border-hairline);
-  --shadow-raise: 0 2px 10px -4px rgba(16, 13, 11, 0.14);
-  --shadow-overlay: 0 24px 60px -24px rgba(16, 13, 11, 0.38);
+  --shadow-raise: 0 2px 10px -4px rgba(0, 0, 0, 0.55);
+  --shadow-overlay: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
 
-  /* ---------- Движение -------------------------------------------------- */
+  /* ---------- Движение --------------------------------------------------- */
   --dur-instant: 120ms;
   --dur-fast: 200ms;
   --dur-base: 320ms;
@@ -152,7 +180,7 @@
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --zoom-hover: 1.035;
 
-  /* ---------- Медиа ----------------------------------------------------- */
+  /* ---------- Медиа ------------------------------------------------------ */
   --ratio-portrait: 3 / 4;
   --ratio-editorial: 4 / 5;
   --ratio-wide: 16 / 9;
@@ -160,71 +188,138 @@
 }
 
 /* =========================================================================
-   Ночная поверхность.
-   Это НЕ пользовательская тёмная тема, а инструмент композиции: чередование
-   светлых и чёрных полос повторяет ритм полос атласа. Ставится на секцию:
-   <Section surface="night"> → data-surface="night".
+   Поле логотипа. Средняя бирюза #054745 — та самая, что залита под знаком.
+   Ставится там, где нужен подъём над основной средой: hero, панели, ниши.
+   <Section surface="muted"> → data-surface="green".
    ========================================================================= */
-[data-surface="night"] {
-  --surface-page: var(--ink-900);
-  --surface-raised: var(--ink-800);
-  --surface-muted: var(--ink-800);
-  --surface-sunken: #0a0807;
-  --surface-invert: var(--bone-50);
+[data-surface="green"] {
+  --surface-page: var(--firuza-800);
+  --surface-raised: var(--firuza-700);
+  --surface-muted: var(--firuza-700);
+  --surface-sunken: var(--firuza-900);
+  --surface-invert: var(--shir-100);
 
-  --text-primary: var(--bone-100);
-  --text-secondary: rgba(243, 238, 228, 0.68);
-  --text-muted: rgba(243, 238, 228, 0.48);
-  --text-invert: var(--ink-900);
-  --text-accent: var(--madder-400);
+  --text-primary: var(--cream);
+  --text-secondary: rgba(242, 234, 219, 0.74);
+  /* На средней бирюзе фон светлее, поэтому приглушённому тексту нужна
+     ещё большая доля: при 0.52 композит давал 3.56:1. */
+  --text-muted: rgba(242, 234, 219, 0.66);
+  --text-invert: var(--firuza-950);
+  /* На средней бирюзе золото даёт 4.30:1 — этого хватает крупному тексту
+     и линиям, но не мелкому. Поэтому акцентом здесь стоит блик. */
+  --text-accent: var(--zar-300);
 
-  --border-hairline: rgba(243, 238, 228, 0.16);
-  --border-strong: rgba(243, 238, 228, 0.32);
-  --border-accent: var(--madder-400);
+  --border-hairline: rgba(218, 153, 41, 0.26);
+  --border-strong: rgba(218, 153, 41, 0.5);
+  --border-accent: var(--zar-500);
 
-  --accent: var(--madder-400);
-  --accent-hover: var(--madder-500);
-  --accent-quiet: rgba(212, 87, 74, 0.14);
-  --accent-contrast: var(--ink-900);
+  --accent: var(--zar-500);
+  --accent-hover: var(--zar-300);
+  --accent-quiet: rgba(218, 153, 41, 0.14);
+  --accent-contrast: var(--firuza-950);
 
-  --gold: var(--zar-300);
-  --gold-quiet: rgba(223, 196, 136, 0.16);
-
-  --state-success: #8fae87;
-  --state-warning: var(--zar-300);
-  --state-danger: var(--madder-400);
-  --state-info: #8fa6d4;
-
+  --gold: var(--zar-500);
+  --gold-quiet: rgba(218, 153, 41, 0.16);
   --focus-ring: var(--zar-300);
-  --ornament-opacity: 0.2;
-  --ornament-opacity-strong: 0.4;
 
-  --shadow-raise: 0 2px 10px -4px rgba(0, 0, 0, 0.6);
-  --shadow-overlay: 0 24px 60px -24px rgba(0, 0, 0, 0.75);
+  --ornament-opacity: 0.075;
+  --ornament-opacity-strong: 0.11;
 }
 
-/* Инверсия внутри ночной секции (например, светлая карточка на чёрном фоне) */
-[data-surface="day"] {
-  --surface-page: var(--bone-50);
-  --surface-raised: #fffcf6;
-  --surface-muted: var(--bone-100);
-  --surface-sunken: var(--bone-200);
-  --surface-invert: var(--ink-900);
-  --text-primary: var(--ink-900);
-  --text-secondary: var(--ink-600);
-  --text-muted: var(--ink-500);
-  --text-invert: var(--bone-100);
-  --text-accent: var(--madder-700);
-  --border-hairline: rgba(16, 13, 11, 0.12);
-  --border-strong: rgba(16, 13, 11, 0.26);
-  --border-accent: var(--madder-700);
-  --accent: var(--madder-700);
-  --accent-hover: var(--madder-800);
-  --accent-quiet: var(--madder-50);
-  --accent-contrast: var(--bone-50);
+/* =========================================================================
+   Глубокая бирюза. Совпадает со средой по умолчанию и существует ради
+   явного объявления: подвал, мобильное меню, полноэкранный просмотр.
+   ========================================================================= */
+[data-surface="night"] {
+  --surface-page: var(--firuza-950);
+  --surface-raised: var(--firuza-800);
+  --surface-muted: var(--firuza-900);
+  --surface-sunken: #021917;
+  --surface-invert: var(--shir-100);
+
+  --text-primary: var(--cream);
+  --text-secondary: rgba(242, 234, 219, 0.72);
+  --text-muted: rgba(242, 234, 219, 0.58);
+  --text-invert: var(--firuza-950);
+  --text-accent: var(--zar-500);
+
+  --border-hairline: rgba(218, 153, 41, 0.22);
+  --border-strong: rgba(218, 153, 41, 0.46);
+  --border-accent: var(--zar-500);
+
+  --accent: var(--zar-500);
+  --accent-hover: var(--zar-300);
+  --accent-quiet: rgba(218, 153, 41, 0.12);
+  --accent-contrast: var(--firuza-950);
+
   --gold: var(--zar-500);
-  --gold-quiet: var(--zar-100);
-  --focus-ring: var(--madder-600);
+  --gold-quiet: rgba(218, 153, 41, 0.14);
+  --focus-ring: var(--zar-300);
+
+  --ornament-opacity: 0.07;
+  --ornament-opacity-strong: 0.1;
+}
+
+/* =========================================================================
+   Светлая поверхность — редкое исключение.
+
+   ЗАКОН ЗОЛОТА действует здесь структурно: --text-accent переключается на
+   бирюзу (9.36:1), потому что золото на кремовом даёт 2.18:1 и не является
+   буквой ни в каком кегле. Золото на светлом живёт только линией и каймой.
+   ========================================================================= */
+[data-surface="day"] {
+  --surface-page: var(--shir-100);
+  --surface-raised: var(--shir-50);
+  --surface-muted: var(--shir-200);
+  --surface-sunken: var(--shir-300);
+  --surface-invert: var(--firuza-950);
+
+  --text-primary: var(--firuza-950);
+  --text-secondary: #35504d;
+  --text-muted: #5d716e;
+  --text-invert: var(--cream);
+  --text-accent: var(--firuza-800);
+
+  --border-hairline: rgba(3, 33, 31, 0.14);
+  --border-strong: rgba(168, 124, 51, 0.55);
+  --border-accent: var(--firuza-800);
+
+  --accent: var(--firuza-800);
+  --accent-hover: var(--firuza-700);
+  --accent-quiet: rgba(5, 71, 69, 0.08);
+  --accent-contrast: var(--shir-50);
+
+  /* Приглушённое золото: 3.33:1 — только линия и крупное, не мелкий текст */
+  --gold: var(--zar-700);
+  --gold-quiet: rgba(168, 124, 51, 0.16);
+  --focus-ring: var(--firuza-700);
+
+  --hoshiya-color: rgba(168, 124, 51, 0.42);
+  --hoshiya-color-strong: rgba(168, 124, 51, 0.7);
+
+  /* На светлом орнамент почти неразличим: тёмный поверх L94 даёт большой
+     размах, поэтому доля ещё меньше, чем на бирюзе. */
+  --ornament-opacity: 0.045;
+  --ornament-opacity-strong: 0.07;
+
+  --shadow-raise: 0 2px 10px -4px rgba(3, 33, 31, 0.16);
+  --shadow-overlay: 0 24px 60px -24px rgba(3, 33, 31, 0.34);
+}
+
+/* На телефоне орнамент тише: маленький экран смотрят на ярком свету, и на
+   полной доле дамаск начинает мельтешить. */
+@media (max-width: 47.99rem) {
+  :root,
+  [data-surface="green"],
+  [data-surface="night"] {
+    --ornament-opacity: 0.05;
+    --ornament-opacity-strong: 0.075;
+  }
+
+  [data-surface="day"] {
+    --ornament-opacity: 0.035;
+    --ornament-opacity-strong: 0.055;
+  }
 }
 
 /* =========================================================================
@@ -280,5 +375,7 @@
   --container-wide: var(--container-max);
 }
 
-/* Вариант для редких случаев, когда токенов недостаточно: `night:...` */
+/* Варианты для редких случаев, когда токенов недостаточно */
 @custom-variant night (&:is([data-surface="night"] *, [data-surface="night"]));
+@custom-variant green (&:is([data-surface="green"] *, [data-surface="green"]));
+@custom-variant day (&:is([data-surface="day"] *, [data-surface="day"]));

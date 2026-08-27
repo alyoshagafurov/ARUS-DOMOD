@@ -2,7 +2,19 @@ import type { CSSProperties } from "react";
 
 import { cn } from "@/lib/cn";
 
-export type OrnamentMotif = "chorkhona" | "dandona" | "mavj" | "gul";
+/**
+ * Живых мотивов в системе «ФИРӮЗА» два, и оба растительные — как орнамент
+ * логотипа: `damask` (грунт крупных полей) и `gul` (розетка сюзане).
+ *
+ * `chorkhona`, `dandona` и `mavj` — геометрия чакана из прежней визуальной
+ * системы. Она снята: навязывать её поверх бирюзово-золотого знака значит
+ * воспроизводить расхождение, из-за которого та версия не была принята.
+ * Имена оставлены в типе только затем, чтобы страницы вне текущей фазы
+ * (каталог, корзина, оформление, избранное) продолжали собираться; в CSS
+ * все три ведут на дамаск, поэтому в вывод геометрия уже не попадает.
+ * Удаляются вместе с переработкой этих страниц.
+ */
+export type OrnamentMotif = "damask" | "gul" | "chorkhona" | "dandona" | "mavj";
 export type OrnamentStrength = "quiet" | "strong" | "full";
 
 interface OrnamentBaseProps {
@@ -20,11 +32,13 @@ interface OrnamentBandProps extends OrnamentBaseProps {
 }
 
 /**
- * Горизонтальная кайма. Основной структурный приём проекта: секции не просто
- * ставятся друг на друга, а «подшиваются» тканой каймой.
+ * Горизонтальная полоса дамаска.
+ *
+ * Структурным приёмом она быть перестала: секции подшивает золотая
+ * волосяная линия (.hoshiya-line), а дамаск остался тональным грунтом.
  */
 export function OrnamentBand({
-  motif = "dandona",
+  motif = "damask",
   strength = "quiet",
   height = 12,
   tile,
@@ -49,7 +63,7 @@ export function OrnamentBand({
 
 /** Вертикальная кайма для краевых акцентов на широких экранах */
 export function OrnamentRail({
-  motif = "chorkhona",
+  motif = "damask",
   strength = "quiet",
   height = 12,
   tile,
@@ -78,7 +92,7 @@ export function OrnamentRail({
  * не декоративный фон под текстом.
  */
 export function OrnamentField({
-  motif = "chorkhona",
+  motif = "damask",
   strength = "quiet",
   tile,
   className,
