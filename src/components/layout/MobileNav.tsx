@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Logo } from "@/components/brand/Logo";
@@ -25,6 +25,7 @@ import { navLabel } from "@/lib/i18n/labels";
 export function MobileNav({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const t = useDictionary();
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -32,6 +33,9 @@ export function MobileNav({ className }: { className?: string }) {
     const { style } = document.body;
     const previous = style.overflow;
     style.overflow = "hidden";
+    // Фокус уходит в панель и возвращается на кнопку меню при закрытии
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    panelRef.current?.querySelector<HTMLElement>("button, a[href]")?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
@@ -41,15 +45,17 @@ export function MobileNav({ className }: { className?: string }) {
     return () => {
       style.overflow = previous;
       window.removeEventListener("keydown", onKeyDown);
+      previouslyFocused?.focus?.();
     };
   }, [open]);
 
   const panel = (
     <div
+      ref={panelRef}
       data-surface="night"
       role="dialog"
       aria-modal="true"
-      aria-label="Навигация"
+      aria-label={t.misc.navigation}
       className="fixed inset-0 z-50 flex flex-col lg:hidden"
     >
       <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between px-[var(--gutter)]">

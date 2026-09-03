@@ -8,12 +8,12 @@ import {
 } from "@/components/catalog/filters";
 import { Divider } from "@/components/ui/Divider";
 import { catalog } from "@/lib/catalog";
+import { getDictionary } from "@/lib/i18n/server";
 
-export const metadata = {
-  title: "Каталог",
-  description:
-    "Коллекция ARUS DOMOD целиком: платья, украшения, аксессуары и парные образы. Покупка и прокат.",
-};
+export async function generateMetadata() {
+  const t = await getDictionary();
+  return { title: t.meta.catalog, description: t.meta.catalogDescription };
+}
 
 /**
  * Каталог целиком.

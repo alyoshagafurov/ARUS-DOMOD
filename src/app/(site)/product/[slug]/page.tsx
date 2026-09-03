@@ -12,6 +12,8 @@ import {
 } from "@/components/product/ProductPurchase";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { catalog } from "@/lib/catalog";
+import { categoryTitle } from "@/lib/i18n/labels";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 
 const RELATED_COUNT = 4;
 
@@ -25,12 +27,13 @@ export async function generateMetadata({
   params,
 }: PageProps<"/product/[slug]">) {
   const { slug } = await params;
+  const t = await getDictionary();
   const product = await catalog().getProductBySlug(slug);
-  if (!product) return { title: "Образ не найден" };
+  if (!product) return { title: t.meta.notFound };
 
   return {
     title: product.title,
-    description: `${product.title} — коллекция ARUS DOMOD.`,
+    description: t.meta.productDescription(product.title),
     openGraph: {
       title: `${product.title} · ARUS DOMOD`,
       images: product.images[0] ? [product.images[0].url] : undefined,
@@ -51,6 +54,8 @@ export async function generateMetadata({
 export default async function ProductPage({
   params,
 }: PageProps<"/product/[slug]">) {
+  const t = await getDictionary();
+  const locale = await getLocale();
   const { slug } = await params;
   const repository = catalog();
   const product = await repository.getProductBySlug(slug);
@@ -83,10 +88,15 @@ export default async function ProductPage({
       <Container className="pt-4 lg:pt-6">
         <Breadcrumbs
           items={[
-            { href: "/", label: "Главная" },
-            { href: "/catalog", label: "Каталог" },
+            { href: "/", label: t.nav.home },
+            { href: "/catalog", label: t.catalog.title },
             ...(category
-              ? [{ href: `/catalog/${category.slug}`, label: category.title }]
+              ? [
+                  {
+                    href: `/catalog/${category.slug}`,
+                    label: categoryTitle(category, locale),
+                  },
+                ]
               : []),
             { label: product.title },
           ]}
@@ -121,15 +131,10 @@ export default async function ProductPage({
         <Container>
           <div className="grid gap-x-[var(--gutter)] gap-y-8 lg:grid-cols-12">
             <Reveal className="lg:col-span-3">
-              <p className="t-label text-ink-secondary">Образ целиком</p>
+              <p className="t-label text-ink-secondary">{t.misc.lookLabel}</p>
             </Reveal>
             <Reveal className="lg:col-span-7 lg:col-start-5" delay={80}>
-              <p className="t-lead t-measure">
-                Мы показываем выход коллекции так, как его видят на свадьбе:
-                полностью, со всеми деталями и в движении. Что-то из коллекции
-                продаётся, что-то доступно в прокат — это указано в карточке
-                каждого образа.
-              </p>
+              <p className="t-lead t-measure">{t.misc.lookLead}</p>
             </Reveal>
           </div>
         </Container>

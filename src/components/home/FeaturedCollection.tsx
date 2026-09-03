@@ -73,7 +73,9 @@ export async function FeaturedCollection({
             <p className="t-label text-ink-muted">
               {collection?.subtitle ?? t.home.collectionLabel}
             </p>
-            <h2 className="t-h1 mt-4">{collection?.title ?? "Коллекция 01"}</h2>
+            <h2 className="t-h1 mt-4">
+              {collection?.title ?? t.misc.catalogLabel}
+            </h2>
           </div>
           <Button href="/catalog" variant="ghost">
             {t.home.seeAll}

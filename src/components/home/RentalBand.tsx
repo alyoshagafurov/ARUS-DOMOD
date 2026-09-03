@@ -24,25 +24,27 @@ export async function RentalBand() {
       <Container className="relative">
         <div className="lg:grid lg:grid-cols-12 lg:items-end lg:gap-[var(--gutter)]">
           <Reveal className="lg:col-span-7">
-            <p className="t-label text-ink-accent">Прокат</p>
+            <p className="t-label text-ink-accent">{t.home.rentalLabel}</p>
             <h2 className="t-display-2 mt-5 max-w-[12ch] text-balance">
-              Образ на один день
+              {t.home.rentalTitle}
             </h2>
             <span
               aria-hidden="true"
               className="hoshiya-line mt-7 max-w-[6rem]"
             />
             <ul className="t-body mt-7 grid max-w-[40rem] gap-x-8 gap-y-3 sm:grid-cols-2">
-              <li>до {rental.maxDays} дней</li>
+              <li>{t.rental.days(rental.maxDays)}</li>
               <li>
-                от{" "}
+                {t.rental.from}{" "}
                 {formatMoney({
                   amount: rental.priceFromMinor,
                   currency: "TJS",
                 })}
               </li>
-              <li>залог: {rental.depositKinds.join(" / ")}</li>
-              <li>оформление в магазине</li>
+              <li>
+                {t.rental.deposit.toLowerCase()}: {t.rental.depositKindsText}
+              </li>
+              <li>{t.rental.inStoreShort}</li>
             </ul>
           </Reveal>
           <Reveal
@@ -50,12 +52,11 @@ export async function RentalBand() {
             delay={100}
           >
             <p className="t-body-sm max-w-[32ch] text-ink-secondary">
-              Цена проката указана в карточке каждого образа. Через сайт прокат
-              не оформляется — напишите, и мы договоримся о примерке.
+              {t.home.rentalNote}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button href={inquiry} external>
-                Узнать о прокате
+                {t.home.rentalCta}
               </Button>
               <Link
                 href="/rental"

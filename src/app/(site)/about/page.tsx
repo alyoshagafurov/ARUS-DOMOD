@@ -63,10 +63,7 @@ export default async function AboutPage() {
             >
               <div className="relative">
                 <Media
-                  image={photo(
-                    "heritage-tajik-bride-editorial",
-                    "Невеста в свадебном образе ARUS DOMOD",
-                  )}
+                  image={photo("heritage-tajik-bride-editorial", t.alts.hero)}
                   ratio="auto"
                   zoomOnHover={false}
                   sizes="(min-width: 1024px) 58vw, 92vw"
@@ -155,16 +152,16 @@ export default async function AboutPage() {
                 <br />
                 {contact.phoneSecondaryName} · {contact.phoneSecondaryDisplay}
               </p>
-              <p className="mt-4 flex flex-wrap gap-4">
+              <p className="mt-3 flex flex-wrap gap-x-6">
                 {socialLinks.map((s) => (
                   <a
                     key={s.href}
                     href={s.href}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="t-label motion-underline"
+                    className="tap-row hover:text-ink-accent"
                   >
-                    {s.label}
+                    <span className="t-label motion-underline">{s.label}</span>
                   </a>
                 ))}
               </p>

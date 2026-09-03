@@ -188,7 +188,7 @@ export function CatalogView({
     })),
     ...filters.sizes.map((value) => ({
       id: `size-${value}`,
-      label: `Размер ${value}`,
+      label: t.catalog.sizeChip(value),
       onRemove: () =>
         update({ sizes: filters.sizes.filter((v) => v !== value) }),
     })),
@@ -235,10 +235,10 @@ export function CatalogView({
         />
 
         <section
-          aria-label="Результаты"
+          aria-label={t.catalog.results}
           className="pb-[var(--space-section-y)] pt-12 lg:pt-16"
         >
-          <h2 className="sr-only">Образы коллекции</h2>
+          <h2 className="sr-only">{t.catalog.resultsTitle}</h2>
           {stale && items.length === 0 ? (
             <CatalogSkeleton />
           ) : items.length === 0 ? (
@@ -266,7 +266,7 @@ export function CatalogView({
                     variant="secondary"
                     onClick={() => setPageSize((size) => size + PAGE_STEP)}
                   >
-                    Показать ещё
+                    {t.catalog.loadMore}
                   </Button>
                   <span
                     className="h-px flex-1 bg-hairline"

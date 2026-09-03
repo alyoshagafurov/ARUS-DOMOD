@@ -28,7 +28,7 @@ export async function CatalogHeader({
   categoryTitleTg,
 }: CatalogHeaderProps) {
   const t = await getDictionary();
-  const eyebrow = collection?.title ?? "Коллекция 01";
+  const eyebrow = collection?.title ?? t.misc.catalogLabel;
 
   return (
     <Container className="pb-12 pt-6 lg:pb-16 lg:pt-10">
@@ -43,18 +43,12 @@ export async function CatalogHeader({
               {categoryTitleTg}
             </p>
           ) : null}
-          <p className="t-lead t-measure mt-7">
-            Съёмка сезона целиком: платья, украшения, аксессуары и парные
-            образы. Каждый образ доступен к покупке, часть — в прокат.
-          </p>
+          <p className="t-lead t-measure mt-7">{t.misc.catalogLead}</p>
         </div>
 
         <div className="lg:col-span-4 lg:col-start-9">
           <Media
-            image={photo(
-              "textile-detail-couture",
-              "Фрагмент кадра из коллекции ARUS DOMOD",
-            )}
+            image={photo("textile-detail-couture", t.alts.catalogDetail)}
             ratio="square"
             zoomOnHover={false}
             sizes="(min-width: 1024px) 30vw, 55vw"

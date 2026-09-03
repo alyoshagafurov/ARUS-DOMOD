@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 
 import { CloseIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 
 interface DrawerProps {
   open: boolean;
@@ -32,6 +33,7 @@ export function Drawer({
   footer,
 }: DrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const t = useDictionary();
 
   useEffect(() => {
     if (!open) return;
@@ -88,7 +90,7 @@ export function Drawer({
     <div className="fixed inset-0 z-50">
       <button
         type="button"
-        aria-label="Закрыть панель"
+        aria-label={t.common.close}
         onClick={onClose}
         className="motion-fade absolute inset-0 h-full w-full cursor-default bg-[rgba(16,13,11,0.5)]"
       />
@@ -108,7 +110,7 @@ export function Drawer({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Закрыть"
+            aria-label={t.common.close}
             className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-[1rem] text-ink-secondary hover:text-ink"
           >
             <CloseIcon />

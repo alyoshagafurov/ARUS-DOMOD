@@ -70,6 +70,7 @@ export const tg: Dictionary = {
     { title: "Мегиред", note: "Расонидан ё худгирӣ дар Душанбе" },
   ],
   rental: {
+    depositKindsText: "пул / шиноснома / тилло",
     days: (n) => `то ${n} рӯз`,
     from: "аз",
     deposit: "Гарав",
@@ -94,6 +95,15 @@ export const tg: Dictionary = {
       `Салом! Иҷораи ${title}${article ? ` (арт. ${article})` : ""} маро ҳавасманд мекунад. Лутфан мавҷудият ва шартҳоро гӯед.`,
   },
   product: {
+    openFrame: (n: number) => `Кадри ${n}-ро пурраэкран кушодан`,
+    detail: "Ҷузъиёт",
+    frame: (n: number) => `Кадри ${n}`,
+    viewerLabel: (title: string) => `${title} — намоиши аксҳо`,
+    closeViewer: "Намоишро пӯшидан",
+    prevFrame: "Кадри пешина",
+    nextFrame: "Кадри навбатӣ",
+    view: "Дидани образ",
+    viewCollection: "Дидани коллексия",
     purchase: "Харид",
     rental: "Иҷора",
     size: "Андоза",
@@ -115,6 +125,12 @@ export const tg: Dictionary = {
     related: "Либосҳои монанд",
   },
   catalog: {
+    sizeChip: (value: string) => `Андоза ${value}`,
+    searchEmpty: (query: string) =>
+      `Аз рӯи дархости «${query}» чизе ёфт нашуд.`,
+    foundLabel: "Ёфт шуд:",
+    results: "Натиҷаҳо",
+    resultsTitle: "Образҳои коллексия",
     title: "Феҳрист",
     filters: "Филтр",
     sort: "Тартиб",
@@ -141,6 +157,12 @@ export const tg: Dictionary = {
     showAll: (n) => `Ҳамаро нишон додан ${n}`,
   },
   cart: {
+    open: (title: string) => `Кушодани ${title}`,
+    sizeLine: (size: string) => `Андоза ${size} · `,
+    rentalTerm: (days?: number) => `Мӯҳлат — ${days} рӯз`,
+    depositShort: (money: string) => ` · гарав ${money}`,
+    continueShopping: "Идомаи интихоб",
+    summary: "Фармоиш",
     title: "Сабад",
     empty: "Сабад холӣ аст",
     emptyHint:
@@ -222,6 +244,8 @@ export const tg: Dictionary = {
     cancelled: "Бекор шуд",
   },
   favorites: {
+    browse: "Кушодани коллексия",
+    count: (n: number) => `${n} дар интихобшудаҳо`,
     title: "Писандидаҳо",
     empty: "Писандидаҳо холӣ аст",
     emptyHint: "Либосҳоро бо дил қайд кунед — онҳо дар ин ҷо ҷамъ мешаванд.",
@@ -246,6 +270,15 @@ export const tg: Dictionary = {
     textileAccent: "Симои муосир.",
   },
   misc: {
+    notFoundHint:
+      "Шояд он дигар дар коллексия нест ё суроға хато навишта шудааст.",
+    backToCollection: "Бозгашт ба коллексия",
+    toHome: "Ба саҳифаи асосӣ",
+    lookLabel: "Образи пурра",
+    lookLead:
+      "Мо баромади коллексияро чунон нишон медиҳем, ки дар тӯй мебинанд: пурра, бо ҳамаи ҷузъиёт ва дар ҳаракат. Қисме аз коллексия фурӯхта мешавад, қисме ба иҷора дода мешавад — ин дар корти ҳар як образ нишон дода шудааст.",
+    navigation: "Навигатсия",
+    breadcrumbs: "Роҳи саҳифа",
     removeFilter: (label) => `Шартро бардоштан: ${label}`,
     catalogSections: "Бахшҳои феҳрист",
     closeSearch: "Ҷустуҷӯро пӯшидан",
@@ -262,6 +295,9 @@ export const tg: Dictionary = {
     favoriteRemove: (title) => `«${title}»-ро аз писандидаҳо гирифтан`,
   },
   meta: {
+    productDescription: (title: string) => `${title} — коллексияи ARUS DOMOD.`,
+    catalogDescription:
+      "Тамоми коллексияи ARUS DOMOD: либосҳо, зеварҳо, аксессуарҳо ва образҳои ҷуфтӣ. Харид ва иҷора.",
     siteTitle: "ARUS DOMOD — либосҳои арӯсӣ",
     siteDescription:
       "ARUS DOMOD — либосҳои арӯсӣ барои арӯсон ва домодон, фурӯш ва иҷора дар услуби миллӣ. Душанбе.",
@@ -321,6 +357,14 @@ export const tg: Dictionary = {
     contactsNote:
       "Иҷора дар мағоза расмӣ карда мешавад — нависед, ва мо дар бораи вақт созиш мекунем.",
     seeLooks: "Дидани либосҳо",
+  },
+  alts: {
+    hero: "Арӯс дар образи тӯёнаи ARUS DOMOD",
+    heritage: "Арӯс дар образи тӯёнаи ARUS DOMOD дар ҷашн",
+    closing: "Домод ва арӯс дар образҳои равшани тӯёнаи ARUS DOMOD",
+    intro: "Намои наздики либоси тӯёнаи ARUS DOMOD",
+    textile: "Порчаҳои матоъи тӯёнаи тоҷикӣ",
+    catalogDetail: "Порчаи кадр аз коллексияи ARUS DOMOD",
   },
   footer: {
     collection: "Коллексия",

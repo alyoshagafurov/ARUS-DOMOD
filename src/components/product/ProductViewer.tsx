@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 
 import { ArrowIcon, CloseIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 import type { ProductImage } from "@/types/catalog";
 
 interface ProductViewerProps {
@@ -37,6 +38,7 @@ export function ProductViewer({
   onClose,
   title,
 }: ProductViewerProps) {
+  const t = useDictionary();
   const panelRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -174,7 +176,7 @@ export function ProductViewer({
       tabIndex={-1}
       role="dialog"
       aria-modal="true"
-      aria-label={`${title} — просмотр фотографий`}
+      aria-label={t.product.viewerLabel(title)}
       data-surface="night"
       className="motion-fade fixed inset-0 z-50 flex flex-col bg-page outline-none"
     >
@@ -188,7 +190,7 @@ export function ProductViewer({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Закрыть просмотр"
+          aria-label={t.product.closeViewer}
           className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-[1rem] text-ink-secondary hover:text-ink"
         >
           <CloseIcon />
@@ -228,7 +230,7 @@ export function ProductViewer({
               type="button"
               onClick={() => goTo(index - 1)}
               disabled={index === 0}
-              aria-label="Предыдущий кадр"
+              aria-label={t.product.prevFrame}
               className={cn(
                 "absolute left-[var(--gutter)] top-1/2 hidden h-12 w-12 -translate-y-1/2",
                 "items-center justify-center rounded-xs bg-page/80 text-ink",
@@ -241,7 +243,7 @@ export function ProductViewer({
               type="button"
               onClick={() => goTo(index + 1)}
               disabled={index === images.length - 1}
-              aria-label="Следующий кадр"
+              aria-label={t.product.nextFrame}
               className={cn(
                 "absolute right-[var(--gutter)] top-1/2 hidden h-12 w-12 -translate-y-1/2",
                 "items-center justify-center rounded-xs bg-page/80 text-ink",
@@ -261,7 +263,7 @@ export function ProductViewer({
               key={image.url}
               type="button"
               onClick={() => goTo(position)}
-              aria-label={`Кадр ${position + 1}`}
+              aria-label={t.product.frame(position + 1)}
               aria-current={position === index ? "true" : undefined}
               className={cn(
                 "relative h-16 w-12 overflow-hidden rounded-xs border transition-colors",

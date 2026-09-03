@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -7,6 +9,7 @@ import { ArrowIcon } from "@/components/ui/icons";
 import { Media } from "@/components/ui/Media";
 import { Tag } from "@/components/ui/Tag";
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 import { discountPercent, formatMoney, getPrimaryOffer } from "@/lib/format";
 import type { OfferKind, Product } from "@/types/catalog";
 
@@ -59,6 +62,7 @@ export function ProductCard({
   sizes,
   className,
 }: ProductCardProps) {
+  const t = useDictionary();
   const offer = getPrimaryOffer(product, preferredOffer);
   const rental = product.offers.find((item) => item.kind === "rental");
   const purchase = product.offers.find((item) => item.kind === "purchase");
@@ -87,9 +91,13 @@ export function ProductCard({
         />
 
         <div className="pointer-events-none absolute left-3 top-3 flex flex-col items-start gap-1.5">
-          {soldOut ? <Tag tone="neutral">Продано</Tag> : null}
+          {soldOut ? (
+            <Tag tone="neutral">{t.product.availability.sold_out}</Tag>
+          ) : null}
           {discount ? <Tag tone="accent">−{discount}%</Tag> : null}
-          {rentalOnly ? <Tag tone="gold">Только прокат</Tag> : null}
+          {rentalOnly ? (
+            <Tag tone="gold">{t.product.availability.rental_only}</Tag>
+          ) : null}
           {product.badges?.map((badge) => (
             <Tag key={badge.label} tone={badge.tone}>
               {badge.label}
@@ -114,7 +122,7 @@ export function ProductCard({
             "group-focus-within:translate-y-0 group-focus-within:opacity-100",
           )}
         >
-          <span className="t-label">Смотреть вещь</span>
+          <span className="t-label">{t.product.view}</span>
           <ArrowIcon className="h-[0.9em] w-[0.9em]" />
         </div>
       </div>
@@ -146,8 +154,10 @@ export function ProductCard({
 
         {showRentalLine && rental ? (
           <p className="t-caption">
-            Прокат — {formatMoney(rental.price)}
-            {rental.rentalPeriodDays ? ` / ${rental.rentalPeriodDays} дн.` : ""}
+            {t.product.rental} — {formatMoney(rental.price)}
+            {rental.rentalPeriodDays
+              ? t.misc.rentalPer(rental.rentalPeriodDays)
+              : ""}
           </p>
         ) : null}
       </div>

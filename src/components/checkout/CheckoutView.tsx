@@ -98,9 +98,7 @@ export function CheckoutView() {
       setResult(data);
       clearCart();
     } catch {
-      setError(
-        "Нет связи с сервером. Проверьте интернет и попробуйте ещё раз.",
-      );
+      setError(t.checkout.networkError);
     } finally {
       setPending(false);
     }

@@ -50,10 +50,7 @@ export async function HomeHero() {
           <div className="order-1 lg:order-2 lg:col-span-7 lg:col-start-6 lg:-mr-[var(--gutter)]">
             <div className="motion-veil relative">
               <Media
-                image={photo(
-                  "hero-tajik-royal-bride",
-                  "Невеста в свадебном образе ARUS DOMOD",
-                )}
+                image={photo("hero-tajik-royal-bride", t.alts.hero)}
                 ratio="auto"
                 priority
                 zoomOnHover={false}

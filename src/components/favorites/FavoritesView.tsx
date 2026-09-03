@@ -1,5 +1,6 @@
 "use client";
 
+import { useDictionary } from "@/lib/i18n/client";
 import { useEffect, useState } from "react";
 
 import { Container } from "@/components/layout/Container";
@@ -20,6 +21,7 @@ import type { Category, Product } from "@/types/catalog";
  * их одним запросом по списку id; пока выборка идёт по общему списку.
  */
 export function FavoritesView() {
+  const t = useDictionary();
   const ids = useFavoriteIds();
   const [all, setAll] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -47,25 +49,25 @@ export function FavoritesView() {
 
   return (
     <Container className="pb-[var(--space-section-y)] pt-4 lg:pt-8">
-      <h1 className="t-h1">Избранное</h1>
+      <h1 className="t-h1">{t.favorites.title}</h1>
 
       {empty ? (
         <div className="flex flex-col items-center py-24 text-center lg:py-32">
           <OrnamentBand motif="gul" height={12} className="max-w-[9rem]" />
           <p className="t-h2 mt-9 max-w-[22ch] text-balance">
-            Сохранённых образов пока нет
+            {t.favorites.empty}
           </p>
           <p className="t-body-sm mt-4 max-w-[38ch] text-ink-secondary">
-            Нажмите на сердце в карточке — образ вернётся сюда.
+            {t.favorites.emptyHint}
           </p>
           <Button href="/catalog" className="mt-8">
-            Открыть коллекцию
+            {t.favorites.browse}
           </Button>
         </div>
       ) : (
         <>
           <p className="t-label mt-4 text-ink-muted" aria-live="polite">
-            {products.length} в избранном
+            {t.favorites.count(products.length)}
           </p>
 
           <ul className="mt-9 grid grid-cols-2 gap-x-[var(--gutter)] gap-y-10 lg:mt-12 lg:grid-cols-4">

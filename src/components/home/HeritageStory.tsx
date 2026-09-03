@@ -17,13 +17,12 @@ import { photo } from "@/lib/photos";
  * краям секции и разомкнутая тоқча вокруг кадра. Тканых лент нет — их роль
  * забрала золотая линия.
  */
-const heritageImage = photo(
-  "heritage-tajik-bride-editorial",
-  "Невеста в свадебном образе ARUS DOMOD на торжестве",
-);
-
 export async function HeritageStory() {
   const t = await getDictionary();
+  const heritageImage = photo(
+    "heritage-tajik-bride-editorial",
+    t.alts.heritage,
+  );
   const pillars = t.editorial.pillars;
   return (
     <Section surface="muted" edge="both" className="overflow-hidden">

@@ -40,9 +40,9 @@ export async function HowItWorks() {
           <Reveal delay={80}>
             <Link
               href="/delivery"
-              className="t-label motion-underline text-ink-secondary"
+              className="tap-row text-ink-secondary hover:text-ink"
             >
-              {t.nav.delivery}
+              <span className="t-label motion-underline">{t.nav.delivery}</span>
             </Link>
           </Reveal>
         </div>

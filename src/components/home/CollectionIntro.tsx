@@ -29,10 +29,7 @@ export async function CollectionIntro() {
           <Reveal className="lg:col-span-7 lg:-ml-[var(--gutter)]">
             <div className="relative">
               <Media
-                image={photo(
-                  "textile-detail-couture",
-                  "Крупный план свадебного наряда ARUS DOMOD",
-                )}
+                image={photo("textile-detail-couture", t.alts.intro)}
                 ratio="auto"
                 zoomOnHover={false}
                 sizes="(min-width: 1024px) 58vw, 92vw"

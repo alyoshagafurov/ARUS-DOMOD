@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDictionary } from "@/lib/i18n/client";
 
 import { ProductViewer } from "@/components/product/ProductViewer";
 import { Media } from "@/components/ui/Media";
@@ -28,6 +29,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * ширины дочерних элементов.
  */
 export function ProductGallery({ images, title }: ProductGalleryProps) {
+  const t = useDictionary();
   const stripRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
   const [index, setIndex] = useState(0);
@@ -82,7 +84,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
             <button
               type="button"
               onClick={() => setViewer(position)}
-              aria-label={`Открыть кадр ${position + 1} во весь экран`}
+              aria-label={t.product.openFrame(position + 1)}
               className="group block w-full cursor-zoom-in text-left"
             >
               <Media
@@ -95,7 +97,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
 
             {position > 0 ? (
               <p className="t-label mt-4 hidden text-ink-muted lg:block">
-                Деталь / {pad(position)}
+                {t.product.detail} / {pad(position)}
               </p>
             ) : null}
           </div>

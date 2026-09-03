@@ -67,6 +67,9 @@ export function SearchOverlay({
     const { style } = document.body;
     const previous = style.overflow;
     style.overflow = "hidden";
+    // Фокус возвращается туда, откуда открыли: иначе после Escape
+    // клавиатура оказывается в начале документа.
+    const previouslyFocused = document.activeElement as HTMLElement | null;
     inputRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -76,6 +79,7 @@ export function SearchOverlay({
     return () => {
       style.overflow = previous;
       window.removeEventListener("keydown", onKeyDown);
+      previouslyFocused?.focus?.();
     };
   }, [open, onClose]);
 
@@ -164,7 +168,7 @@ export function SearchOverlay({
           className="shrink-0"
         >
           <label htmlFor={inputId} className="t-label text-ink-muted">
-            Поиск по коллекции
+            {t.catalog.searchTitle}
           </label>
           <div className="mt-5 flex items-center gap-4 border-b border-strong pb-4">
             <SearchIcon
@@ -211,13 +215,13 @@ export function SearchOverlay({
             {results.length === 0 ? (
               settled ? (
                 <p className="t-lead mt-8">
-                  По запросу «{debounced}» ничего не нашлось.
+                  {t.catalog.searchEmpty(debounced)}
                 </p>
               ) : null
             ) : (
               <>
                 <p className="t-label mt-8 text-ink-muted">
-                  Найдено:{" "}
+                  {t.catalog.foundLabel}{" "}
                   <span className="tabular-nums text-ink">{total}</span>
                 </p>
 

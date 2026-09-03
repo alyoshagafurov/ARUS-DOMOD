@@ -48,9 +48,9 @@ export default async function AdminDashboard() {
           <h2 className="t-h2">Последние заказы</h2>
           <Link
             href="/admin/orders"
-            className="t-label motion-underline text-ink-secondary"
+            className="tap-row text-ink-secondary hover:text-ink"
           >
-            Все заказы
+            <span className="t-label motion-underline">Все заказы</span>
           </Link>
         </div>
         {latest.length === 0 ? (

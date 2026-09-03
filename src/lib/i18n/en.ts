@@ -66,6 +66,7 @@ export const en: Dictionary = {
     { title: "You receive", note: "Delivery or pickup in Dushanbe" },
   ],
   rental: {
+    depositKindsText: "cash / passport / gold",
     days: (n) => `up to ${n} days`,
     from: "from",
     deposit: "Deposit",
@@ -90,6 +91,15 @@ export const en: Dictionary = {
       `Hello! I'm interested in renting ${title}${article ? ` (ref. ${article})` : ""}. Could you tell me about availability and terms?`,
   },
   product: {
+    openFrame: (n: number) => `Open image ${n} full screen`,
+    detail: "Detail",
+    frame: (n: number) => `Image ${n}`,
+    viewerLabel: (title: string) => `${title} — photo viewer`,
+    closeViewer: "Close viewer",
+    prevFrame: "Previous image",
+    nextFrame: "Next image",
+    view: "View the look",
+    viewCollection: "View the collection",
     purchase: "Purchase",
     rental: "Rental",
     size: "Size",
@@ -111,6 +121,11 @@ export const en: Dictionary = {
     related: "Similar looks",
   },
   catalog: {
+    sizeChip: (value: string) => `Size ${value}`,
+    searchEmpty: (query: string) => `Nothing found for “${query}”.`,
+    foundLabel: "Found:",
+    results: "Results",
+    resultsTitle: "Looks in the collection",
     title: "Catalogue",
     filters: "Filter",
     sort: "Sort",
@@ -137,6 +152,12 @@ export const en: Dictionary = {
     showAll: (n) => `Show all ${n}`,
   },
   cart: {
+    open: (title: string) => `Open ${title}`,
+    sizeLine: (size: string) => `Size ${size} · `,
+    rentalTerm: (days?: number) => `Term — ${days} days`,
+    depositShort: (money: string) => ` · deposit ${money}`,
+    continueShopping: "Continue browsing",
+    summary: "Order",
     title: "Cart",
     empty: "Your cart is empty",
     emptyHint: "Pick looks from the collection — they will appear here.",
@@ -218,6 +239,8 @@ export const en: Dictionary = {
     cancelled: "Cancelled",
   },
   favorites: {
+    browse: "Open the collection",
+    count: (n: number) => `${n} saved`,
     title: "Favourites",
     empty: "No favourites yet",
     emptyHint: "Mark looks with the heart — they will gather here.",
@@ -242,6 +265,15 @@ export const en: Dictionary = {
     textileAccent: "A modern silhouette.",
   },
   misc: {
+    notFoundHint:
+      "It may no longer be in the collection, or the address was mistyped.",
+    backToCollection: "Back to the collection",
+    toHome: "Go to the homepage",
+    lookLabel: "The whole look",
+    lookLead:
+      "We show each look the way it is seen at the wedding: in full, with every detail, in motion. Some pieces are for sale, some are for rent — it is stated on each look’s page.",
+    navigation: "Navigation",
+    breadcrumbs: "Breadcrumbs",
     removeFilter: (label) => `Remove filter: ${label}`,
     catalogSections: "Catalogue sections",
     closeSearch: "Close search",
@@ -258,6 +290,10 @@ export const en: Dictionary = {
     favoriteRemove: (title) => `Remove “${title}” from favourites`,
   },
   meta: {
+    productDescription: (title: string) =>
+      `${title} — the ARUS DOMOD collection.`,
+    catalogDescription:
+      "The whole ARUS DOMOD collection: dresses, jewellery, accessories and couple looks. Sale and rental.",
     siteTitle: "ARUS DOMOD — wedding attire",
     siteDescription:
       "ARUS DOMOD — wedding attire for brides and grooms, sale and rental in the national style. Dushanbe.",
@@ -318,6 +354,14 @@ export const en: Dictionary = {
     contactsNote:
       "Rental is arranged in the store — write to us and we will agree on a time.",
     seeLooks: "See the looks",
+  },
+  alts: {
+    hero: "Bride in an ARUS DOMOD wedding look",
+    heritage: "Bride in an ARUS DOMOD wedding look at the celebration",
+    closing: "Groom and bride in light ARUS DOMOD wedding looks",
+    intro: "Close-up of an ARUS DOMOD wedding dress",
+    textile: "Fragments of Tajik wedding textiles",
+    catalogDetail: "Detail of a frame from the ARUS DOMOD collection",
   },
   footer: {
     collection: "Collection",

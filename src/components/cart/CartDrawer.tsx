@@ -115,8 +115,7 @@ function CartDrawerBody({ onClose }: { onClose: () => void }) {
         ) : null}
         {totals.rental.length ? (
           <p className="t-caption">
-            Прокат ({totals.rental.length}) в заказ не входит — его оформляют в
-            магазине.
+            {t.cart.rentalExcluded(totals.rental.length)}
           </p>
         ) : null}
       </dl>

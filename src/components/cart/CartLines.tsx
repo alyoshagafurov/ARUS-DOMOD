@@ -6,6 +6,7 @@ import type { ResolvedLine } from "@/components/cart/useCartProducts";
 import { QuantityStepper } from "@/components/cart/QuantityStepper";
 import { Media } from "@/components/ui/Media";
 import { Tag } from "@/components/ui/Tag";
+import { useDictionary } from "@/lib/i18n/client";
 import { removeLine, setQuantity } from "@/lib/cart";
 import { formatMoney } from "@/lib/format";
 
@@ -23,6 +24,7 @@ interface CartLinesProps {
  * получить вопрос «а почему итог такой».
  */
 export function CartLines({ title, note, items }: CartLinesProps) {
+  const t = useDictionary();
   if (items.length === 0) return null;
 
   return (
@@ -40,7 +42,7 @@ export function CartLines({ title, note, items }: CartLinesProps) {
           >
             <Link
               href={`/product/${product.slug}`}
-              aria-label={`Открыть ${product.title}`}
+              aria-label={t.cart.open(product.title)}
               className="w-20 shrink-0 sm:w-24"
             >
               <Media
@@ -62,7 +64,7 @@ export function CartLines({ title, note, items }: CartLinesProps) {
                     </Link>
                   </h3>
                   <p className="t-caption mt-1.5">
-                    {line.size ? `Размер ${line.size} · ` : ""}
+                    {line.size ? t.cart.sizeLine(line.size) : ""}
                     {line.variantId
                       ? product.variants.find((v) => v.id === line.variantId)
                           ?.sku
@@ -74,9 +76,9 @@ export function CartLines({ title, note, items }: CartLinesProps) {
 
               {offer.kind === "rental" ? (
                 <p className="t-caption">
-                  Срок — {offer.rentalPeriodDays} дн.
+                  {t.cart.rentalTerm(offer.rentalPeriodDays)}
                   {offer.deposit
-                    ? ` · залог ${formatMoney(offer.deposit)}`
+                    ? t.cart.depositShort(formatMoney(offer.deposit))
                     : ""}
                 </p>
               ) : null}
@@ -92,7 +94,9 @@ export function CartLines({ title, note, items }: CartLinesProps) {
                   onClick={() => removeLine(line.id)}
                   className="tap-row self-start text-ink-muted hover:text-ink-accent"
                 >
-                  <span className="t-label motion-underline">Удалить</span>
+                  <span className="t-label motion-underline">
+                    {t.cart.remove}
+                  </span>
                 </button>
               </div>
             </div>
@@ -105,9 +109,10 @@ export function CartLines({ title, note, items }: CartLinesProps) {
 
 /** Плашка типа предложения — используется и в корзине, и на оформлении */
 export function OfferTag({ kind }: { kind: "purchase" | "rental" }) {
+  const t = useDictionary();
   return kind === "rental" ? (
-    <Tag tone="gold">Прокат</Tag>
+    <Tag tone="gold">{t.product.rental}</Tag>
   ) : (
-    <Tag tone="outline">Покупка</Tag>
+    <Tag tone="outline">{t.product.purchase}</Tag>
   );
 }

@@ -59,18 +59,14 @@ export default async function ContactsPage() {
                 <li className="relative border border-hairline p-6">
                   <p className="t-label text-ink-accent">{p.name}</p>
                   <p className="t-caption mt-1">{p.role}</p>
-                  <a
-                    href={`tel:${p.phone}`}
-                    className="t-h2 motion-underline mt-4 inline-block"
-                  >
-                    {p.display}
+                  <a href={`tel:${p.phone}`} className="tap-row mt-3 w-fit">
+                    <span className="t-h2 motion-underline">{p.display}</span>
                   </a>
                   <div className="mt-5">
                     <Button
                       href={whatsappLink(p.phone, t.pages.writeHello)}
                       external
                       variant="secondary"
-                      size="sm"
                     >
                       {t.pages.writeWhatsApp}
                     </Button>

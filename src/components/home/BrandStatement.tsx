@@ -47,10 +47,7 @@ export async function BrandStatement() {
           утилиты position одного веса разрешаются порядком в CSS. */}
       <div className="absolute inset-0">
         <Media
-          image={photo(
-            "tajik-textile-archive-cover",
-            "Фрагменты таджикского свадебного текстиля",
-          )}
+          image={photo("tajik-textile-archive-cover", t.alts.textile)}
           ratio="auto"
           zoomOnHover={false}
           sizes="100vw"

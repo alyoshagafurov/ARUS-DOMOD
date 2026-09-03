@@ -76,6 +76,7 @@ export const ru = {
     { title: "Получаете", note: "Доставка или самовывоз в Душанбе" },
   ],
   rental: {
+    depositKindsText: "деньги / паспорт / золото",
     days: (n: number) => `до ${n} дней`,
     from: "от",
     deposit: "Залог",
@@ -99,6 +100,15 @@ export const ru = {
       `Здравствуйте! Интересует прокат: ${title}${article ? ` (арт. ${article})` : ""}. Подскажите, пожалуйста, наличие и условия.`,
   },
   product: {
+    openFrame: (n: number) => `Открыть кадр ${n} во весь экран`,
+    detail: "Деталь",
+    frame: (n: number) => `Кадр ${n}`,
+    viewerLabel: (title: string) => `${title} — просмотр фотографий`,
+    closeViewer: "Закрыть просмотр",
+    prevFrame: "Предыдущий кадр",
+    nextFrame: "Следующий кадр",
+    view: "Смотреть вещь",
+    viewCollection: "Смотреть коллекцию",
     purchase: "Покупка",
     rental: "Прокат",
     size: "Размер",
@@ -120,6 +130,11 @@ export const ru = {
     related: "Похожие образы",
   },
   catalog: {
+    sizeChip: (value: string) => `Размер ${value}`,
+    searchEmpty: (query: string) => `По запросу «${query}» ничего не нашлось.`,
+    foundLabel: "Найдено:",
+    results: "Результаты",
+    resultsTitle: "Образы коллекции",
     title: "Каталог",
     filters: "Фильтр",
     sort: "Сортировка",
@@ -131,8 +146,8 @@ export const ru = {
     show: (n: number) => `Показать ${n}`,
     reset: "Сбросить",
     resetAll: "Сбросить всё",
-    empty: "Ничего не нашлось",
-    emptyHint: "Попробуйте снять часть фильтров.",
+    empty: "Мы пока не нашли этот образ.",
+    emptyHint: "Попробуйте снять часть условий.",
     offerKind: "Покупка или прокат",
     price: "Цена",
     availability: "Наличие",
@@ -146,10 +161,16 @@ export const ru = {
     showAll: (n: number) => `Показать все ${n}`,
   },
   cart: {
+    open: (title: string) => `Открыть ${title}`,
+    sizeLine: (size: string) => `Размер ${size} · `,
+    rentalTerm: (days?: number) => `Срок — ${days} дн.`,
+    depositShort: (money: string) => ` · залог ${money}`,
+    continueShopping: "Продолжить выбор",
+    summary: "Заказ",
     title: "Корзина",
-    empty: "Корзина пуста",
-    emptyHint: "Выберите образы в коллекции — они появятся здесь.",
-    browse: "Смотреть образы",
+    empty: "Ваша коллекция пока пуста",
+    emptyHint: "Отложите понравившиеся образы — они появятся здесь.",
+    browse: "Смотреть коллекцию",
     items: "Образов",
     purchase: "Покупка",
     rental: "Прокат",
@@ -226,9 +247,11 @@ export const ru = {
     cancelled: "Отменён",
   },
   favorites: {
+    browse: "Открыть коллекцию",
+    count: (n: number) => `${n} в избранном`,
     title: "Избранное",
-    empty: "В избранном пусто",
-    emptyHint: "Отмечайте образы сердцем — они соберутся здесь.",
+    empty: "Сохранённых образов пока нет",
+    emptyHint: "Нажмите на сердце в карточке — образ вернётся сюда.",
   },
   editorial: {
     houseLabel: "Дом ARUS DOMOD",
@@ -249,6 +272,15 @@ export const ru = {
     textileAccent: "Современный силуэт.",
   },
   misc: {
+    notFoundHint:
+      "Возможно, он больше не в коллекции или адрес набран с ошибкой.",
+    backToCollection: "Вернуться в коллекцию",
+    toHome: "На главную",
+    lookLabel: "Образ целиком",
+    lookLead:
+      "Мы показываем выход коллекции так, как его видят на свадьбе: полностью, со всеми деталями и в движении. Что-то из коллекции продаётся, что-то доступно в прокат — это указано в карточке каждого образа.",
+    navigation: "Навигация",
+    breadcrumbs: "Хлебные крошки",
     removeFilter: (label: string) => `Убрать условие: ${label}`,
     catalogSections: "Разделы каталога",
     closeSearch: "Закрыть поиск",
@@ -265,6 +297,9 @@ export const ru = {
     favoriteRemove: (title: string) => `Убрать «${title}» из избранного`,
   },
   meta: {
+    productDescription: (title: string) => `${title} — коллекция ARUS DOMOD.`,
+    catalogDescription:
+      "Коллекция ARUS DOMOD целиком: платья, украшения, аксессуары и парные образы. Покупка и прокат.",
     siteTitle: "ARUS DOMOD — свадебные наряды",
     siteDescription:
       "ARUS DOMOD — свадебные наряды для невест и женихов, продажа и прокат в национальном стиле. Душанбе.",
@@ -324,6 +359,14 @@ export const ru = {
     contactsNote:
       "Прокат оформляется в магазине — напишите, и мы договоримся о времени.",
     seeLooks: "Смотреть образы",
+  },
+  alts: {
+    hero: "Невеста в свадебном образе ARUS DOMOD",
+    heritage: "Невеста в свадебном образе ARUS DOMOD на торжестве",
+    closing: "Жених и невеста в светлых свадебных образах ARUS DOMOD",
+    intro: "Крупный план свадебного наряда ARUS DOMOD",
+    textile: "Фрагменты таджикского свадебного текстиля",
+    catalogDetail: "Фрагмент кадра из коллекции ARUS DOMOD",
   },
   footer: {
     collection: "Коллекция",

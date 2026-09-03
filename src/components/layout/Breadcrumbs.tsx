@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getDictionary } from "@/lib/i18n/server";
 
 import { cn } from "@/lib/cn";
 
@@ -11,15 +12,16 @@ export interface Crumb {
  * Спокойная навигация над заголовком. Отдельной полосы под неё не выделяем:
  * это подпись, а не панель.
  */
-export function Breadcrumbs({
+export async function Breadcrumbs({
   items,
   className,
 }: {
   items: Crumb[];
   className?: string;
 }) {
+  const t = await getDictionary();
   return (
-    <nav aria-label="Хлебные крошки" className={className}>
+    <nav aria-label={t.misc.breadcrumbs} className={className}>
       <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
         {items.map((item, index) => (
           <li key={item.label} className="flex items-center gap-2">

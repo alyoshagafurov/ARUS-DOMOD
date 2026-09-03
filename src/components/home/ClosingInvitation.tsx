@@ -59,10 +59,7 @@ export async function ClosingInvitation() {
           >
             <div className="relative">
               <Media
-                image={photo(
-                  "final-tajik-bridal-editorial",
-                  "Жених и невеста в светлых свадебных образах ARUS DOMOD",
-                )}
+                image={photo("final-tajik-bridal-editorial", t.alts.closing)}
                 ratio="auto"
                 zoomOnHover={false}
                 sizes="(min-width: 1024px) 58vw, 92vw"

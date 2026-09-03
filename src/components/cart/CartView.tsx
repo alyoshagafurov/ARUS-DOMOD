@@ -23,19 +23,17 @@ export function CartView() {
 
   return (
     <Container className="pb-[var(--space-section-y)] pt-4 lg:pt-8">
-      <h1 className="t-h1">Корзина</h1>
+      <h1 className="t-h1">{t.cart.title}</h1>
 
       {empty ? (
         <div className="flex flex-col items-center py-24 text-center lg:py-32">
           <OrnamentBand motif="mavj" height={10} className="max-w-[9rem]" />
-          <p className="t-h2 mt-9 max-w-[20ch] text-balance">
-            Ваша коллекция пока пуста
-          </p>
+          <p className="t-h2 mt-9 max-w-[20ch] text-balance">{t.cart.empty}</p>
           <p className="t-body-sm mt-4 max-w-[38ch] text-ink-secondary">
-            Отложите понравившиеся образы — они появятся здесь.
+            {t.cart.emptyHint}
           </p>
           <Button href="/catalog" className="mt-8">
-            Смотреть коллекцию
+            {t.cart.browse}
           </Button>
         </div>
       ) : (
@@ -51,16 +49,16 @@ export function CartView() {
 
           <div className="lg:col-span-4 lg:col-start-9">
             <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
-              <h2 className="t-label text-ink-muted">Заказ</h2>
+              <h2 className="t-label text-ink-muted">{t.cart.summary}</h2>
               <div className="mt-5 border-t border-hairline pt-4">
                 <CartSummary totals={totals} />
               </div>
 
               <Button href="/checkout" fullWidth className="mt-7">
-                Оформить заказ
+                {t.cart.checkout}
               </Button>
               <Button href="/catalog" variant="ghost" className="mt-5">
-                Продолжить выбор
+                {t.cart.continueShopping}
               </Button>
             </div>
           </div>

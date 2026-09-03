@@ -5,6 +5,7 @@ import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
 import type { Category, Product } from "@/types/catalog";
+import { getDictionary } from "@/lib/i18n/server";
 
 interface RelatedProductsProps {
   products: Product[];
@@ -15,10 +16,11 @@ interface RelatedProductsProps {
  * Продолжение просмотра. Карточки те же, что в каталоге, — страница товара
  * не заводит собственный вид карточки.
  */
-export function RelatedProducts({
+export async function RelatedProducts({
   products,
   categories,
 }: RelatedProductsProps) {
+  const t = await getDictionary();
   if (products.length === 0) return null;
   const labels = new Map(categories.map((c) => [c.slug, c.title]));
 
@@ -26,9 +28,9 @@ export function RelatedProducts({
     <Section surface="muted" edge="top" edgeMotif="mavj" rhythm="block">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
-          <h2 className="t-h2">Другие образы</h2>
+          <h2 className="t-h2">{t.product.related}</h2>
           <Button href="/catalog" variant="ghost">
-            Смотреть коллекцию
+            {t.product.viewCollection}
           </Button>
         </div>
 

@@ -26,7 +26,7 @@ export default async function RentalPage() {
       t.rental.price,
       `${t.rental.from} ${formatMoney({ amount: rental.priceFromMinor, currency: "TJS" })}`,
     ],
-    [t.rental.deposit, rental.depositKinds.join(" / ")],
+    [t.rental.deposit, t.rental.depositKindsText],
     [t.rental.depositReturnRow, t.rental.depositReturnValue],
     [t.rental.registration, t.rental.registrationValue],
     [t.rental.deliveryRow, t.rental.deliveryValue],
