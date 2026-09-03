@@ -1,3 +1,4 @@
+import { Aivan } from "@/components/layout/Aivan";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
@@ -19,10 +20,10 @@ export default async function DeliveryPage() {
   const t = await getDictionary();
   return (
     <>
-      <Section surface="muted" className="pt-[calc(var(--header-h)+2rem)]">
+      <Section rhythm="block">
         <Container width="narrow">
           <Reveal>
-            <p className="t-label-wide text-ink-accent">
+            <p className="t-label-wide text-gold-ink">
               {t.pages.deliveryLabel}
             </p>
             <h1 className="t-display-2 mt-5 max-w-[14ch] text-balance">
@@ -48,36 +49,43 @@ export default async function DeliveryPage() {
         </Container>
       </Section>
 
-      <Section surface="muted" edge="top">
+      <Section rhythm="block">
         <Container width="narrow">
-          <div className="grid gap-10 md:grid-cols-2">
-            <Reveal>
-              <h2 className="t-h3">{t.pages.pickup}</h2>
-              <p className="t-body-sm mt-3 text-ink-secondary">
-                {t.pages.pickupNote}
-              </p>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="t-h3">{t.pages.courier}</h2>
-              <p className="t-body-sm mt-3 text-ink-secondary">
-                {t.pages.courierNote}
-              </p>
-              <p className="t-caption mt-3">{t.pages.courierRental}</p>
-            </Reveal>
-          </div>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Button href="/catalog" size="lg">
-              {t.pages.seeLooks}
-            </Button>
-            <Button
-              href={`tel:${contact.phone}`}
-              external
-              variant="secondary"
-              size="lg"
-            >
-              {contact.phoneDisplay}
-            </Button>
-          </div>
+          <Aivan
+            surface="green"
+            pad="block"
+            ornament="corner"
+            ornamentOrigin={[100, 100]}
+          >
+            <div className="grid gap-10 md:grid-cols-2">
+              <Reveal>
+                <h2 className="t-h3">{t.pages.pickup}</h2>
+                <p className="t-body-sm mt-3 text-ink-secondary">
+                  {t.pages.pickupNote}
+                </p>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="t-h3">{t.pages.courier}</h2>
+                <p className="t-body-sm mt-3 text-ink-secondary">
+                  {t.pages.courierNote}
+                </p>
+                <p className="t-caption mt-3">{t.pages.courierRental}</p>
+              </Reveal>
+            </div>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Button href="/catalog" size="lg">
+                {t.pages.seeLooks}
+              </Button>
+              <Button
+                href={`tel:${contact.phone}`}
+                external
+                variant="secondary"
+                size="lg"
+              >
+                {contact.phoneDisplay}
+              </Button>
+            </div>
+          </Aivan>
         </Container>
       </Section>
     </>

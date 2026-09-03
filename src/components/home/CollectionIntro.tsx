@@ -1,73 +1,59 @@
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
-import { getDictionary } from "@/lib/i18n/server";
-import { OrnamentField } from "@/components/ornament/Ornament";
 import { Media } from "@/components/ui/Media";
+import { getDictionary } from "@/lib/i18n/server";
 import { photo } from "@/lib/photos";
 
 /**
- * Разворот о материале — первый после hero, и первая смена поверхности:
- * с поля логотипа страница уходит на глубокую бирюзу.
+ * Манифест — белая пауза после айвона.
  *
- * Это не карточка с картинкой, а редакционный крупный план. Кадр занимает
- * семь колонок из двенадцати, уходит за левый край окна и выше границы
- * ниши — так, как смотрят на ткань вблизи: вышивку, нить, плотность.
- * Товаров здесь нет ни одного, и это намеренно.
- *
- * Тоқча разомкнута влево: кадр выходит за неё и за экран одновременно.
+ * Одна фраза дома антиквой во всю ширину, справа — короткий текст, слева —
+ * маленький плавающий кадр ткани, который едет по прокрутке медленнее
+ * страницы. Без фона и без рамки: белое здесь и есть композиция.
  */
 export async function CollectionIntro() {
   const t = await getDictionary();
   return (
-    <Section surface="night" className="overflow-hidden">
-      <OrnamentField motif="damask" />
+    <Section rhythm="block" className="pt-0">
+      <Container>
+        <div className="grid grid-cols-12 items-end gap-x-[var(--gutter)] gap-y-10">
+          <Reveal className="col-span-12 lg:col-span-9">
+            <p className="t-label text-gold-ink">{t.editorial.houseLabel}</p>
+            <h2 className="t-display-2 mt-6 max-w-[16ch] text-balance">
+              {t.editorial.traditionTitle}
+            </h2>
+          </Reveal>
 
-      <Container className="relative">
-        <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-[var(--gutter)]">
-          {/* --- КРУПНЫЙ ПЛАН ------------------------------------------- */}
-          <Reveal className="lg:col-span-7 lg:-ml-[var(--gutter)]">
-            <div className="relative">
+          <Reveal
+            delay={120}
+            className="col-span-6 col-start-1 sm:col-span-4 lg:col-span-3 lg:col-start-1 lg:row-start-2"
+          >
+            <div className="motion-drift" style={{ "--drift": "4%" } as never}>
               <Media
                 image={photo("textile-detail-couture", t.alts.intro)}
-                ratio="auto"
+                ratio="square"
+                radius="card"
                 zoomOnHover={false}
-                sizes="(min-width: 1024px) 58vw, 92vw"
-                className="h-[46svh] min-h-[300px] rounded-none lg:h-[68svh] lg:min-h-[460px]"
-              />
-              <span
-                aria-hidden="true"
-                data-open="left"
-                className="toqcha -bottom-3 -right-3 -top-3 left-10 sm:-bottom-4 sm:-right-4 sm:-top-4 sm:left-16"
+                sizes="(min-width: 1024px) 22vw, 45vw"
+                className="shadow-card"
               />
             </div>
           </Reveal>
 
-          {/* --- СЛОВО --------------------------------------------------- */}
-          <div className="pt-[var(--space-silence)] lg:col-span-4 lg:col-start-9 lg:pt-0">
-            <Reveal>
-              <p className="t-label text-ink-accent">
-                {t.editorial.houseLabel}
-              </p>
-              <h2 className="t-h1 mt-6 max-w-[16ch] text-balance">
-                {t.editorial.traditionTitle}
-              </h2>
-            </Reveal>
-
-            <Reveal delay={90}>
-              <span
-                aria-hidden="true"
-                className="hoshiya-line mt-8 max-w-[5rem]"
-              />
-              <p className="t-lead t-measure mt-8">
-                {t.editorial.traditionLead}
-              </p>
-              <p className="t-body-sm mt-5 max-w-[38ch] text-ink-secondary">
-                {t.editorial.traditionNote}
-              </p>
-            </Reveal>
-          </div>
+          <Reveal
+            delay={200}
+            className="col-span-12 sm:col-span-8 lg:col-span-6 lg:col-start-5 lg:row-start-2 lg:self-center"
+          >
+            <p className="t-lead t-measure">{t.editorial.traditionLead}</p>
+            <p className="t-caption mt-5">{t.editorial.traditionNote}</p>
+          </Reveal>
         </div>
+
+        <span
+          aria-hidden="true"
+          className="hoshiya-seam mt-[var(--space-block-y)]"
+        />
       </Container>
     </Section>
   );

@@ -12,6 +12,14 @@ import type { ProductImage } from "@/types/catalog";
 
 type MediaRatio =
   "portrait" | "editorial" | "wide" | "square" | "tall" | "auto";
+type MediaRadius = "card" | "block" | "sm" | "none";
+
+const radiusClass: Record<MediaRadius, string> = {
+  card: "rounded-[var(--radius-card)]",
+  block: "rounded-[var(--radius-block)]",
+  sm: "rounded-sm",
+  none: "rounded-none",
+};
 
 const ratioClass: Record<MediaRatio, string> = {
   portrait: "aspect-[var(--ratio-portrait)]",
@@ -50,14 +58,16 @@ interface MediaProps {
   plateVariant?: PlateVariant;
   /** Мотив жаккарда плиты — меняется от блока к блоку */
   plateMotif?: OrnamentMotif;
+  /** Скругление кадра: карточка по умолчанию, блок — для крупных полотен */
+  radius?: MediaRadius;
   className?: string;
 }
 
 /**
  * Единая обработка изображений ARUS DOMOD.
  *
- * Правила: портретный кадр 3:4 по умолчанию (одежда), радиус 2px — ткань
- * режут, а не скругляют; при отсутствии фото место занимает тканая плита,
+ * Правила: портретный кадр 3:4 по умолчанию (одежда), радиус карточки —
+ * кадр лежит на поверхности как предмет; при отсутствии фото место занимает тканая плита,
  * а не серый прямоугольник; `sizes` обязателен для настоящих фотографий.
  */
 export function Media({
@@ -73,6 +83,7 @@ export function Media({
   tone,
   plateVariant = "look",
   plateMotif = "chorkhona",
+  radius = "card",
   className,
 }: MediaProps) {
   const showSecondLayer = hoverReveal && (secondary || !image);
@@ -80,7 +91,8 @@ export function Media({
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden rounded-xs bg-muted",
+        "relative w-full overflow-hidden bg-muted",
+        radiusClass[radius],
         ratioClass[ratio],
         className,
       )}

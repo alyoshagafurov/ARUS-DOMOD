@@ -5,22 +5,25 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Logo } from "@/components/brand/Logo";
-import { OrnamentBand } from "@/components/ornament/Ornament";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { OrnamentField } from "@/components/ornament/Ornament";
 import { CloseIcon, MenuIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
-import { primaryNav, utilityNav } from "@/lib/config/site";
+import { contact, primaryNav, utilityNav } from "@/lib/config/site";
 import { useDictionary } from "@/lib/i18n/client";
 import { navLabel } from "@/lib/i18n/labels";
 
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+
 /**
- * Мобильная навигация. Панель на всю высоту в ночной поверхности —
- * тот же приём чередования, что и в секциях страницы.
+ * Мобильная навигация — глубокая ниша на весь экран.
  *
- * Панель рендерится порталом в <body> намеренно: у шапки есть backdrop-filter,
- * а он создаёт containing block для position: fixed, из-за чего inset-0 внутри
- * шапки схлопывается до её собственной высоты. Портал — единственный способ
- * оставить и размытие шапки, и полноэкранное меню.
+ * Пункты набраны антиквой во всю ширину с золотыми номерами: меню на
+ * телефоне — не список, а оглавление дома. Внизу — язык и телефон.
+ *
+ * Панель рендерится порталом в <body>: у шапки есть backdrop-filter, а он
+ * создаёт containing block для position: fixed. Фокус уходит в панель и
+ * возвращается на кнопку меню при закрытии.
  */
 export function MobileNav({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
@@ -33,7 +36,6 @@ export function MobileNav({ className }: { className?: string }) {
     const { style } = document.body;
     const previous = style.overflow;
     style.overflow = "hidden";
-    // Фокус уходит в панель и возвращается на кнопку меню при закрытии
     const previouslyFocused = document.activeElement as HTMLElement | null;
     panelRef.current?.querySelector<HTMLElement>("button, a[href]")?.focus();
 
@@ -56,9 +58,16 @@ export function MobileNav({ className }: { className?: string }) {
       role="dialog"
       aria-modal="true"
       aria-label={t.misc.navigation}
-      className="fixed inset-0 z-50 flex flex-col lg:hidden"
+      className="motion-fade fixed inset-0 z-50 flex flex-col overflow-hidden lg:hidden"
     >
-      <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between px-[var(--gutter)]">
+      <OrnamentField
+        motif="damask"
+        strength="strong"
+        className="ornament--fade"
+        style={{ "--fade-x": "100%", "--fade-y": "100%" } as never}
+      />
+
+      <div className="relative flex h-[var(--header-h)] shrink-0 items-center justify-between px-[var(--gutter)]">
         <Logo variant="wordmark" className="text-[0.9rem]" />
         <button
           type="button"
@@ -70,35 +79,52 @@ export function MobileNav({ className }: { className?: string }) {
         </button>
       </div>
 
-      <OrnamentBand motif="dandona" height={10} className="shrink-0" />
+      <nav className="relative flex flex-1 flex-col overflow-y-auto px-[var(--gutter)] pb-8 pt-6">
+        <ul className="flex flex-col">
+          {primaryNav.map((link, index) => (
+            <li key={link.href} className="border-b border-hairline">
+              <Link
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="group flex min-h-16 items-baseline gap-4 py-3"
+              >
+                <span className="t-num text-[1rem] text-ink-accent">
+                  {pad(index)}
+                </span>
+                <span className="t-display-2 text-[clamp(2rem,9vw,3rem)]">
+                  {navLabel(link, t)}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
 
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-[var(--gutter)] pb-12 pt-10">
-        {primaryNav.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            onClick={() => setOpen(false)}
-            className="t-h2 flex min-h-11 items-center py-2"
-          >
-            {navLabel(link, t)}
-          </Link>
-        ))}
-
-        <LanguageSwitcher className="mt-8 -ml-2" />
-        <span className="mt-auto flex flex-col border-t border-hairline pt-6">
+        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2">
           {utilityNav.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="tap-row text-ink-secondary"
+              className="tap-row text-ink-secondary hover:text-ink"
             >
               <span className="t-label motion-underline">
                 {navLabel(link, t)}
               </span>
             </Link>
           ))}
-        </span>
+        </div>
+
+        <div className="mt-auto flex flex-wrap items-end justify-between gap-6 pt-10">
+          <LanguageSwitcher className="-ml-2" />
+          <a
+            href={`tel:${contact.phone}`}
+            className="tap-row text-ink hover:text-ink-accent"
+          >
+            <span className="t-h3 motion-underline">
+              {contact.phoneDisplay}
+            </span>
+          </a>
+        </div>
       </nav>
     </div>
   );
@@ -118,8 +144,6 @@ export function MobileNav({ className }: { className?: string }) {
         <MenuIcon />
       </button>
 
-      {/* open становится true только по клику, то есть уже на клиенте —
-          проверка на монтирование не нужна */}
       {open ? createPortal(panel, document.body) : null}
     </>
   );

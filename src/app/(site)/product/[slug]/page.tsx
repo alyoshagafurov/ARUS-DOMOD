@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { Aivan } from "@/components/layout/Aivan";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
@@ -103,15 +104,17 @@ export default async function ProductPage({
         />
 
         <div className="mt-6 grid gap-x-[var(--gutter)] gap-y-10 pb-[var(--space-block-y)] lg:mt-8 lg:grid-cols-12">
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-7">
             <ProductGallery images={product.images} title={product.title} />
           </div>
 
-          {/* Кадры занимают шесть модулей из двенадцати, а не семь: на 1440
-              семь модулей давали высоту почти в 1000px, и колонка с ценой
-              уезжала за первый экран. */}
+          {/* Панель покупки — белая плавающая карточка, прилипающая к шапке:
+              подпись к развороту, лежащая поверх страницы, а не колонка. */}
           <div className="lg:col-span-5 lg:col-start-8">
-            <div className="lg:sticky lg:top-[calc(var(--header-h)+3rem)]">
+            <div
+              data-surface="day"
+              className="card card--float p-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:p-8"
+            >
               <ProductPurchase product={product} />
             </div>
           </div>
@@ -121,22 +124,26 @@ export default async function ProductPage({
       {/* С этой секции липкая панель телефона больше не нужна: дальше идут
           рассказ о коллекции, другие образы и подвал. Её id — точка
           остановки, на которую смотрит ProductPurchase. */}
-      <Section
-        id={PRODUCT_STORY_ID}
-        surface="night"
-        edge="both"
-        edgeMotif="chorkhona"
-        rhythm="block"
-      >
+      <Section id={PRODUCT_STORY_ID} rhythm="block">
         <Container>
-          <div className="grid gap-x-[var(--gutter)] gap-y-8 lg:grid-cols-12">
-            <Reveal className="lg:col-span-3">
-              <p className="t-label text-ink-secondary">{t.misc.lookLabel}</p>
-            </Reveal>
-            <Reveal className="lg:col-span-7 lg:col-start-5" delay={80}>
-              <p className="t-lead t-measure">{t.misc.lookLead}</p>
-            </Reveal>
-          </div>
+          <Aivan
+            surface="green"
+            pad="block"
+            ornament="corner"
+            ornamentOrigin={[100, 0]}
+          >
+            <div className="grid gap-x-[var(--gutter)] gap-y-8 lg:grid-cols-12">
+              <Reveal className="lg:col-span-4">
+                <p className="t-label text-ink-accent">{t.misc.lookLabel}</p>
+                <p className="t-num mt-6 text-[clamp(3rem,8vw,6rem)] text-gold-ink">
+                  {product.article?.replace(/\D/g, "") || "01"}
+                </p>
+              </Reveal>
+              <Reveal className="lg:col-span-7 lg:col-start-6" delay={80}>
+                <p className="t-h2 t-measure text-balance">{t.misc.lookLead}</p>
+              </Reveal>
+            </div>
+          </Aivan>
         </Container>
       </Section>
 

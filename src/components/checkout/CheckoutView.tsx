@@ -25,7 +25,7 @@ interface OrderResponse {
 }
 
 const field =
-  "mt-2 h-12 w-full border border-hairline bg-transparent px-4 text-ink outline-none transition-colors duration-[var(--dur-fast)] focus:border-accent";
+  "mt-2 h-12 w-full rounded-md border border-strong bg-white px-4 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] ease-[var(--ease-quiet)] placeholder:text-ink-muted focus:border-accent focus:shadow-raise";
 
 /** Сегодняшняя дата в формате input[type=date] — раньше неё свадьбы не бывает */
 const today = () => new Date().toISOString().slice(0, 10);
@@ -119,15 +119,22 @@ export function CheckoutView() {
   if (result) {
     const { order } = result;
     return (
-      <Container width="narrow" className="py-16 lg:py-24">
-        <div className="mx-auto max-w-[40rem]">
-          <p className="t-label text-ink-accent">
+      <Container width="narrow" className="py-8 lg:py-12">
+        <div
+          data-surface="green"
+          className="aivan mx-auto max-w-[44rem] overflow-hidden p-[var(--block-pad)]"
+        >
+          <p className="t-label flex items-center gap-3 text-ink-accent">
+            <span className="t-num text-[1.5rem] text-gold-ink">
+              {order.id.replace(/\D/g, "")}
+            </span>
+            <span aria-hidden="true" className="h-px w-8 bg-gold/60" />
             {t.checkout.order} {order.id}
           </p>
-          <h1 className="t-h1 mt-4 text-balance">{t.checkout.accepted}</h1>
-          <span aria-hidden="true" className="hoshiya-line mt-6 max-w-[5rem]" />
-
-          <p className="t-lead mt-6">{t.checkout.acceptedLead}</p>
+          <h1 className="t-display-2 mt-5 text-balance">
+            {t.checkout.accepted}
+          </h1>
+          <p className="t-lead mt-6 max-w-[40ch]">{t.checkout.acceptedLead}</p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button href={result.whatsapp.primary} external size="lg">
@@ -144,8 +151,10 @@ export function CheckoutView() {
               </Button>
             ) : null}
           </div>
+        </div>
 
-          <dl className="mt-10 flex flex-col border-t border-hairline">
+        <div className="mx-auto mt-10 max-w-[44rem]">
+          <dl className="flex flex-col border-t border-hairline">
             {order.lines.map((line) => (
               <div
                 key={`${line.productId}-${line.size ?? ""}`}
@@ -176,7 +185,7 @@ export function CheckoutView() {
             </div>
           </dl>
 
-          <details className="mt-6 border border-hairline">
+          <details className="mt-6 rounded-[var(--radius-card)] border border-hairline">
             <summary className="tap-row cursor-pointer px-4 text-ink-secondary">
               <span className="t-label">{t.checkout.orderText}</span>
             </summary>
@@ -304,7 +313,7 @@ export function CheckoutView() {
                     value={value}
                     checked={delivery === value}
                     onChange={() => setDelivery(value)}
-                    className="mt-1 h-4 w-4 accent-[var(--accent)]"
+                    className="mt-1 h-4 w-4 shrink-0 accent-[var(--accent)]"
                   />
                   <span>
                     <span className="t-body-sm block">{label}</span>
@@ -335,7 +344,7 @@ export function CheckoutView() {
               name="comment"
               rows={4}
               maxLength={1000}
-              className="mt-4 w-full resize-y border border-hairline bg-transparent p-4 text-ink outline-none transition-colors duration-[var(--dur-fast)] focus:border-accent"
+              className="mt-4 w-full resize-y rounded-md border border-strong bg-white p-4 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise"
             />
           </label>
 
@@ -343,8 +352,11 @@ export function CheckoutView() {
         </div>
 
         <div className="lg:col-span-4 lg:col-start-9">
-          <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
-            <h2 className="t-label text-ink-muted">{t.checkout.summary}</h2>
+          <div
+            data-surface="day"
+            className="card card--float p-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:p-8"
+          >
+            <h2 className="t-label text-gold-ink">{t.checkout.summary}</h2>
 
             <ul className="mt-5 flex flex-col border-t border-hairline">
               {totals.purchase.map(({ line, product, total }) => (
@@ -370,7 +382,7 @@ export function CheckoutView() {
             </ul>
 
             {totals.rental.length ? (
-              <p className="t-caption mt-4 border border-hairline p-3">
+              <p className="t-caption mt-4 rounded-md border border-hairline p-3">
                 {t.cart.rentalExcluded(totals.rental.length)}
               </p>
             ) : null}
@@ -396,7 +408,7 @@ export function CheckoutView() {
             {error ? (
               <p
                 role="alert"
-                className="t-body-sm mt-5 border border-danger px-4 py-3 text-danger"
+                className="t-body-sm mt-5 rounded-md border border-danger px-4 py-3 text-danger"
               >
                 {error}
               </p>

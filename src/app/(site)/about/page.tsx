@@ -1,11 +1,11 @@
 import Link from "next/link";
 
+import { Aivan } from "@/components/layout/Aivan";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { categoryTitle } from "@/lib/i18n/labels";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
-import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
 import { catalog } from "@/lib/catalog";
@@ -32,16 +32,12 @@ export default async function AboutPage() {
 
   return (
     <>
-      <Section
-        surface="muted"
-        className="overflow-hidden pt-[calc(var(--header-h)+2rem)]"
-      >
-        <OrnamentField motif="damask" />
-        <Container className="relative">
+      <Section rhythm="block">
+        <Container>
           <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-[var(--gutter)]">
             <div className="lg:col-span-5">
               <Reveal>
-                <p className="t-label-wide text-ink-accent">
+                <p className="t-label-wide text-gold-ink">
                   {t.pages.aboutLabel}
                 </p>
                 <h1 className="t-display-2 mt-5 text-balance">
@@ -63,13 +59,17 @@ export default async function AboutPage() {
               className="mt-10 lg:col-span-7 lg:col-start-6 lg:mt-0 lg:-mr-[var(--gutter)]"
               delay={80}
             >
-              <div className="relative">
+              <div
+                className="motion-drift relative"
+                style={{ "--drift": "4%" } as never}
+              >
                 <Media
                   image={photo("heritage-tajik-bride-editorial", t.alts.hero)}
                   ratio="auto"
+                  radius="block"
                   zoomOnHover={false}
                   sizes="(min-width: 1024px) 58vw, 92vw"
-                  className="h-[46svh] min-h-[300px] rounded-none lg:h-[64svh] lg:min-h-[440px]"
+                  className="h-[46svh] min-h-[300px] shadow-float lg:h-[64svh] lg:min-h-[440px]"
                 />
                 <span
                   aria-hidden="true"
@@ -114,66 +114,75 @@ export default async function AboutPage() {
         </Container>
       </Section>
 
-      <Section surface="muted" edge="top">
-        <Container width="narrow">
-          <div className="grid gap-10 md:grid-cols-3">
-            <Reveal>
-              <h2 className="t-label text-ink-accent">{t.pages.aboutBuy}</h2>
-              <p className="t-body-sm mt-3 text-ink-secondary">
-                {t.pages.aboutBuyNote}
-              </p>
-              <Link
-                href="/delivery"
-                className="tap-row text-ink hover:text-ink-accent"
-              >
-                <span className="t-label motion-underline">
-                  {t.pages.aboutBuyLink}
-                </span>
-              </Link>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="t-label text-ink-accent">{t.pages.aboutRent}</h2>
-              <p className="t-body-sm mt-3 text-ink-secondary">
-                {t.pages.aboutRentNote}
-              </p>
-              <Link
-                href="/rental"
-                className="tap-row text-ink hover:text-ink-accent"
-              >
-                <span className="t-label motion-underline">
-                  {t.pages.aboutRentLink}
-                </span>
-              </Link>
-            </Reveal>
-            <Reveal delay={120}>
-              <h2 className="t-label text-ink-accent">
-                {t.pages.aboutContact}
-              </h2>
-              <p className="t-body-sm mt-3 text-ink-secondary">
-                {contact.phoneName} · {contact.phoneDisplay}
-                <br />
-                {contact.phoneSecondaryName} · {contact.phoneSecondaryDisplay}
-              </p>
-              <p className="mt-3 flex flex-wrap gap-x-6">
-                {socialLinks.map((s) => (
-                  <a
-                    key={s.href}
-                    href={s.href}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="tap-row hover:text-ink-accent"
-                  >
-                    <span className="t-label motion-underline">{s.label}</span>
-                  </a>
-                ))}
-              </p>
-            </Reveal>
-          </div>
-          <div className="mt-12">
-            <Button href="/catalog" size="lg">
-              {t.pages.seeLooks}
-            </Button>
-          </div>
+      <Section rhythm="block">
+        <Container>
+          <Aivan
+            surface="green"
+            pad="block"
+            ornament="corner"
+            ornamentOrigin={[100, 100]}
+          >
+            <div className="grid gap-10 md:grid-cols-3">
+              <Reveal>
+                <h2 className="t-label text-ink-accent">{t.pages.aboutBuy}</h2>
+                <p className="t-body-sm mt-3 text-ink-secondary">
+                  {t.pages.aboutBuyNote}
+                </p>
+                <Link
+                  href="/delivery"
+                  className="tap-row text-ink hover:text-ink-accent"
+                >
+                  <span className="t-label motion-underline">
+                    {t.pages.aboutBuyLink}
+                  </span>
+                </Link>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="t-label text-ink-accent">{t.pages.aboutRent}</h2>
+                <p className="t-body-sm mt-3 text-ink-secondary">
+                  {t.pages.aboutRentNote}
+                </p>
+                <Link
+                  href="/rental"
+                  className="tap-row text-ink hover:text-ink-accent"
+                >
+                  <span className="t-label motion-underline">
+                    {t.pages.aboutRentLink}
+                  </span>
+                </Link>
+              </Reveal>
+              <Reveal delay={120}>
+                <h2 className="t-label text-ink-accent">
+                  {t.pages.aboutContact}
+                </h2>
+                <p className="t-body-sm mt-3 text-ink-secondary">
+                  {contact.phoneName} · {contact.phoneDisplay}
+                  <br />
+                  {contact.phoneSecondaryName} · {contact.phoneSecondaryDisplay}
+                </p>
+                <p className="mt-3 flex flex-wrap gap-x-6">
+                  {socialLinks.map((s) => (
+                    <a
+                      key={s.href}
+                      href={s.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="tap-row hover:text-ink-accent"
+                    >
+                      <span className="t-label motion-underline">
+                        {s.label}
+                      </span>
+                    </a>
+                  ))}
+                </p>
+              </Reveal>
+            </div>
+            <div className="mt-12">
+              <Button href="/catalog" size="lg" arrow>
+                {t.pages.seeLooks}
+              </Button>
+            </div>
+          </Aivan>
         </Container>
       </Section>
     </>

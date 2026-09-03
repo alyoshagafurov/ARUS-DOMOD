@@ -72,8 +72,8 @@ export async function generateMetadata(): Promise<Metadata> {
  * адреса на телефоне продолжает поле логотипа, а не спорит с ним.
  */
 export const viewport: Viewport = {
-  themeColor: "#03211f",
-  colorScheme: "dark",
+  themeColor: "#ffffff",
+  colorScheme: "light",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

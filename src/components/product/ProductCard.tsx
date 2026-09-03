@@ -37,6 +37,12 @@ interface ProductCardProps {
   plateMotif?: OrnamentMotif;
   priority?: boolean;
   sizes?: string;
+  /**
+   * Карточка как предмет на поверхности: белая подложка с тенью вокруг
+   * кадра и подписи. Включается внутри зелёных айвонов; на белом дворе
+   * поднимается сам кадр.
+   */
+  framed?: boolean;
   className?: string;
 }
 
@@ -60,6 +66,7 @@ export function ProductCard({
   plateMotif,
   priority = false,
   sizes,
+  framed = false,
   className,
 }: ProductCardProps) {
   const t = useDictionary();
@@ -76,12 +83,27 @@ export function ProductCard({
   const second = product.images[1] ?? null;
 
   return (
-    <article className={cn("group relative flex flex-col", className)}>
-      <div className="relative overflow-hidden rounded-xs">
+    <article
+      data-surface={framed ? "day" : undefined}
+      className={cn(
+        "group relative flex flex-col",
+        framed ? "card lift p-3 pb-4" : "lift rounded-[var(--radius-card)]",
+        className,
+      )}
+    >
+      <div
+        className={cn(
+          "relative overflow-hidden",
+          framed
+            ? "rounded-[calc(var(--radius-card)-0.5rem)]"
+            : "rounded-[var(--radius-card)] shadow-card",
+        )}
+      >
         <Media
           image={cover}
           secondary={second}
           ratio={ratio}
+          radius={framed ? "sm" : "card"}
           sizes={sizes}
           priority={priority}
           hoverReveal
@@ -114,9 +136,9 @@ export function ProductCard({
         <div
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute inset-x-0 bottom-0 hidden items-center justify-between",
-            "bg-page px-4 py-3 text-ink lg:flex",
-            "translate-y-full opacity-0 transition-[transform,opacity]",
+            "pointer-events-none absolute bottom-3 left-3 hidden items-center gap-3",
+            "rounded-pill bg-white px-4 py-2.5 text-[var(--firuza-950)] shadow-raise lg:flex",
+            "translate-y-3 opacity-0 transition-[transform,opacity]",
             "duration-[var(--dur-base)] ease-[var(--ease-quiet)]",
             "group-hover:translate-y-0 group-hover:opacity-100",
             "group-focus-within:translate-y-0 group-focus-within:opacity-100",
@@ -127,7 +149,7 @@ export function ProductCard({
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 pt-3">
+      <div className={cn("flex flex-1 flex-col gap-1 pt-3", framed && "px-1")}>
         {categoryLabel ? (
           <span className="t-label text-ink-muted">{categoryLabel}</span>
         ) : null}

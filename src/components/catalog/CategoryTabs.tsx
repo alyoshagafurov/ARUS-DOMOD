@@ -1,6 +1,5 @@
 "use client";
 
-import { OrnamentBand } from "@/components/ornament/Ornament";
 import { cn } from "@/lib/cn";
 import { useDictionary, useLocale } from "@/lib/i18n/client";
 import { categoryTitle } from "@/lib/i18n/labels";
@@ -57,7 +56,7 @@ export function CategoryTabs({
     >
       <nav
         aria-label={t.misc.catalogSections}
-        className="flex w-max items-end gap-7 border-b border-hairline"
+        className="flex w-max items-center gap-2 py-1"
       >
         {tabs.map((tab) => {
           const active = tab.slug === value;
@@ -68,23 +67,22 @@ export function CategoryTabs({
               aria-current={active ? "true" : undefined}
               onClick={() => onChange(tab.slug)}
               className={cn(
-                // pt-2 к нижнему отступу даёт строке разделов полные 48px по высоте
-                "relative whitespace-nowrap pb-4 pt-2 transition-colors",
-                "duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
-                active ? "text-ink" : "text-ink-muted hover:text-ink",
+                "inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-pill border px-4",
+                "transition-[background-color,color,border-color,transform] duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
+                active
+                  ? "border-accent bg-accent text-accent-contrast shadow-raise"
+                  : "border-strong text-ink hover:-translate-y-0.5 hover:border-accent hover:bg-accent-quiet",
               )}
             >
               <span className="t-label">{tab.label}</span>
-              <span className="t-caption ml-2 tabular-nums">{tab.count}</span>
-
-              {active ? (
-                <OrnamentBand
-                  motif="dandona"
-                  height={5}
-                  strength="strong"
-                  className="absolute inset-x-0 -bottom-px"
-                />
-              ) : null}
+              <span
+                className={cn(
+                  "t-caption tabular-nums",
+                  active ? "text-accent-contrast/80" : "text-ink-muted",
+                )}
+              >
+                {tab.count}
+              </span>
             </button>
           );
         })}

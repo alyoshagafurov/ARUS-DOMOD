@@ -8,7 +8,7 @@ import { login } from "./actions";
 export const metadata = { title: "Вход в админку", robots: { index: false } };
 
 const field =
-  "mt-2 h-12 w-full border border-hairline bg-transparent px-4 text-ink outline-none transition-colors duration-[var(--dur-fast)] focus:border-accent";
+  "mt-2 h-11 w-full rounded-md border border-strong bg-white px-3 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise";
 
 export default async function AdminLoginPage({
   searchParams,
@@ -24,8 +24,8 @@ export default async function AdminLoginPage({
       data-surface="night"
       className="flex min-h-svh items-center justify-center px-[var(--gutter)] py-16"
     >
-      <div className="relative w-full max-w-[24rem] border border-hairline p-8">
-        <span aria-hidden="true" className="hoshiya-frame" />
+      <div className="card card--float relative w-full max-w-[24rem] p-8">
+        <span aria-hidden="true" className="gold-frame" />
         <Logo variant="lockup" className="text-[1rem]" />
         <h1 className="t-h2 mt-8">Вход в админку</h1>
 

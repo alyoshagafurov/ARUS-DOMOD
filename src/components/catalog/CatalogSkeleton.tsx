@@ -29,7 +29,7 @@ export function CatalogSkeleton({ count = 7 }: { count?: number }) {
         <li key={index} className={cells[index % cells.length]}>
           <div
             className={cn(
-              "w-full rounded-xs bg-sunken animate-pulse",
+              "w-full rounded-md bg-sunken animate-pulse",
               index % 7 >= 4
                 ? "aspect-[var(--ratio-editorial)]"
                 : "aspect-[var(--ratio-portrait)]",
@@ -37,11 +37,11 @@ export function CatalogSkeleton({ count = 7 }: { count?: number }) {
             style={{ animationDelay: `${(index % 7) * 80}ms` }}
           />
           <div
-            className="mt-5 h-2 w-1/3 rounded-xs bg-sunken animate-pulse"
+            className="mt-5 h-2 w-1/3 rounded-md bg-sunken animate-pulse"
             style={{ animationDelay: `${(index % 7) * 80 + 50}ms` }}
           />
           <div
-            className="mt-3 h-2 w-1/2 rounded-xs bg-sunken animate-pulse"
+            className="mt-3 h-2 w-1/2 rounded-md bg-sunken animate-pulse"
             style={{ animationDelay: `${(index % 7) * 80 + 100}ms` }}
           />
         </li>

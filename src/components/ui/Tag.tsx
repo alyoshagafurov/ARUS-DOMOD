@@ -9,7 +9,7 @@ const toneClass: Record<TagTone, string> = {
   neutral: "bg-invert text-ink-invert",
   accent: "bg-accent text-accent-contrast",
   // Золото светлое на любой поверхности, поэтому текст на нём всегда тёмный —
-  // это единственное место, где цвет берётся из сырой палитры, а не из семантики.
+  // единственное место, где цвет берётся из сырой палитры, а не из семантики.
   gold: "bg-gold text-[var(--firuza-950)]",
   outline: "border border-strong text-ink",
 };
@@ -17,7 +17,7 @@ const toneClass: Record<TagTone, string> = {
 interface TagProps {
   children: ReactNode;
   tone?: TagTone;
-  /** square — плашки на карточках; pill — только фильтры каталога */
+  /** square — плашки на карточках (радиус 8px); pill — чипы фильтров */
   shape?: TagShape;
   className?: string;
 }
@@ -32,7 +32,7 @@ export function Tag({
     <span
       className={cn(
         "t-label inline-flex items-center px-2.5 py-1.5",
-        shape === "pill" ? "rounded-pill px-4" : "rounded-xs",
+        shape === "pill" ? "rounded-pill px-4" : "rounded-sm",
         toneClass[tone],
         className,
       )}

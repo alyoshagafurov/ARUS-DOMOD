@@ -16,14 +16,13 @@ interface DrawerProps {
 }
 
 /**
- * Панель поверх страницы: снизу на телефоне, справа на широком экране.
+ * Панель поверх страницы: лист снизу на телефоне, плавающая карточка справа
+ * на широком экране — с отступом от края и собственной тенью, а не полоса
+ * от верха до низа.
  *
- * Рендерится порталом в <body>: у шапки есть backdrop-filter, а он создаёт
- * containing block для position: fixed — внутри шапки inset-0 схлопнулся бы
- * до её высоты.
- *
- * Ловушка фокуса, Escape и блокировка прокрутки обязательны: без них панель
- * недоступна с клавиатуры, а фон уезжает под пальцем на телефоне.
+ * Рендерится порталом в <body>: у шапки есть backdrop-filter, и внутри неё
+ * inset-0 схлопнулся бы до её высоты. Ловушка фокуса, Escape, блокировка
+ * прокрутки и возврат фокуса — обязательны.
  */
 export function Drawer({
   open,
@@ -92,7 +91,7 @@ export function Drawer({
         type="button"
         aria-label={t.common.close}
         onClick={onClose}
-        className="motion-fade absolute inset-0 h-full w-full cursor-default bg-[rgba(16,13,11,0.5)]"
+        className="motion-fade absolute inset-0 h-full w-full cursor-default bg-[rgba(3,33,31,0.42)] backdrop-blur-[2px]"
       />
 
       <div
@@ -100,24 +99,28 @@ export function Drawer({
         role="dialog"
         aria-modal="true"
         aria-label={title}
+        data-surface="day"
         className={cn(
-          "motion-drawer absolute inset-x-0 bottom-0 flex max-h-[86svh] flex-col bg-page",
-          "lg:inset-y-0 lg:left-auto lg:right-0 lg:max-h-none lg:w-[26rem]",
+          "motion-drawer absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col",
+          "rounded-t-[var(--radius-block)] bg-page shadow-overlay",
+          "lg:inset-x-auto lg:inset-y-4 lg:right-4 lg:max-h-none lg:w-[27rem]",
+          "lg:rounded-[var(--radius-block)]",
         )}
       >
-        <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-hairline px-6">
+        <div className="flex h-16 shrink-0 items-center justify-between px-6">
           <h2 className="t-label">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label={t.common.close}
-            className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-[1rem] text-ink-secondary hover:text-ink"
+            className="tap-icon -mr-2 inline-flex h-11 w-11 items-center justify-center text-[1rem] text-ink-secondary hover:text-ink"
           >
             <CloseIcon />
           </button>
         </div>
+        <span aria-hidden="true" className="hoshiya-line mx-6 w-auto" />
 
-        <div className="flex-1 overflow-y-auto px-6 py-8">{children}</div>
+        <div className="flex-1 overflow-y-auto px-6 py-6">{children}</div>
 
         {footer ? (
           <div className="shrink-0 border-t border-hairline px-6 py-5">

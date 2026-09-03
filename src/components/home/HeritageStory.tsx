@@ -1,112 +1,102 @@
+import { Aivan } from "@/components/layout/Aivan";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
+import { CountUp } from "@/components/motion/CountUp";
 import { Reveal } from "@/components/motion/Reveal";
-import { getDictionary } from "@/lib/i18n/server";
 import { Media } from "@/components/ui/Media";
+import { LOCALES } from "@/lib/i18n";
+import { rental } from "@/lib/config/site";
+import { getDictionary } from "@/lib/i18n/server";
 import { photo } from "@/lib/photos";
 
+interface HeritageStoryProps {
+  lookCount: number;
+  sectionCount: number;
+}
+
 /**
- * Редакционный разворот о культуре свадьбы. Кадр уходит за левый край
- * экрана, текст стоит правой колонкой — противоположно hero, чтобы страница
- * не читалась как чередование одинаковых блоков.
+ * История дома — кадр и айвон внахлёст.
  *
- * Поверхность — поле логотипа: между двумя глубокими соседями секция
- * приподнимается, и разворот получает собственный вес.
+ * Квадратный кадр торжества стоит слева и едет по прокрутке медленнее
+ * страницы; зелёный айвон справа сдвинут вниз и заходит под кадр. Два слоя,
+ * два ритма — так читается глубина, а не «фото и текст рядом».
  *
- * Декоративных элементов здесь два, и оба структурные: волосяная кайма по
- * краям секции и разомкнутая тоқча вокруг кадра. Тканых лент нет — их роль
- * забрала золотая линия.
+ * Цифры внизу настоящие: образы и разделы — из базы, дни проката — из
+ * условий клиента, языки — из словаря. Выдуманных «лет на рынке» здесь нет.
  */
-export async function HeritageStory() {
+export async function HeritageStory({
+  lookCount,
+  sectionCount,
+}: HeritageStoryProps) {
   const t = await getDictionary();
-  const heritageImage = photo(
-    "heritage-tajik-bride-editorial",
-    t.alts.heritage,
-  );
-  const pillars = t.editorial.pillars;
+  const facts: [number, string][] = [
+    [lookCount, t.home.facts.looks(lookCount).replace(/^\d+\s*/, "")],
+    [sectionCount, t.home.facts.sections(sectionCount).replace(/^\d+\s*/, "")],
+    [rental.maxDays, t.home.facts.days(rental.maxDays).replace(/^\d+\s*/, "")],
+    [
+      LOCALES.length,
+      t.home.facts.languages(LOCALES.length).replace(/^\d+\s*/, ""),
+    ],
+  ];
+
   return (
-    <Section surface="muted" edge="both" className="overflow-hidden">
-      {/*
-        Кадр во всю высоту секции, вне контейнера — сетка нарушена намеренно.
+    <Section id="heritage">
+      <Container>
+        <div className="relative lg:grid lg:grid-cols-12 lg:items-start">
+          <Reveal className="relative z-10 lg:col-span-6 lg:col-start-1 lg:row-start-1 lg:pt-10">
+            <div
+              className="motion-drift relative"
+              style={{ "--drift": "5%" } as never}
+            >
+              <span
+                aria-hidden="true"
+                data-open="right"
+                className="toqcha -inset-y-4 -left-4 right-10"
+              />
+              <Media
+                image={photo("heritage-tajik-bride-editorial", t.alts.heritage)}
+                ratio="square"
+                radius="block"
+                zoomOnHover={false}
+                sizes="(min-width: 1024px) 46vw, 92vw"
+                className="shadow-float"
+              />
+            </div>
+          </Reveal>
 
-        Точку обрезки тут не задаём, и это проверено счётом, а не на глаз:
-        исходник квадратный (1254×1254), невеста занимает x 230–1010, а в
-        левую панель попадает 907px исходника из 1254. При центрированной
-        обрезке окно это 174–1081 — фигура целиком внутри. То же и на
-        телефоне, где кадр встаёт в поток пропорцией 4:5.
-      */}
-      <div className="absolute inset-y-0 left-0 hidden w-[42%] lg:block">
-        <Media
-          image={heritageImage}
-          ratio="auto"
-          zoomOnHover={false}
-          sizes="42vw"
-          className="h-full rounded-none"
-        />
-        {/* Ниша разомкнута влево — туда кадр и уходит за край окна */}
-        <span
-          aria-hidden="true"
-          data-open="left"
-          className="toqcha inset-y-10 left-0 right-8"
-        />
-      </div>
-
-      <Container className="relative">
-        <div className="lg:grid lg:grid-cols-12">
-          <div className="lg:col-span-6 lg:col-start-7">
-            <Reveal>
-              <p className="t-label text-ink-secondary">
+          <Aivan
+            surface="green"
+            pad="block"
+            ornament="corner"
+            ornamentOrigin={[100, 100]}
+            className="-mt-12 lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:mt-28 lg:pl-[calc(var(--block-pad)+9%)]"
+          >
+            <Reveal className="pt-8 lg:pt-0">
+              <p className="t-label text-ink-accent">
                 {t.editorial.heritageLabel}
               </p>
-              <h2 className="t-display-2 mt-7 text-balance">
+              <h2 className="t-display-2 mt-6 max-w-[12ch] text-balance">
                 {t.editorial.heritageTitle}
               </h2>
-            </Reveal>
-
-            {/* На мобильном кадр встаёт в поток, а не исчезает */}
-            <Reveal className="mt-10 lg:hidden" delay={60}>
-              <div className="relative">
-                <Media
-                  image={heritageImage}
-                  ratio="editorial"
-                  zoomOnHover={false}
-                  /* Кадр внутри Container и живёт только до lg: 100vw просил
-                     бы ступень на размер больше, чем нужно. */
-                  sizes="(min-width: 640px) 90vw, 88vw"
-                />
-                {/* На узкой колонке ниша разрывается вниз: боковой разрыв
-                    там просто не читается. */}
-                <span
-                  aria-hidden="true"
-                  data-open="bottom"
-                  className="toqcha -left-3 -right-3 -top-3 bottom-10"
-                />
-              </div>
-            </Reveal>
-
-            <Reveal delay={100}>
-              <p className="t-lead t-measure mt-9">
+              <p className="t-lead mt-6 max-w-[42ch]">
                 {t.editorial.heritageLead}
               </p>
             </Reveal>
 
-            <Reveal delay={160}>
-              <ul className="mt-14 flex flex-col border-t border-hairline">
-                {pillars.map((item) => (
-                  <li
-                    key={item.tg}
-                    className="flex flex-col gap-1 border-b border-hairline py-6 sm:flex-row sm:items-baseline sm:gap-8"
-                  >
-                    <span className="t-h2 w-40 shrink-0">{item.tg}</span>
-                    <span className="t-label text-ink-muted">{item.ru}</span>
-                    <span className="t-body-sm text-ink-secondary sm:ml-auto sm:text-right">
-                      {item.note}
-                    </span>
-                  </li>
+            <Reveal delay={120} className="mt-10 lg:mt-14">
+              <span aria-hidden="true" className="hoshiya-line" />
+              <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
+                {facts.map(([value, label]) => (
+                  <div key={label} className="flex flex-col gap-2">
+                    <dt className="t-caption order-2">{label}</dt>
+                    <dd className="t-num order-1 text-[clamp(2.5rem,5vw,4rem)] text-gold-ink">
+                      <CountUp value={value} />
+                    </dd>
+                  </div>
                 ))}
-              </ul>
+              </dl>
             </Reveal>
-          </div>
+          </Aivan>
         </div>
       </Container>
     </Section>

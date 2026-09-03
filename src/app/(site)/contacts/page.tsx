@@ -2,7 +2,6 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { getDictionary } from "@/lib/i18n/server";
-import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { contact, site, socialLinks } from "@/lib/config/site";
 import { whatsappLink } from "@/lib/orders/whatsapp";
@@ -31,14 +30,10 @@ export default async function ContactsPage() {
   ];
   return (
     <>
-      <Section
-        surface="muted"
-        className="overflow-hidden pt-[calc(var(--header-h)+2rem)]"
-      >
-        <OrnamentField motif="damask" />
-        <Container width="narrow" className="relative">
+      <Section rhythm="block">
+        <Container width="narrow">
           <Reveal>
-            <p className="t-label-wide text-ink-accent">{t.nav.contacts}</p>
+            <p className="t-label-wide text-gold-ink">{t.nav.contacts}</p>
             <h1 className="t-display-2 mt-5">{t.pages.contactsTitle}</h1>
             <span
               aria-hidden="true"
@@ -56,8 +51,8 @@ export default async function ContactsPage() {
           <ul className="grid gap-6 md:grid-cols-2">
             {people.map((p, i) => (
               <Reveal key={p.phone} delay={i * 60}>
-                <li className="relative border border-hairline p-6">
-                  <p className="t-label text-ink-accent">{p.name}</p>
+                <li className="card card--float lift relative p-6 lg:p-8">
+                  <p className="t-label text-gold-ink">{p.name}</p>
                   <p className="t-caption mt-1">{p.role}</p>
                   <a href={`tel:${p.phone}`} className="tap-row mt-3 w-fit">
                     <span className="t-h2 motion-underline">{p.display}</span>

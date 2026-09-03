@@ -47,7 +47,10 @@ export function CatalogToolbar({
     price_desc: t.catalog.sortPriceDesc,
   };
   return (
-    <div className="sticky top-[var(--header-h)] z-30 -mx-[var(--gutter)] border-y border-hairline bg-page/94 px-[var(--gutter)] backdrop-blur-[8px]">
+    <div
+      data-surface="day"
+      className="sticky top-[calc(var(--header-h)+0.5rem)] z-30 rounded-[var(--radius-card)] bg-white/90 px-4 shadow-raise backdrop-blur-[10px] sm:px-5"
+    >
       <div className="flex h-14 items-center justify-between gap-3">
         <p className="t-label min-w-0 shrink text-ink-muted" aria-live="polite">
           <span className="tabular-nums text-ink">{total}</span>
@@ -60,7 +63,7 @@ export function CatalogToolbar({
           <button
             type="button"
             onClick={onOpenSearch}
-            className="t-label tap-icon inline-flex h-11 w-11 items-center justify-center gap-2
+            className="t-label tap-icon inline-flex h-11 w-11 shrink-0 items-center justify-center gap-2
               text-ink-secondary hover:text-ink sm:w-auto sm:px-2"
           >
             <SearchIcon className="h-[1.1em] w-[1.1em]" />
@@ -97,11 +100,11 @@ export function CatalogToolbar({
             type="button"
             onClick={onOpenFilters}
             className={cn(
-              "t-label inline-flex h-11 shrink-0 items-center gap-2 border px-3 sm:px-4",
-              "transition-colors duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
+              "t-label inline-flex h-11 shrink-0 items-center gap-2 rounded-pill border px-4",
+              "transition-[background-color,color,border-color] duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
               activeFilterCount > 0
-                ? "border-accent text-ink-accent"
-                : "border-strong text-ink hover:border-accent",
+                ? "border-accent bg-accent text-accent-contrast"
+                : "border-strong text-ink hover:border-accent hover:bg-accent-quiet",
             )}
           >
             {t.catalog.filters}

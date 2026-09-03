@@ -35,7 +35,7 @@ export default async function AdminLayout({
       data-surface="day"
       className="min-h-svh lg:grid lg:grid-cols-[15rem_1fr]"
     >
-      <aside className="border-b border-hairline lg:sticky lg:top-0 lg:h-svh lg:border-b-0 lg:border-r">
+      <aside className="border-b border-hairline bg-muted lg:sticky lg:top-0 lg:h-svh lg:border-b-0 lg:border-r">
         <div className="flex items-center justify-between px-5 py-4 lg:block lg:px-6 lg:py-6">
           <Link href="/admin" className="flex h-11 items-center text-[0.9rem]">
             <Logo variant="lockup" />
@@ -52,21 +52,21 @@ export default async function AdminLayout({
             <Link
               key={item.href}
               href={item.href}
-              className="tap-icon flex h-11 shrink-0 items-center rounded-xs px-3 text-ink-secondary hover:text-ink"
+              className="flex h-11 shrink-0 items-center rounded-md px-3 text-ink-secondary transition-[background-color,color] duration-[var(--dur-fast)] hover:bg-white hover:text-ink hover:shadow-raise"
             >
               <span className="t-label">{item.label}</span>
             </Link>
           ))}
           <Link
             href="/"
-            className="tap-icon flex h-11 shrink-0 items-center rounded-xs px-3 text-ink-secondary hover:text-ink lg:mt-auto"
+            className="tap-icon flex h-11 shrink-0 items-center rounded-md px-3 text-ink-secondary hover:text-ink lg:mt-auto"
           >
             <span className="t-label">На сайт →</span>
           </Link>
           <form action={logout}>
             <button
               type="submit"
-              className="tap-icon flex h-11 w-full items-center rounded-xs px-3 text-ink-muted hover:text-ink"
+              className="tap-icon flex h-11 w-full items-center rounded-md px-3 text-ink-muted hover:text-ink"
             >
               <span className="t-label">Выйти</span>
             </button>

@@ -33,7 +33,10 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     <div
       role="group"
       aria-label={t.nav.language}
-      className={cn("flex items-center", className)}
+      className={cn(
+        "flex items-center gap-0.5 rounded-pill border border-hairline p-0.5",
+        className,
+      )}
     >
       {LOCALES.map((locale) => (
         <button
@@ -44,9 +47,10 @@ export function LanguageSwitcher({ className }: { className?: string }) {
           aria-label={LOCALE_NAMES[locale]}
           disabled={pending}
           className={cn(
-            "tap-icon t-label inline-flex h-11 min-w-11 items-center justify-center px-2",
+            "t-label inline-flex h-9 min-w-9 items-center justify-center rounded-pill px-2.5",
+            "transition-[background-color,color] duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
             locale === current
-              ? "text-ink-accent"
+              ? "bg-accent text-accent-contrast"
               : "text-ink-secondary hover:text-ink",
           )}
         >

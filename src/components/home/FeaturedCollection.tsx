@@ -1,55 +1,13 @@
+import { Aivan } from "@/components/layout/Aivan";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
-import { getDictionary } from "@/lib/i18n/server";
 import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
-import type { OrnamentMotif } from "@/components/ornament/Ornament";
-import type { PlateTone } from "@/components/ui/FabricPlate";
+import { cn } from "@/lib/cn";
+import { getDictionary } from "@/lib/i18n/server";
 import type { Collection, Product } from "@/types/catalog";
-
-/**
- * Раскладка полосы задана вручную, а не циклом по одинаковым ячейкам.
- * Разные пропорции кадра, разные ширины колонок и вертикальные сдвиги дают
- * витрине ритм журнального разворота; тона плит подобраны в одну гамму.
- */
-const layout: {
-  cell: string;
-  ratio: "editorial" | "tall" | "portrait" | "square";
-  tone: PlateTone;
-  motif: OrnamentMotif;
-  sizes: string;
-}[] = [
-  {
-    cell: "col-span-2 lg:col-span-7",
-    ratio: "editorial",
-    tone: "madder",
-    motif: "chorkhona",
-    sizes: "(min-width: 1024px) 56vw, 100vw",
-  },
-  {
-    cell: "lg:col-span-4 lg:col-start-9 lg:mt-32",
-    ratio: "tall",
-    tone: "nil",
-    motif: "mavj",
-    sizes: "(min-width: 1024px) 32vw, 50vw",
-  },
-  {
-    cell: "lg:col-span-4 lg:col-start-2",
-    ratio: "square",
-    tone: "ink",
-    motif: "gul",
-    sizes: "(min-width: 1024px) 32vw, 50vw",
-  },
-  {
-    cell: "col-span-2 sm:col-span-1 lg:col-span-5 lg:col-start-7 lg:mt-24",
-    ratio: "portrait",
-    tone: "bone",
-    motif: "chorkhona",
-    sizes: "(min-width: 1024px) 40vw, (min-width: 640px) 46vw, 100vw",
-  },
-];
 
 interface FeaturedCollectionProps {
   products: Product[];
@@ -57,6 +15,16 @@ interface FeaturedCollectionProps {
   collection?: Collection;
 }
 
+const pad = (n: number) => String(n).padStart(2, "0");
+
+/**
+ * Подборка — айвон с рейкой предметов.
+ *
+ * Внутри зелёного объёма лежат белые карточки: первая крупнее и выше,
+ * остальные идут за ней лентой, которая прокручивается по горизонтали на
+ * любом экране и уходит за правый край блока. Карточки приподняты и при
+ * наведении поднимаются ещё — предметы на поверхности, а не ячейки сетки.
+ */
 export async function FeaturedCollection({
   products,
   categoryLabels,
@@ -66,40 +34,58 @@ export async function FeaturedCollection({
   if (products.length === 0) return null;
 
   return (
-    <Section id="featured">
+    <Section id="featured" rhythm="block">
       <Container>
-        <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
-          <div>
-            <p className="t-label text-ink-muted">
-              {collection?.subtitle ?? t.home.collectionLabel}
-            </p>
-            <h2 className="t-h1 mt-4">
-              {collection?.title ?? t.misc.catalogLabel}
-            </h2>
+        <Aivan
+          surface="green"
+          pad="none"
+          ornament="corner"
+          ornamentOrigin={[100, 100]}
+        >
+          <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 px-[var(--block-pad)] pt-[var(--block-pad)]">
+            <Reveal>
+              <p className="t-label flex items-center gap-3 text-ink-accent">
+                <span className="t-num text-[1.35rem] text-gold-ink">
+                  {pad(products.length)}
+                </span>
+                <span aria-hidden="true" className="h-px w-8 bg-gold/60" />
+                {collection?.subtitle ?? t.home.collectionLabel}
+              </p>
+              <h2 className="t-display-2 mt-5 max-w-[14ch] text-balance">
+                {collection?.title ?? t.misc.catalogLabel}
+              </h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <Button href="/catalog" variant="secondary" arrow>
+                {t.home.seeAll}
+              </Button>
+            </Reveal>
           </div>
-          <Button href="/catalog" variant="ghost">
-            {t.home.seeAll}
-          </Button>
-        </div>
 
-        <ul className="mt-14 grid grid-cols-2 gap-x-[var(--gutter)] gap-y-14 lg:mt-20 lg:grid-cols-12 lg:gap-y-6">
-          {products.slice(0, layout.length).map((product, index) => {
-            const cell = layout[index];
-            return (
+          <ul className="rail mt-10 gap-4 px-[var(--block-pad)] pb-[var(--block-pad)] lg:mt-14 lg:gap-6">
+            {products.map((product, index) => (
               <Reveal
                 as="li"
                 key={product.id}
-                delay={index * 90}
-                className={cell.cell}
+                delay={Math.min(index, 4) * 90}
+                className={cn(
+                  index === 0
+                    ? "w-[78vw] max-w-[26rem] sm:w-[24rem] lg:w-[28rem]"
+                    : "w-[62vw] max-w-[20rem] sm:w-[17rem] lg:w-[19rem]",
+                  index !== 0 && "self-end",
+                )}
               >
                 <ProductCard
                   product={product}
                   categoryLabel={categoryLabels[product.categorySlug]}
-                  ratio={cell.ratio}
-                  tone={cell.tone}
-                  plateMotif={cell.motif}
-                  sizes={cell.sizes}
-                  priority={index === 0}
+                  ratio={index === 0 ? "editorial" : "portrait"}
+                  sizes={
+                    index === 0
+                      ? "(min-width: 1024px) 28rem, 78vw"
+                      : "(min-width: 1024px) 19rem, 62vw"
+                  }
+                  priority={index < 2}
+                  framed
                   action={
                     <FavoriteButton
                       productId={product.id}
@@ -108,18 +94,21 @@ export async function FeaturedCollection({
                   }
                 />
               </Reveal>
-            );
-          })}
-        </ul>
+            ))}
 
-        {/* Редакционная линейка вместо обычной кнопки по центру */}
-        <div className="mt-20 flex items-center gap-6 lg:mt-28">
-          <span className="h-px flex-1 bg-hairline" aria-hidden="true" />
-          <Button href="/catalog" variant="secondary">
-            {t.home.allCollection}
-          </Button>
-          <span className="h-px flex-1 bg-hairline" aria-hidden="true" />
-        </div>
+            {/* Хвост рейки: ссылка на всю коллекцию как ещё один предмет */}
+            <li className="flex w-[44vw] max-w-[14rem] items-stretch sm:w-[12rem]">
+              <Button
+                href="/catalog"
+                variant="secondary"
+                className="h-auto w-full flex-col gap-3 rounded-[var(--radius-card)] py-10"
+                arrow
+              >
+                {t.home.allCollection}
+              </Button>
+            </li>
+          </ul>
+        </Aivan>
       </Container>
     </Section>
   );

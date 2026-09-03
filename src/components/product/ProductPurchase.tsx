@@ -135,7 +135,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
   return (
     <>
       <div className="flex flex-col">
-        <p className="t-label text-ink-muted">
+        <p className="t-label text-gold-ink">
           ARUS DOMOD{product.article ? ` · ${product.article}` : ""}
         </p>
         <h1 className="t-h1 mt-3">{product.title}</h1>
@@ -175,12 +175,12 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
                       <label
                         key={item.id}
                         className={cn(
-                          "t-label inline-flex h-11 min-w-[3.25rem] cursor-pointer items-center justify-center rounded-xs border px-3",
+                          "t-label inline-flex h-11 min-w-[3.25rem] cursor-pointer items-center justify-center rounded-pill border px-4",
                           "transition-colors duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
                           "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--focus-ring)]",
                           active
-                            ? "border-accent text-ink-accent"
-                            : "border-hairline text-ink-secondary hover:border-strong hover:text-ink",
+                            ? "border-accent bg-accent text-accent-contrast"
+                            : "border-strong text-ink-secondary hover:border-accent hover:text-ink",
                         )}
                       >
                         <input
@@ -212,7 +212,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
               <FavoriteButton
                 productId={product.id}
                 productTitle={product.title}
-                className="shrink-0 border border-hairline"
+                className="shrink-0"
               />
             </div>
 
@@ -227,7 +227,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
           <section
             aria-labelledby={`${groupId}-rent`}
             data-surface="green"
-            className="mt-8 border border-hairline p-5"
+            className="aivan mt-8 p-5 sm:p-6"
           >
             <div className="flex items-baseline justify-between gap-4">
               <h2 id={`${groupId}-rent`} className="t-label text-ink-accent">
@@ -261,7 +261,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
                 <FavoriteButton
                   productId={product.id}
                   productTitle={product.title}
-                  className="shrink-0 border border-hairline"
+                  className="shrink-0"
                 />
               ) : null}
             </div>
@@ -277,15 +277,16 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
 
       {/* Липкая панель телефона: покупка — в корзину, прокат — в WhatsApp */}
       <div
+        data-surface="green"
         className={cn(
-          "fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-page/95 backdrop-blur-[8px] lg:hidden",
+          "aivan fixed inset-x-3 bottom-3 z-30 rounded-[var(--radius-card)] bg-page shadow-overlay lg:hidden",
           "transition-[transform,opacity] duration-[var(--dur-base)] ease-[var(--ease-quiet)]",
           stuck
             ? "translate-y-0 opacity-100"
             : "pointer-events-none translate-y-full opacity-0",
         )}
       >
-        <div className="flex items-center gap-3 px-[var(--gutter)] py-3">
+        <div className="flex items-center gap-3 px-4 py-3">
           <span className="min-w-0 flex-1">
             <span className="t-label block truncate text-ink-muted">
               {product.title}

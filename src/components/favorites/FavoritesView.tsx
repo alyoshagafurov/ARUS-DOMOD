@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/motion/Reveal";
-import { OrnamentBand } from "@/components/ornament/Ornament";
 import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
@@ -57,7 +56,7 @@ export function FavoritesView() {
 
       {empty ? (
         <div className="flex flex-col items-center py-24 text-center lg:py-32">
-          <OrnamentBand motif="gul" height={12} className="max-w-[9rem]" />
+          <span aria-hidden="true" className="hoshiya-seam max-w-[9rem]" />
           <p className="t-h2 mt-9 max-w-[22ch] text-balance">
             {t.favorites.empty}
           </p>

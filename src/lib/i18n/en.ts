@@ -38,6 +38,24 @@ export const en: Dictionary = {
     marquee: "Sale and rental",
   },
   home: {
+    facts: {
+      looks: (n: number) => `${n} ${n === 1 ? "look" : "looks"}`,
+      sections: (n: number) => `${n} ${n === 1 ? "section" : "sections"}`,
+      days: (n: number) => `${n} rental ${n === 1 ? "day" : "days"}`,
+      languages: (n: number) => `${n} ${n === 1 ? "language" : "languages"}`,
+    },
+    storeLabel: "Store",
+    storeTitle: "We are in Dushanbe",
+    storeLead:
+      "Ask for the address and opening hours by phone or WhatsApp — we will answer and tell you how to get here.",
+    buyTitle: "Order online",
+    buyLead:
+      "Choose a look on the site — we confirm everything else personally.",
+    flow: ["Website", "Confirmation", "Payment", "Delivery or pickup", "You"],
+    rentTitle: "Rental — in store only",
+    rentLead: "Rental terms are simple and the same for every look.",
+    lookCard: "Look",
+    campaign: "Season campaign",
     heroLine: "Wedding looks for brides.",
     heroSub: "A catalogue of looks to buy or rent.",
     heroCta: "See the looks",

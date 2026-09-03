@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { OrnamentBand } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { getDictionary } from "@/lib/i18n/server";
 
@@ -11,7 +10,7 @@ export default async function ProductNotFound() {
   const t = await getDictionary();
   return (
     <Container className="flex flex-col items-center py-32 text-center lg:py-48">
-      <OrnamentBand motif="mavj" height={10} className="max-w-[10rem]" />
+      <span aria-hidden="true" className="hoshiya-seam max-w-[10rem]" />
       <h1 className="t-h1 mt-10 max-w-[16ch] text-balance">
         {t.meta.notFound}
       </h1>

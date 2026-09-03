@@ -1,8 +1,8 @@
+import { Aivan } from "@/components/layout/Aivan";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { getDictionary } from "@/lib/i18n/server";
-import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { contact, rental } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
@@ -34,14 +34,10 @@ export default async function RentalPage() {
 
   return (
     <>
-      <Section
-        surface="muted"
-        className="overflow-hidden pt-[calc(var(--header-h)+2rem)]"
-      >
-        <OrnamentField motif="damask" />
-        <Container width="narrow" className="relative">
+      <Section rhythm="block">
+        <Container width="narrow">
           <Reveal>
-            <p className="t-label-wide text-ink-accent">{t.nav.rental}</p>
+            <p className="t-label-wide text-gold-ink">{t.nav.rental}</p>
             <h1 className="t-display-2 mt-5 max-w-[14ch] text-balance">
               {t.pages.rentalTitle}
             </h1>
@@ -75,9 +71,11 @@ export default async function RentalPage() {
               className="mt-10 lg:col-span-4 lg:col-start-9 lg:mt-0"
               delay={80}
             >
-              <div
-                data-surface="green"
-                className="relative border border-hairline p-6"
+              <Aivan
+                surface="green"
+                pad="tight"
+                ornament="corner"
+                ornamentOrigin={[100, 0]}
               >
                 <p className="t-label text-ink-accent">{t.pages.rentalHow}</p>
                 <ol className="t-body-sm mt-4 flex flex-col gap-3 text-ink-secondary">
@@ -93,7 +91,7 @@ export default async function RentalPage() {
                     {t.pages.seeLooks}
                   </Button>
                 </div>
-              </div>
+              </Aivan>
             </Reveal>
           </div>
         </Container>

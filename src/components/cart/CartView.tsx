@@ -6,7 +6,6 @@ import { CartLines } from "@/components/cart/CartLines";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { useCartProducts } from "@/components/cart/useCartProducts";
 import { Container } from "@/components/layout/Container";
-import { OrnamentBand } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 
 /**
@@ -27,7 +26,7 @@ export function CartView() {
 
       {empty ? (
         <div className="flex flex-col items-center py-24 text-center lg:py-32">
-          <OrnamentBand motif="mavj" height={10} className="max-w-[9rem]" />
+          <span aria-hidden="true" className="hoshiya-seam max-w-[9rem]" />
           <p className="t-h2 mt-9 max-w-[20ch] text-balance">{t.cart.empty}</p>
           <p className="t-body-sm mt-4 max-w-[38ch] text-ink-secondary">
             {t.cart.emptyHint}
@@ -48,8 +47,11 @@ export function CartView() {
           </div>
 
           <div className="lg:col-span-4 lg:col-start-9">
-            <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
-              <h2 className="t-label text-ink-muted">{t.cart.summary}</h2>
+            <div
+              data-surface="day"
+              className="card card--float p-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:p-8"
+            >
+              <h2 className="t-label text-gold-ink">{t.cart.summary}</h2>
               <div className="mt-5 border-t border-hairline pt-4">
                 <CartSummary totals={totals} />
               </div>

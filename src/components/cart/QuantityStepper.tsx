@@ -23,7 +23,7 @@ export function QuantityStepper({
     "inline-flex h-11 w-11 items-center justify-center text-ink-secondary transition-colors duration-[var(--dur-fast)] hover:text-ink disabled:opacity-35 disabled:hover:text-ink-secondary";
 
   return (
-    <div className="inline-flex items-center border border-hairline">
+    <div className="inline-flex items-center rounded-md border border-strong">
       <button
         type="button"
         onClick={() => onChange(value - 1)}

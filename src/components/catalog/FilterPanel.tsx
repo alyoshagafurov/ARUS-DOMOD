@@ -187,11 +187,11 @@ export function FilterPanel({
                       onChange({ sizes: toggle(filters.sizes, value) })
                     }
                     className={cn(
-                      "t-label h-11 min-w-[3.25rem] rounded-xs border px-3",
+                      "t-label h-11 min-w-[3.25rem] rounded-pill border px-4",
                       "transition-colors duration-[var(--dur-fast)]",
                       checked
-                        ? "border-accent text-ink-accent"
-                        : "border-hairline text-ink-secondary hover:border-strong hover:text-ink",
+                        ? "border-accent bg-accent text-accent-contrast"
+                        : "border-strong text-ink-secondary hover:border-accent hover:text-ink",
                     )}
                   >
                     {value}

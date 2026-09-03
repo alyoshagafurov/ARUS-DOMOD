@@ -233,7 +233,7 @@ export function ProductViewer({
               aria-label={t.product.prevFrame}
               className={cn(
                 "absolute left-[var(--gutter)] top-1/2 hidden h-12 w-12 -translate-y-1/2",
-                "items-center justify-center rounded-xs bg-page/80 text-ink",
+                "items-center justify-center rounded-md bg-page/80 text-ink",
                 "transition-opacity duration-[var(--dur-fast)] disabled:opacity-30 lg:flex",
               )}
             >
@@ -246,7 +246,7 @@ export function ProductViewer({
               aria-label={t.product.nextFrame}
               className={cn(
                 "absolute right-[var(--gutter)] top-1/2 hidden h-12 w-12 -translate-y-1/2",
-                "items-center justify-center rounded-xs bg-page/80 text-ink",
+                "items-center justify-center rounded-md bg-page/80 text-ink",
                 "transition-opacity duration-[var(--dur-fast)] disabled:opacity-30 lg:flex",
               )}
             >
@@ -266,7 +266,7 @@ export function ProductViewer({
               aria-label={t.product.frame(position + 1)}
               aria-current={position === index ? "true" : undefined}
               className={cn(
-                "relative h-16 w-12 overflow-hidden rounded-xs border transition-colors",
+                "relative h-16 w-12 overflow-hidden rounded-md border transition-colors",
                 "duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
                 position === index
                   ? "border-accent"

@@ -1,13 +1,17 @@
 /* =========================================================================
-   ARUS DOMOD — базовый слой.
-   Только элементные стили, типографические классы, фокус и движение.
-   Никаких компонентов: они живут в src/components.
+   ARUS DOMOD — базовый слой системы «САҲН».
+   Элементные стили, типографические роли, объёмы (айвон, карточка),
+   фокус и примитивы движения. Компоненты живут в src/components.
    ========================================================================= */
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    /* Заголовки-переростки намеренно выходят за край; горизонтальной
+       прокрутки страница при этом давать не должна. clip не создаёт
+       scroll-контейнер, поэтому sticky продолжает работать. */
+    overflow-x: clip;
   }
 
   body {
@@ -20,9 +24,10 @@
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
   }
 
-  /* Фон наследует поверхность секции — так работает чередование день/ночь */
+  /* Фон и текст наследуют поверхность: белый двор, айвон или ниша */
   [data-surface] {
     background-color: var(--surface-page);
     color: var(--text-primary);
@@ -35,11 +40,10 @@
 
   :focus-visible {
     outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
-    border-radius: var(--radius-xs);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
   }
 
-  /* Убираем «мышиный» фокус, но оставляем клавиатурный */
   :focus:not(:focus-visible) {
     outline: none;
   }
@@ -67,18 +71,28 @@
 }
 
 /* =========================================================================
-   Типографические роли. Каждый текст на сайте обязан быть одной из ролей —
+   Типографические роли. Каждый текст обязан быть одной из ролей —
    произвольные size/leading в разметке запрещены.
    ========================================================================= */
 @layer components {
+  .t-giant,
   .t-display-1,
   .t-display-2,
   .t-h1,
   .t-h2,
-  .t-h3 {
+  .t-h3,
+  .t-num {
     font-family: var(--font-display);
     font-weight: 400;
     text-wrap: balance;
+  }
+
+  /* Имя дома на всю ширину — подвал и финальные развороты */
+  .t-giant {
+    font-size: var(--text-giant);
+    line-height: 0.82;
+    letter-spacing: -0.02em;
+    text-wrap: nowrap;
   }
 
   .t-display-1 {
@@ -111,6 +125,13 @@
     letter-spacing: var(--tracking-heading);
   }
 
+  /* Крупная цифра антиквой: номер образа, коллекции, шага */
+  .t-num {
+    font-variant-numeric: lining-nums tabular-nums;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+
   .t-lead {
     font-size: var(--text-body-lg);
     line-height: var(--leading-body);
@@ -134,7 +155,7 @@
     color: var(--text-muted);
   }
 
-  /* Микро-заголовок: единственный уместный caps в макете */
+  /* Микро-заголовок: единственный уместный caps */
   .t-label {
     font-family: var(--font-sans);
     font-size: var(--text-label);
@@ -153,7 +174,13 @@
     text-transform: uppercase;
   }
 
-  /* Цена: табличные цифры, чтобы колонки карточек не «плясали» */
+  /* Вертикальная подпись на рейке айвона: читается снизу вверх */
+  .t-vertical {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  /* Цена: табличные цифры, иначе колонки карточек «пляшут» */
   .t-price {
     font-family: var(--font-sans);
     font-variant-numeric: tabular-nums;
@@ -165,16 +192,57 @@
     max-width: var(--container-text);
     text-wrap: pretty;
   }
+
+  /* ---------- Объёмы -----------------------------------------------------
+     Айвон — зелёный блок на белом дворе. Тень трёхслойная и падает на
+     белое; внутри — тонкая кромка: блик сверху, тень у пола. */
+  .aivan {
+    position: relative;
+    isolation: isolate;
+    border-radius: var(--radius-block);
+    box-shadow: var(--shadow-block), var(--shadow-inset);
+  }
+
+  /* Арка: верхние углы шире — силуэт айвона, а не карточки */
+  .aivan--arch {
+    border-top-left-radius: var(--radius-arch);
+    border-top-right-radius: var(--radius-arch);
+  }
+
+  /* Карточка — белый предмет, лежащий на поверхности */
+  .card {
+    position: relative;
+    background-color: var(--surface-raised);
+    color: var(--text-primary);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card--float {
+    box-shadow: var(--shadow-float);
+  }
+
+  /* Подъём при наведении: 4px и тень отвечает */
+  .lift {
+    transition:
+      transform var(--dur-base) var(--ease-quiet),
+      box-shadow var(--dur-base) var(--ease-quiet);
+  }
+
+  .lift:hover,
+  .lift:focus-within {
+    transform: translateY(var(--lift-y));
+    box-shadow: var(--shadow-card-hover);
+  }
 }
 
 /* =========================================================================
-   Движение. Три примитива, больше в фундаменте не нужно.
+   Движение. Медленно, тихо, без пружин.
    ========================================================================= */
 @layer utilities {
-  /* Появление при скролле — управляется <Reveal /> через data-revealed */
   .motion-reveal {
     opacity: 0;
-    transform: translate3d(0, 18px, 0);
+    transform: translate3d(0, 22px, 0);
     transition:
       opacity var(--dur-slow) var(--ease-quiet),
       transform var(--dur-slow) var(--ease-quiet);
@@ -187,12 +255,27 @@
     transform: none;
   }
 
-  /* Появление при загрузке — только для первого экрана, где ждать скролла
-     нечего. Чистый CSS: у hero не должно быть ни кадра пустоты. */
+  /* Линия, растущая из точки: включается появлением родителя */
+  .motion-line {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-veil) var(--ease-silk);
+    transition-delay: var(--line-delay, 120ms);
+  }
+
+  .motion-line--y {
+    transform: scaleY(0);
+    transform-origin: center top;
+  }
+
+  .motion-reveal[data-revealed="true"] .motion-line {
+    transform: none;
+  }
+
   @keyframes arus-enter {
     from {
       opacity: 0;
-      transform: translate3d(0, 14px, 0);
+      transform: translate3d(0, 18px, 0);
     }
     to {
       opacity: 1;
@@ -211,20 +294,17 @@
     }
   }
 
+  /* Первый экран: появление без ожидания прокрутки */
   .motion-enter {
     animation: arus-enter var(--dur-slow) var(--ease-quiet) both;
     animation-delay: var(--enter-delay, 0ms);
   }
 
-  /* Кадр не «включается», а проявляется — как ткань на свету */
   .motion-veil {
     animation: arus-veil var(--dur-veil) var(--ease-quiet) both;
     animation-delay: var(--enter-delay, 0ms);
   }
 
-  /* Появление панели: снизу на телефоне, справа на широком экране.
-     Закрытие без анимации намеренно — уход панели пользователь уже не
-     разглядывает, а AnimatePresence ради него тянуть незачем. */
   @keyframes arus-rise {
     from {
       opacity: 0;
@@ -270,17 +350,28 @@
     animation: arus-fade var(--dur-fast) var(--ease-quiet) both;
   }
 
-  /* Медленный наезд на изображение товара */
+  /* Медленный наезд на кадр внутри .group */
   .motion-zoom {
     transition: transform var(--dur-veil) var(--ease-quiet);
   }
 
   .group:hover .motion-zoom,
-  .group:focus-visible .motion-zoom {
+  .group:focus-visible .motion-zoom,
+  .group:focus-within .motion-zoom {
     transform: scale(var(--zoom-hover));
   }
 
-  /* Подчёркивание, которое растёт от левого края */
+  /* Стрелка уходит вперёд вместе с наведением на .group */
+  .motion-arrow {
+    transition: transform var(--dur-base) var(--ease-quiet);
+  }
+
+  .group:hover .motion-arrow,
+  .group:focus-within .motion-arrow {
+    transform: translateX(6px);
+  }
+
+  /* Подчёркивание, растущее от левого края */
   .motion-underline {
     background-image: linear-gradient(currentColor, currentColor);
     background-repeat: no-repeat;
@@ -295,21 +386,28 @@
   }
 
   /*
-   * Зона нажатия строчной ссылки в списках — подвал, меню, хлебные крошки.
-   *
-   * Растёт только область касания: текст остаётся своей роли, поэтому
-   * шрифтовая композиция подвала не меняется. Палец получает полные 44px,
-   * курсор — прежнюю плотную строку.
-   *
-   * Порог снятия — тип указателя, а не ширина экрана. По ширине планшет в
-   * альбомной ориентации считался «десктопом» и терял тач-зоны: на 1024px
-   * ссылки подвала схлопывались до 25px, хотя нажимают их пальцем.
-   *
-   * Подчёркивание при этом обязано остаться под текстом: у .motion-underline
-   * оно рисуется по нижнему краю фонового бокса, и в растянутой строке
-   * уехало бы на 13px вниз. Поэтому подчёркивается вложенный span, а строка
-   * лишь передаёт ему наведение и фокус.
+   * Параллакс кадра по прокрутке — только там, где браузер умеет
+   * scroll-driven animations. Прочие получают неподвижный кадр:
+   * это прогрессивное улучшение, а не условие композиции.
    */
+  @supports (animation-timeline: view()) {
+    @keyframes arus-drift {
+      from {
+        transform: translate3d(0, var(--drift, 6%), 0);
+      }
+      to {
+        transform: translate3d(0, calc(var(--drift, 6%) * -1), 0);
+      }
+    }
+
+    .motion-drift {
+      animation: arus-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+
+  /* Зона нажатия строчной ссылки: 44px пальцу, плотная строка курсору */
   .tap-row {
     display: flex;
     align-items: center;
@@ -327,19 +425,9 @@
     }
   }
 
-  /*
-   * Иконка в шапке и подобные ей кнопки без подписи.
-   *
-   * Сама иконка мелкая — рамки у неё нет намеренно, иначе шапка
-   * превращается в ряд квадратов. Нажимаемость показывается движением:
-   * при наведении и удержании под иконкой проступает тихая подложка.
-   *
-   * Подложка выводится из currentColor, а не из токена поверхности: над
-   * прозрачной шапкой поверх фотографии плотный квадрат читался бы как
-   * плашка, а полупрозрачная примесь одинаково тиха и на дне, и на ночи.
-   */
+  /* Иконка без подписи: нажимаемость показана подложкой */
   .tap-icon {
-    border-radius: 2px;
+    border-radius: var(--radius-pill);
     transition:
       background-color var(--dur-fast) var(--ease-quiet),
       color var(--dur-fast) var(--ease-quiet);
@@ -351,6 +439,24 @@
 
   .tap-icon:active {
     background-color: color-mix(in srgb, currentColor 15%, transparent);
+  }
+
+  /* Горизонтальная рейка со snap — без полосы прокрутки */
+  .rail {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
   }
 }
 
@@ -368,8 +474,13 @@
     scroll-behavior: auto !important;
   }
 
-  .motion-reveal {
+  .motion-reveal,
+  .motion-line {
     opacity: 1;
     transform: none;
+  }
+
+  .motion-drift {
+    animation: none;
   }
 }

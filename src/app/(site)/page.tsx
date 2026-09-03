@@ -1,52 +1,39 @@
-import { BrandStatement } from "@/components/home/BrandStatement";
 import { CategoryNavigation } from "@/components/home/CategoryNavigation";
 import { ClosingInvitation } from "@/components/home/ClosingInvitation";
 import { CollectionIntro } from "@/components/home/CollectionIntro";
 import { FeaturedCollection } from "@/components/home/FeaturedCollection";
 import { HeritageStory } from "@/components/home/HeritageStory";
 import { HomeHero } from "@/components/home/HomeHero";
-import { HowItWorks } from "@/components/home/HowItWorks";
-import { RentalBand } from "@/components/home/RentalBand";
-import { SocialProof } from "@/components/home/SocialProof";
+import { StoreBlock } from "@/components/home/StoreBlock";
+import { TwoWays } from "@/components/home/TwoWays";
 import { catalog } from "@/lib/catalog";
-import { getLocale } from "@/lib/i18n/server";
 import { categoryTitle } from "@/lib/i18n/labels";
+import { getLocale } from "@/lib/i18n/server";
 
 /**
- * Главная — журнальный разворот, внутри которого стоит магазин.
+ * Главная — путь по двору дома.
  *
- * Последовательность ролей, а не череда одинаковых прямоугольников:
+ *   АЙВОН      первый экран: имя больше объёма, кадр выходит на белое
+ *   МАНИФЕСТ   белая пауза: фраза дома и маленький кадр ткани
+ *   РАЗДЕЛЫ    редакционная навигация: большая плитка, лесенка, номера
+ *   ПОДБОРКА   зелёный айвон с рейкой белых карточек-предметов
+ *   ДВА ПУТИ   покупка (движение) и прокат (покой) — намеренно разные
+ *   НАСЛЕДИЕ   кадр и айвон внахлёст, настоящие цифры дома
+ *   МАГАЗИН    Душанбе, два телефона-карточки, соцсети
+ *   ФИНАЛ      широкий кадр пары с плавающей карточкой и одной кнопкой
  *
- *   БРЕНД      hero на поле логотипа — имя, функция, действие
- *   РАЗВОРОТ   крупный план ткани: материал и мастерство вблизи
- *   РАЗДЕЛЫ    плотный ряд категорий
- *   КОЛЛЕКЦИЯ  витрина образов
- *   НАСЛЕДИЕ   кадр торжества, уходящий за край экрана
- *   ПРОКАТ     отдельная полоса: прокат — не второй пункт покупки
- *   КАК КУПИТЬ пять шагов и получение
- *   ТИШИНА     архивный текстиль — единственная светлая пауза страницы
- *   СЕТЬ       профиль и ссылки, без поддельной ленты
- *   ДЕЙСТВИЕ   финальный кадр пары и одна кнопка
- *
- * Меняется не только содержимое: у каждой роли своя плотность, свой масштаб
- * и своя поверхность. Средой служит бирюза логотипа, светлое появляется
- * ровно один раз — на текстильном полотне, — чтобы пауза читалась как пауза.
- * Светлой эту секцию делает не прихоть ритма, а сам кадр: архивная ткань
- * почти вся кремовая, и тёмный текст на ней единственно возможен.
- *
- * Секции больше не подшиваются тканой лентой: границу держит золотая
- * волосяная линия, а орнамент ушёл в тональный грунт полей.
- *
- * Данные берутся только через catalog() — ни один компонент ниже не знает,
- * что за ним сейчас стоят демонстрационные записи.
+ * Белое между блоками — часть композиции: у каждого объёма своя тень,
+ * своя высота и свой сдвиг, поэтому страница читается как путь, а не как
+ * стопка одинаковых прямоугольников.
  */
 export default async function HomePage() {
   const repository = catalog();
 
-  const [featured, categories, collections] = await Promise.all([
+  const [featured, categories, collections, firstPage] = await Promise.all([
     repository.listFeatured(),
     repository.listCategories(),
     repository.listCollections(),
+    repository.listProducts({ pageSize: 1 }),
   ]);
 
   const locale = await getLocale();
@@ -59,21 +46,20 @@ export default async function HomePage() {
 
   return (
     <>
-      <HomeHero />
+      <HomeHero lookCount={firstPage.total} />
       <CollectionIntro />
       <CategoryNavigation categories={categories} />
-
       <FeaturedCollection
         products={featured}
         categoryLabels={categoryLabels}
         collection={collections[0]}
       />
-
-      <HeritageStory />
-      <RentalBand />
-      <HowItWorks />
-      <BrandStatement />
-      <SocialProof />
+      <TwoWays />
+      <HeritageStory
+        lookCount={firstPage.total}
+        sectionCount={categories.length}
+      />
+      <StoreBlock />
       <ClosingInvitation />
     </>
   );

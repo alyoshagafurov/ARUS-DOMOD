@@ -29,7 +29,7 @@ export async function RelatedProducts({
   );
 
   return (
-    <Section surface="muted" edge="top" edgeMotif="mavj" rhythm="block">
+    <Section rhythm="block">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
           <h2 className="t-h2">{t.product.related}</h2>

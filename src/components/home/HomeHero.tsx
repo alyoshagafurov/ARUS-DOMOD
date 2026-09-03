@@ -1,132 +1,144 @@
+import Link from "next/link";
 import type { CSSProperties } from "react";
 
+import { Aivan } from "@/components/layout/Aivan";
 import { Container } from "@/components/layout/Container";
-import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
+import { ArrowIcon } from "@/components/ui/icons";
 import { Media } from "@/components/ui/Media";
-
+import { rental } from "@/lib/config/site";
+import { formatMoney } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/server";
 import { photo } from "@/lib/photos";
 
 const delay = (ms: number) => ({ "--enter-delay": `${ms}ms` }) as CSSProperties;
 
+interface HomeHeroProps {
+  /** Сколько образов в коллекции — настоящее число из базы */
+  lookCount: number;
+}
+
 /**
- * Первый экран — логотип, увеличенный до размера окна.
+ * Первый экран — айвон на белом дворе.
  *
- * Порядок разложен прямо со знака: поле бирюзы → кадр в нише → полоса
- * тишины → имя дома → чем он занимается. В логотипе между знаком и словом
- * лежит 11% высоты пустоты; здесь она такая же и служит композицией, а не
- * отступом.
+ * Это не «текст слева, фото справа»: на дворе стоит зелёный объём с арочным
+ * верхом, имя дома набрано больше объёма и упирается в его край, а кадр
+ * невесты стоит в нише и ВЫХОДИТ из айвона вниз, на белое, — как шлейф на
+ * логотипе пересекает венок. На кадре лежит плавающая карточка с условиями
+ * проката: главный факт бизнеса виден в первую секунду.
  *
- * Кадр живёт в ТОҚЧА — нише из золотой волосяной линии, РАЗОМКНУТОЙ с одной
- * стороны: рамка смещена наружу сверху и слева, а справа её нет вовсе, и
- * фотография уходит за границу. Это прямая цитата венка со знака — он тоже
- * открыт, и шлейф невесты пересекает его край.
- *
- * Затемняющих подложек здесь нет ни одной. Текст не лежит поверх кадра, а
- * стоит рядом на чистой бирюзе; шапка тоже не заезжает на фотографию —
- * секция начинается ниже её высоты, поэтому градиент ради читаемости
- * не потребовался.
- *
- * На телефоне это не сжатый десктоп: композиция вертикальная и идёт ровно в
- * порядке логотипа. На широком экране колонки расходятся, кадр встаёт справа
- * и продолжается за край окна.
+ * На телефоне это вертикальная сцена в том же порядке: имя → слово → кадр,
+ * кадр так же свешивается за нижний край блока.
  */
-export async function HomeHero() {
+export async function HomeHero({ lookCount }: HomeHeroProps) {
   const t = await getDictionary();
+  const priceFrom = formatMoney({
+    amount: rental.priceFromMinor,
+    currency: "TJS",
+  });
+
   return (
-    <section
-      data-surface="green"
-      className="relative isolate overflow-hidden pb-[var(--space-section-y)] pt-[calc(var(--header-h)+1rem)] lg:pt-[calc(var(--header-h)+3rem)]"
-    >
-      {/* Растительный дамаск — грунт поля, а не рисунок поверх него */}
-      <OrnamentField motif="damask" />
-
-      <Container className="relative">
-        <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-[var(--gutter)]">
-          {/* --- КАДР В НИШЕ ---------------------------------------------
-              На телефоне идёт первым: у логотипа знак тоже стоит над словом,
-              и фотография остаётся главным содержанием первого экрана. */}
-          <div className="order-1 lg:order-2 lg:col-span-7 lg:col-start-6 lg:-mr-[var(--gutter)]">
-            <div className="motion-veil relative">
-              <Media
-                image={photo("hero-tajik-royal-bride", t.alts.hero)}
-                ratio="auto"
-                priority
-                zoomOnHover={false}
-                /* Невеста занимает правые две трети кадра (в исходнике
-                   1334×1179 её фигура это x 580–1290), поэтому
-                   центрированный object-cover резал бы её пополам. Точка
-                   обрезки сохранена с проверенной версии. */
-                imageClassName="object-[80%_40%] xl:object-[78%_center]"
-                sizes="(min-width: 1024px) 58vw, 92vw"
-                className="h-[40svh] min-h-[280px] rounded-none lg:h-[74svh] lg:min-h-[520px]"
-              />
-
-              {/* Тоқча: рамка вынесена НАРУЖУ кадра с трёх сторон — только
-                  так волосяная линия видна на бирюзе, а не теряется в
-                  фотографии. Справа её нет вовсе: туда кадр и уходит. */}
-              <span
-                aria-hidden="true"
-                data-open="right"
-                className="toqcha -bottom-3 -left-3 -top-3 right-10 sm:-bottom-4 sm:-left-4 sm:-top-4 sm:right-16"
-              />
-            </div>
-          </div>
-
-          {/* --- СЛОВО ---------------------------------------------------- */}
-          <div className="order-2 pt-6 lg:order-1 lg:col-span-5 lg:pt-0">
+    <section className="relative pt-[calc(var(--header-h)+0.75rem)]">
+      <Container>
+        <Aivan
+          surface="green"
+          pad="none"
+          arch
+          clip={false}
+          ornament="corner"
+          ornamentOrigin={[0, 0]}
+          className="mb-16 lg:mb-24"
+        >
+          <div className="relative grid grid-cols-12 gap-x-[var(--gutter)] px-[var(--block-pad)] pb-0 pt-[calc(var(--block-pad)+1.5rem)] lg:min-h-[min(82svh,820px)] lg:pb-[var(--block-pad)]">
+            {/* Рейка: вертикальная подпись вдоль левого края (широкий экран) */}
             <p
-              className="motion-enter t-label-wide text-ink-accent"
-              style={delay(60)}
+              className="motion-enter t-label-wide t-vertical hidden self-end pb-2 text-ink-accent lg:col-span-1 lg:block"
+              style={delay(500)}
             >
-              {t.common.tagline}
-            </p>
-
-            <h1
-              className="motion-enter t-display-1 mt-4 leading-[0.94] tracking-[0.02em] lg:mt-5"
-              style={delay(140)}
-            >
-              ARUS <br />
-              DOMOD
-            </h1>
-
-            {/* Волосяная линия вместо отбивки: единственный разделитель системы */}
-            <span
-              aria-hidden="true"
-              className="motion-enter hoshiya-line mt-5 max-w-[7rem] lg:mt-7 lg:max-w-[calc(100%+var(--gutter))]"
-              style={delay(200)}
-            />
-
-            <p
-              className="motion-enter t-h3 mt-5 font-sans font-medium tracking-normal lg:mt-7"
-              style={delay(240)}
-            >
-              {t.home.heroLine}
-            </p>
-
-            <p
-              className="motion-enter t-lead mt-3 max-w-[34ch]"
-              style={delay(300)}
-            >
-              {t.home.heroSub}
-            </p>
-
-            <div className="motion-enter mt-7 lg:mt-9" style={delay(380)}>
-              <Button href="/catalog" size="lg">
-                {t.home.heroCta}
-              </Button>
-            </div>
-
-            <p
-              className="motion-enter t-caption mt-8 flex items-center gap-3"
-              style={delay(460)}
-            >
-              <span aria-hidden="true" className="h-px w-8 bg-strong" />
               {t.common.positioning} · {t.common.city}
             </p>
+
+            {/* Слово */}
+            <div className="col-span-12 flex flex-col justify-end lg:col-span-6 lg:col-start-2">
+              <p
+                className="motion-enter t-label flex items-center gap-3 text-ink-accent"
+                style={delay(60)}
+              >
+                <span className="t-num text-[1.35rem] text-gold-ink">01</span>
+                <span aria-hidden="true" className="h-px w-8 bg-gold/60" />
+                {t.misc.catalogLabel} · {t.home.facts.looks(lookCount)}
+              </p>
+
+              <h1
+                className="motion-enter t-display-1 mt-6 -ml-[0.04em] lg:mt-8"
+                style={delay(140)}
+              >
+                ARUS
+                <br />
+                DOMOD
+              </h1>
+
+              <p
+                className="motion-enter t-lead mt-6 max-w-[30ch] lg:mt-8"
+                style={delay(260)}
+              >
+                {t.home.heroLine} {t.home.heroSub}
+              </p>
+
+              <div
+                className="motion-enter mt-8 flex flex-wrap gap-3 lg:mt-10"
+                style={delay(360)}
+              >
+                <Button href="/catalog" size="lg" arrow>
+                  {t.home.heroCta}
+                </Button>
+                <Button href="/rental" variant="secondary" size="lg">
+                  {t.nav.rental}
+                </Button>
+              </div>
+            </div>
+
+            {/* Кадр в нише: выходит за нижний край айвона на белый двор */}
+            <div className="relative col-span-12 mt-10 lg:col-span-4 lg:col-start-9 lg:-mr-[calc(var(--block-pad)*0.5)] lg:mt-0 lg:self-end">
+              <div className="motion-veil relative -mb-12 lg:-mb-24 lg:translate-y-4">
+                <span
+                  aria-hidden="true"
+                  data-open="bottom"
+                  className="toqcha -inset-x-3 -top-3 bottom-8 lg:-inset-x-4 lg:-top-4"
+                />
+                <Media
+                  image={photo("hero-tajik-royal-bride", t.alts.hero)}
+                  ratio="portrait"
+                  radius="card"
+                  priority
+                  zoomOnHover={false}
+                  imageClassName="object-[78%_36%]"
+                  sizes="(min-width: 1024px) 34vw, 92vw"
+                  className="shadow-float"
+                />
+
+                {/* Плавающая карточка: условия проката — факт, а не слоган */}
+                <Link
+                  href="/rental"
+                  className="card card--float lift group absolute -left-3 bottom-7 flex max-w-[15rem] items-center gap-4 p-4 sm:-left-6 lg:-left-10"
+                  data-surface="day"
+                >
+                  <span className="flex flex-col gap-1">
+                    <span className="t-label text-gold-ink">
+                      {t.nav.rental}
+                    </span>
+                    <span className="t-h3">
+                      {t.rental.days(rental.maxDays)} · {t.rental.from}{" "}
+                      {priceFrom}
+                    </span>
+                    <span className="t-caption">{t.rental.inStoreShort}</span>
+                  </span>
+                  <ArrowIcon className="motion-arrow h-[1em] w-[1em] shrink-0 text-ink-accent" />
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
+        </Aivan>
       </Container>
     </section>
   );

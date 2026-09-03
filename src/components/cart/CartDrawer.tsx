@@ -61,7 +61,7 @@ function CartDrawerBody({ onClose }: { onClose: () => void }) {
             key={line.id}
             className="flex gap-4 border-b border-hairline py-4"
           >
-            <span className="relative aspect-[3/4] w-16 shrink-0 overflow-hidden bg-muted">
+            <span className="relative aspect-[3/4] w-16 shrink-0 overflow-hidden rounded-md bg-muted">
               {product.images[0] ? (
                 <Image
                   src={product.images[0].url}

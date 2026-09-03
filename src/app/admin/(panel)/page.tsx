@@ -32,10 +32,10 @@ export default async function AdminDashboard() {
 
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {tiles.map((tile) => (
-          <li key={tile.label} className="border border-hairline">
-            <Link href={tile.href} className="block p-5 hover:bg-muted">
+          <li key={tile.label} className="card lift">
+            <Link href={tile.href} className="block p-5">
               <span className="t-label text-ink-muted">{tile.label}</span>
-              <span className="t-display-2 mt-3 block tabular-nums">
+              <span className="t-num mt-3 block text-[clamp(2.5rem,4vw,3.5rem)] text-ink-accent">
                 {tile.value}
               </span>
             </Link>

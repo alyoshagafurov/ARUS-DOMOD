@@ -335,3 +335,8 @@ export function photo(slug: PhotoSlug, alt: string): ProductImage {
     blurDataURL: meta.blurDataURL,
   };
 }
+
+/** Есть ли кадр с таким слагом — для слагов, собранных из данных (cat-*) */
+export function hasPhoto(slug: string): slug is PhotoSlug {
+  return Object.prototype.hasOwnProperty.call(photoMeta, slug);
+}

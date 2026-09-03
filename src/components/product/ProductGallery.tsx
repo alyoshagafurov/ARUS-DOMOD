@@ -78,26 +78,31 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
             }}
             className={cn(
               "w-[88%] shrink-0 snap-start xs:w-[78%] lg:shrink",
-              position === 0 ? "lg:w-full" : "lg:w-[76%] lg:self-end",
+              position === 0 ? "lg:w-full" : "lg:-mt-16 lg:w-[72%] lg:self-end",
             )}
           >
             <button
               type="button"
               onClick={() => setViewer(position)}
               aria-label={t.product.openFrame(position + 1)}
-              className="group block w-full cursor-zoom-in text-left"
+              className="group lift block w-full cursor-zoom-in rounded-[var(--radius-card)] text-left"
             >
               <Media
                 image={image}
                 ratio="editorial"
+                radius="card"
                 priority={position === 0}
-                sizes="(min-width: 1024px) 46vw, 88vw"
+                sizes="(min-width: 1024px) 52vw, 88vw"
+                className="shadow-card"
               />
             </button>
 
             {position > 0 ? (
-              <p className="t-label mt-4 hidden text-ink-muted lg:block">
-                {t.product.detail} / {pad(position)}
+              <p className="t-label mt-4 hidden items-center gap-3 text-ink-muted lg:flex">
+                <span className="t-num text-[1.25rem] text-gold-ink">
+                  {pad(position + 1)}
+                </span>
+                {t.product.detail}
               </p>
             ) : null}
           </div>

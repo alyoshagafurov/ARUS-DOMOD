@@ -37,8 +37,8 @@ export function PaymentPlaceholder() {
             key={step}
             className="flex gap-4 border-b border-hairline py-4 first:border-t"
           >
-            <span className="t-price w-6 shrink-0 text-ink-accent">
-              {index + 1}
+            <span className="t-num w-8 shrink-0 text-[1.25rem] text-gold-ink">
+              0{index + 1}
             </span>
             <span className="t-body-sm text-ink-secondary">{step}</span>
           </li>

@@ -39,14 +39,14 @@ export function FavoriteButton({
       }
       onClick={toggle}
       className={cn(
-        "inline-flex h-11 w-11 items-center justify-center rounded-xs text-[0.95rem]",
+        "inline-flex h-11 w-11 items-center justify-center rounded-pill text-[0.95rem] shadow-raise",
         // Плашка непрозрачная: полупрозрачная поверх светлой съёмки
         // размывалась в бледный квадрат и читалась как недоделка.
-        "bg-page text-ink",
-        "transition-[color,background-color,opacity]",
+        "bg-white text-[var(--firuza-950)]",
+        "transition-[color,background-color,opacity,transform]",
         "duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
-        "hover:text-ink-accent",
-        active && "text-ink-accent",
+        "hover:-translate-y-0.5 hover:text-[var(--firuza-800)]",
+        active && "text-[var(--firuza-800)]",
         className,
       )}
     >
