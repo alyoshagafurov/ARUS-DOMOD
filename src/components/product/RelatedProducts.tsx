@@ -5,7 +5,8 @@ import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
 import type { Category, Product } from "@/types/catalog";
-import { getDictionary } from "@/lib/i18n/server";
+import { categoryTitle } from "@/lib/i18n/labels";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 
 interface RelatedProductsProps {
   products: Product[];
@@ -22,7 +23,10 @@ export async function RelatedProducts({
 }: RelatedProductsProps) {
   const t = await getDictionary();
   if (products.length === 0) return null;
-  const labels = new Map(categories.map((c) => [c.slug, c.title]));
+  const locale = await getLocale();
+  const labels = new Map(
+    categories.map((c) => [c.slug, categoryTitle(c, locale)]),
+  );
 
   return (
     <Section surface="muted" edge="top" edgeMotif="mavj" rhythm="block">

@@ -76,7 +76,10 @@ export type NavKey =
   | "delivery"
   | "contacts"
   | "favorites"
-  | "cart";
+  | "cart"
+  | "allLooks"
+  | "brideOutfits"
+  | "groomChapans";
 
 /** В навигации стоят только существующие маршруты. */
 export const primaryNav: NavLink[] = [
@@ -97,11 +100,19 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
   {
     title: "Коллекция",
     links: [
-      { href: "/catalog", label: "Все образы" },
-      { href: "/catalog/arus", label: "Наряды для невесты" },
-      { href: "/catalog/domod", label: "Чапаны для жениха" },
-      { href: "/catalog/zewar", label: "Украшения" },
-      { href: "/favorites", label: "Избранное" },
+      { href: "/catalog", label: "Все образы", key: "allLooks" },
+      {
+        href: "/catalog/arus",
+        label: "Наряды для невесты",
+        key: "brideOutfits",
+      },
+      {
+        href: "/catalog/domod",
+        label: "Чапаны для жениха",
+        key: "groomChapans",
+      },
+      { href: "/catalog/zewar", label: "Украшения", key: "jewelry" },
+      { href: "/favorites", label: "Избранное", key: "favorites" },
     ],
   },
   {

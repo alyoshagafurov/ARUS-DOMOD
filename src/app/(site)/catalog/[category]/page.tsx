@@ -10,6 +10,8 @@ import {
 } from "@/components/catalog/filters";
 import { Divider } from "@/components/ui/Divider";
 import { catalog } from "@/lib/catalog";
+import { categoryTitle as localizedCategoryTitle } from "@/lib/i18n/labels";
+import { getLocale } from "@/lib/i18n/server";
 
 /** Разделы известны заранее — маршруты можно отрисовать при сборке */
 export async function generateStaticParams() {
@@ -22,10 +24,11 @@ export async function generateMetadata({
 }: PageProps<"/catalog/[category]">) {
   const { category: slug } = await params;
   const category = await catalog().getCategoryBySlug(slug);
+  const locale = await getLocale();
   if (!category) return {};
 
   return {
-    title: category.title,
+    title: localizedCategoryTitle(category, locale),
     description: category.description,
   };
 }
@@ -40,6 +43,7 @@ export default async function CatalogCategoryPage({
   const { category: slug } = await params;
   const repository = catalog();
   const category = await repository.getCategoryBySlug(slug);
+  const locale = await getLocale();
   if (!category) notFound();
 
   const query = toQuery(
@@ -57,8 +61,8 @@ export default async function CatalogCategoryPage({
   return (
     <>
       <CatalogHeader
-        categoryTitle={category.title}
-        categoryTitleTg={category.titleTg}
+        categoryTitle={localizedCategoryTitle(category, locale)}
+        categoryTitleTg={locale === "tg" ? category.title : category.titleTg}
       />
       <Divider variant="ornament" motif="mavj" />
       <CatalogView

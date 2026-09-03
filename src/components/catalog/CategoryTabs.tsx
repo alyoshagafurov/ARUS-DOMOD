@@ -2,7 +2,8 @@
 
 import { OrnamentBand } from "@/components/ornament/Ornament";
 import { cn } from "@/lib/cn";
-import { useDictionary } from "@/lib/i18n/client";
+import { useDictionary, useLocale } from "@/lib/i18n/client";
+import { categoryTitle } from "@/lib/i18n/labels";
 import type { Category, FacetValue } from "@/types/catalog";
 
 interface CategoryTabsProps {
@@ -32,6 +33,7 @@ export function CategoryTabs({
   total,
 }: CategoryTabsProps) {
   const t = useDictionary();
+  const locale = useLocale();
   const countOf = new Map(counts.map((c) => [c.value, c.count]));
   const shown = categories.filter((category) => countOf.has(category.slug));
 
@@ -43,7 +45,7 @@ export function CategoryTabs({
     },
     ...shown.map((category) => ({
       slug: category.slug,
-      label: category.title,
+      label: categoryTitle(category, locale),
       count: countOf.get(category.slug) ?? 0,
     })),
   ];

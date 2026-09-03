@@ -16,6 +16,9 @@ export const en: Dictionary = {
     loading: "Loading…",
   },
   nav: {
+    allLooks: "All looks",
+    brideOutfits: "Bridal outfits",
+    groomChapans: "Groom's chapans",
     catalog: "Collections",
     bride: "Bride",
     groom: "Groom",

@@ -20,6 +20,9 @@ export const tg: Dictionary = {
     loading: "Боркунӣ…",
   },
   nav: {
+    allLooks: "Ҳамаи образҳо",
+    brideOutfits: "Либоси арӯс",
+    groomChapans: "Ҷомаи домод",
     catalog: "Коллексияҳо",
     bride: "Ба арӯс",
     groom: "Ба домод",

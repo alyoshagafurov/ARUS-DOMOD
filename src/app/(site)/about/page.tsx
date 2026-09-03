@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
-import { getDictionary } from "@/lib/i18n/server";
+import { categoryTitle } from "@/lib/i18n/labels";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
@@ -23,6 +24,7 @@ export async function generateMetadata() {
  * биографию бренда нельзя.
  */
 export default async function AboutPage() {
+  const locale = await getLocale();
   const [categories, t] = await Promise.all([
     catalog().listCategories(),
     getDictionary(),
@@ -97,10 +99,10 @@ export default async function AboutPage() {
                       href={`/catalog/${c.slug}`}
                       className="tap-row flex items-baseline justify-between gap-6 py-4 hover:text-ink-accent"
                     >
-                      <span className="t-h3">{c.title}</span>
-                      {c.titleTg ? (
+                      <span className="t-h3">{categoryTitle(c, locale)}</span>
+                      {(locale === "tg" ? c.title : c.titleTg) ? (
                         <span className="t-label text-ink-muted">
-                          {c.titleTg}
+                          {locale === "tg" ? c.title : c.titleTg}
                         </span>
                       ) : null}
                     </Link>

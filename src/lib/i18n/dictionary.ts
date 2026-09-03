@@ -23,6 +23,9 @@ export const ru = {
     loading: "Загрузка…",
   },
   nav: {
+    allLooks: "Все образы",
+    brideOutfits: "Наряды для невесты",
+    groomChapans: "Чапаны для жениха",
     catalog: "Коллекции",
     bride: "Невесте",
     groom: "Жениху",

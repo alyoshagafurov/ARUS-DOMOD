@@ -9,6 +9,8 @@ import { HowItWorks } from "@/components/home/HowItWorks";
 import { RentalBand } from "@/components/home/RentalBand";
 import { SocialProof } from "@/components/home/SocialProof";
 import { catalog } from "@/lib/catalog";
+import { getLocale } from "@/lib/i18n/server";
+import { categoryTitle } from "@/lib/i18n/labels";
 
 /**
  * Главная — журнальный разворот, внутри которого стоит магазин.
@@ -47,8 +49,12 @@ export default async function HomePage() {
     repository.listCollections(),
   ]);
 
+  const locale = await getLocale();
   const categoryLabels = Object.fromEntries(
-    categories.map((category) => [category.slug, category.title]),
+    categories.map((category) => [
+      category.slug,
+      categoryTitle(category, locale),
+    ]),
   );
 
   return (

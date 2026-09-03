@@ -4,6 +4,8 @@ import { Reveal } from "@/components/motion/Reveal";
 import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { ProductCard } from "@/components/product/ProductCard";
 import type { Category, Product } from "@/types/catalog";
+import { useLocale } from "@/lib/i18n/client";
+import { categoryTitle } from "@/lib/i18n/labels";
 
 /**
  * Раскладка каталога.
@@ -56,7 +58,10 @@ export function ProductGrid({
   categories,
   priorityCount = 3,
 }: ProductGridProps) {
-  const labels = new Map(categories.map((c) => [c.slug, c.title]));
+  const locale = useLocale();
+  const labels = new Map(
+    categories.map((c) => [c.slug, categoryTitle(c, locale)]),
+  );
 
   return (
     <ul className="grid grid-cols-2 gap-x-[var(--gutter)] gap-y-10 lg:grid-cols-12 lg:gap-y-12">

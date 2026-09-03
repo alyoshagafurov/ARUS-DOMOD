@@ -1,6 +1,7 @@
 "use client";
 
-import { useDictionary } from "@/lib/i18n/client";
+import { useDictionary, useLocale } from "@/lib/i18n/client";
+import { categoryTitle } from "@/lib/i18n/labels";
 import { useEffect, useState } from "react";
 
 import { Container } from "@/components/layout/Container";
@@ -22,6 +23,7 @@ import type { Category, Product } from "@/types/catalog";
  */
 export function FavoritesView() {
   const t = useDictionary();
+  const locale = useLocale();
   const ids = useFavoriteIds();
   const [all, setAll] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -44,7 +46,9 @@ export function FavoritesView() {
 
   const chosen = new Set(ids);
   const products = (all ?? []).filter((product) => chosen.has(product.id));
-  const labels = new Map(categories.map((c) => [c.slug, c.title]));
+  const labels = new Map(
+    categories.map((c) => [c.slug, categoryTitle(c, locale)]),
+  );
   const empty = all !== null && products.length === 0;
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
-import { useDictionary } from "@/lib/i18n/client";
+import { useDictionary, useLocale } from "@/lib/i18n/client";
+import { categoryTitle } from "@/lib/i18n/labels";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -43,6 +44,7 @@ export function SearchOverlay({
   onApply,
 }: SearchOverlayProps) {
   const t = useDictionary();
+  const locale = useLocale();
   const router = useRouter();
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -199,9 +201,11 @@ export function SearchOverlay({
                     onClick={onClose}
                     className="flex items-baseline justify-between gap-6 py-5"
                   >
-                    <span className="t-h3">{category.title}</span>
+                    <span className="t-h3">
+                      {categoryTitle(category, locale)}
+                    </span>
                     <span className="t-label text-ink-muted">
-                      {category.titleTg}
+                      {locale === "tg" ? category.title : category.titleTg}
                     </span>
                   </Link>
                 </li>

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
-import { getDictionary } from "@/lib/i18n/server";
+import { categoryTitle } from "@/lib/i18n/labels";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import type { OrnamentMotif } from "@/components/ornament/Ornament";
 import type { PlateTone } from "@/components/ui/FabricPlate";
 import { Media } from "@/components/ui/Media";
@@ -80,6 +81,7 @@ export async function CategoryNavigation({
   categories,
 }: CategoryNavigationProps) {
   const t = await getDictionary();
+  const locale = await getLocale();
   if (categories.length === 0) return null;
 
   return (
@@ -127,13 +129,13 @@ export async function CategoryNavigation({
                       )}
                     >
                       <span className="t-h2 text-[var(--shir-50)]">
-                        {category.titleTg}
+                        {locale === "tg" ? category.title : category.titleTg}
                       </span>
                     </span>
                   </div>
 
                   <div className="mt-4 flex items-baseline justify-between gap-4">
-                    <h3 className="t-h3">{category.title}</h3>
+                    <h3 className="t-h3">{categoryTitle(category, locale)}</h3>
                     <span className="t-label text-ink-muted">
                       {String(index + 1).padStart(2, "0")}
                     </span>
