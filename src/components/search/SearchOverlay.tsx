@@ -1,5 +1,7 @@
 "use client";
 
+import { useDictionary } from "@/lib/i18n/client";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -40,6 +42,7 @@ export function SearchOverlay({
   categories: provided,
   onApply,
 }: SearchOverlayProps) {
+  const t = useDictionary();
   const router = useRouter();
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -138,14 +141,14 @@ export function SearchOverlay({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Поиск по коллекции"
+      aria-label={t.catalog.searchTitle}
       className="motion-fade fixed inset-0 z-50 flex flex-col bg-page"
     >
       <div className="flex h-[var(--header-h)] shrink-0 items-center justify-end px-[var(--gutter)]">
         <button
           type="button"
           onClick={onClose}
-          aria-label="Закрыть поиск"
+          aria-label={t.misc.closeSearch}
           className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-[1rem] text-ink-secondary hover:text-ink"
         >
           <CloseIcon />
@@ -175,7 +178,7 @@ export function SearchOverlay({
               onChange={(event) => setTerm(event.target.value)}
               type="search"
               autoComplete="off"
-              placeholder="Образ, раздел или артикул"
+              placeholder={t.catalog.searchPlaceholder}
               className="t-h2 h-11 w-full bg-transparent outline-none placeholder:text-ink-muted"
             />
           </div>
@@ -183,7 +186,7 @@ export function SearchOverlay({
 
         {!searching ? (
           <div className="mt-14">
-            <p className="t-label text-ink-muted">Разделы</p>
+            <p className="t-label text-ink-muted">{t.misc.sectionsShort}</p>
             <ul className="mt-6 flex flex-col">
               {categories.map((category) => (
                 <li key={category.slug} className="border-b border-hairline">
@@ -259,7 +262,7 @@ export function SearchOverlay({
                     className="tap-row mt-8 w-fit text-ink-accent"
                   >
                     <span className="t-label motion-underline">
-                      Показать все {total}
+                      {t.catalog.showAll(total)}
                     </span>
                   </button>
                 ) : null}

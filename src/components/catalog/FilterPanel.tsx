@@ -3,14 +3,10 @@
 import { Button } from "@/components/ui/Button";
 import { Drawer } from "@/components/ui/Drawer";
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 import type { Availability, CatalogFacets, OfferKind } from "@/types/catalog";
 
-import {
-  availabilityLabels,
-  offerKindLabels,
-  priceBands,
-  type CatalogFilters,
-} from "./filters";
+import { priceBands, type CatalogFilters } from "./filters";
 
 interface FilterPanelProps {
   open: boolean;
@@ -93,6 +89,7 @@ export function FilterPanel({
   onReset,
   total,
 }: FilterPanelProps) {
+  const t = useDictionary();
   const bands = priceBands(facets.price);
   const toggle = <T,>(list: T[], value: T): T[] =>
     list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -101,21 +98,21 @@ export function FilterPanel({
     <Drawer
       open={open}
       onClose={onClose}
-      title="Фильтр"
+      title={t.catalog.filters}
       footer={
         <div className="flex items-center gap-3">
           <Button onClick={onClose} fullWidth>
-            Показать {total}
+            {t.catalog.show(total)}
           </Button>
           <Button onClick={onReset} variant="ghost" className="shrink-0 px-4">
-            Сбросить
+            {t.catalog.reset}
           </Button>
         </div>
       }
     >
       <div className="flex flex-col gap-8">
         {facets.offerKinds.length > 1 ? (
-          <Section title="Покупка или прокат">
+          <Section title={t.catalog.offerKind}>
             {facets.offerKinds.map(({ value, count }) => (
               <Option
                 key={value}
@@ -129,7 +126,7 @@ export function FilterPanel({
                         : (value as OfferKind),
                   })
                 }
-                label={offerKindLabels[value]}
+                label={value === "rental" ? t.cart.rental : t.cart.purchase}
                 count={count}
               />
             ))}
@@ -137,7 +134,7 @@ export function FilterPanel({
         ) : null}
 
         {bands.length > 0 ? (
-          <Section title="Цена">
+          <Section title={t.catalog.price}>
             {bands.map((band, index) => (
               <Option
                 key={band.label}
@@ -155,7 +152,7 @@ export function FilterPanel({
         ) : null}
 
         {facets.availability.length > 1 ? (
-          <Section title="Наличие">
+          <Section title={t.catalog.availability}>
             {facets.availability.map(({ value, count }) => (
               <Option
                 key={value}
@@ -169,7 +166,7 @@ export function FilterPanel({
                     ),
                   })
                 }
-                label={availabilityLabels[value]}
+                label={t.product.availability[value]}
                 count={count}
               />
             ))}
@@ -177,7 +174,7 @@ export function FilterPanel({
         ) : null}
 
         {facets.sizes.length > 0 ? (
-          <Section title="Размер">
+          <Section title={t.catalog.sizes}>
             <div className="flex flex-wrap gap-2 pt-1">
               {facets.sizes.map(({ value, count }) => {
                 const checked = filters.sizes.includes(value);

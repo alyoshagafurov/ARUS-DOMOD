@@ -3,17 +3,11 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
+import { getDictionary } from "@/lib/i18n/server";
 
 /** Путь заказа — по процессу, описанному клиентом. Без сроков и обещаний. */
-const steps = [
-  { title: "Выбираете", note: "Образ, размер и количество в каталоге" },
-  { title: "Оформляете заказ", note: "Имя, телефон, способ получения" },
-  { title: "Подтверждаем", note: "Администратор уточняет наличие и стоимость" },
-  { title: "Оплачиваете", note: "Напрямую администратору после подтверждения" },
-  { title: "Получаете", note: "Доставка или самовывоз в Душанбе" },
-];
-
-export function HowItWorksSteps() {
+export async function HowItWorksSteps() {
+  const { steps } = await getDictionary();
   return (
     <ol className="grid gap-px border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-5">
       {steps.map((s, i) => (
@@ -31,15 +25,16 @@ export function HowItWorksSteps() {
  * Как купить. Пять шагов — как решётка с золотыми швами: не пять карточек,
  * а одно поле, разделённое волосяными линиями.
  */
-export function HowItWorks() {
+export async function HowItWorks() {
+  const t = await getDictionary();
   return (
     <Section edge="top">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <Reveal>
-            <p className="t-label text-ink-accent">Как купить</p>
+            <p className="t-label text-ink-accent">{t.home.howLabel}</p>
             <h2 className="t-h1 mt-4 max-w-[16ch] text-balance">
-              Пять шагов до вашего образа
+              {t.home.howTitle}
             </h2>
           </Reveal>
           <Reveal delay={80}>
@@ -47,7 +42,7 @@ export function HowItWorks() {
               href="/delivery"
               className="t-label motion-underline text-ink-secondary"
             >
-              Доставка и получение
+              {t.nav.delivery}
             </Link>
           </Reveal>
         </div>

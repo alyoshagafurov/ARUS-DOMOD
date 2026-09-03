@@ -7,19 +7,17 @@ import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { contact, rental } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
+import { getDictionary } from "@/lib/i18n/server";
 import { whatsappLink } from "@/lib/orders/whatsapp";
-
-const inquiry = whatsappLink(
-  contact.phone,
-  "Здравствуйте! Хочу узнать о прокате свадебного образа: условия и наличие.",
-);
 
 /**
  * Прокат — отдельный поток, и на главной он стоит отдельной полосой:
  * покупка и прокат не должны читаться как две кнопки одного действия.
  * Цифры — от клиента; ничего сверх них.
  */
-export function RentalBand() {
+export async function RentalBand() {
+  const t = await getDictionary();
+  const inquiry = whatsappLink(contact.phone, t.rental.inquiry);
   return (
     <Section surface="muted" className="overflow-hidden">
       <OrnamentField motif="damask" />
@@ -63,7 +61,9 @@ export function RentalBand() {
                 href="/rental"
                 className="tap-row text-ink-secondary hover:text-ink"
               >
-                <span className="t-label motion-underline">Условия</span>
+                <span className="t-label motion-underline">
+                  {t.home.rentalTerms}
+                </span>
               </Link>
             </div>
           </Reveal>

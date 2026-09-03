@@ -5,18 +5,12 @@ import { useEffect, useId, useRef, useState } from "react";
 import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 import { useAddToCart, useCartHas } from "@/lib/cart";
 import { contact, rental as rentalTerms } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
 import { whatsappLink } from "@/lib/orders/whatsapp";
 import type { Product } from "@/types/catalog";
-
-const availabilityLabels = {
-  in_stock: "В наличии",
-  made_to_order: "Под заказ",
-  rental_only: "Только прокат",
-  sold_out: "Продано",
-} as const;
 
 /**
  * Якорь, ниже которого липкая панель телефона прячется. Экспортируется,
@@ -46,6 +40,8 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
   const groupId = useId();
   const ctaRef = useRef<HTMLDivElement>(null);
   const addToCart = useAddToCart();
+  const t = useDictionary();
+  const availabilityLabels = t.product.availability;
 
   const purchase = product.offers.find((offer) => offer.kind === "purchase");
   const rental = product.offers.find((offer) => offer.kind === "rental");
@@ -125,17 +121,15 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
   };
 
   const buyLabel = soldOut
-    ? "Нет в наличии"
+    ? t.product.soldOut
     : flash
-      ? "Добавлено"
-      : "Добавить в корзину";
+      ? t.product.added
+      : t.product.addToCart;
 
   /* Вопрос о прокате — от лица клиента, без утверждений о товаре */
   const rentalInquiry = whatsappLink(
     contact.phone,
-    `Здравствуйте! Интересует прокат: ${product.title}` +
-      (product.article ? ` (арт. ${product.article})` : "") +
-      ". Подскажите, пожалуйста, наличие и условия.",
+    t.rental.inquiryProduct(product.title, product.article),
   );
 
   return (
@@ -154,7 +148,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
           >
             <div className="flex items-baseline justify-between gap-4">
               <h2 id={`${groupId}-buy`} className="t-label text-ink-accent">
-                Покупка
+                {t.product.purchase}
               </h2>
               <p className="flex items-baseline gap-3">
                 <span className="t-price text-[1.25rem]">
@@ -172,7 +166,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
             {sized.length > 0 ? (
               <fieldset className="mt-6">
                 <legend className="t-label float-left w-full pb-4 text-ink-muted">
-                  Размер
+                  {t.product.size}
                 </legend>
                 <div className="clear-both flex flex-wrap gap-2">
                   {sized.map((item) => {
@@ -223,7 +217,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
             </div>
 
             <p className="t-caption mt-3 min-h-[1.2em]" aria-live="polite">
-              {inCart ? "Образ в корзине" : ""}
+              {inCart ? t.product.inCart : ""}
             </p>
           </section>
         ) : null}
@@ -237,27 +231,31 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
           >
             <div className="flex items-baseline justify-between gap-4">
               <h2 id={`${groupId}-rent`} className="t-label text-ink-accent">
-                Прокат
+                {t.product.rental}
               </h2>
               <p className="t-price text-[1.125rem]">
                 {formatMoney(rental.price)}
                 <span className="t-caption ml-2 font-normal">
-                  до {rentalTerms.maxDays} дней
+                  {t.rental.days(rentalTerms.maxDays)}
                 </span>
               </p>
             </div>
 
             <ul className="t-body-sm mt-4 flex flex-col gap-2 text-ink-secondary">
-              <li>Оформляется непосредственно в магазине.</li>
-              <li>Срок — до {rentalTerms.maxDays} дней.</li>
-              <li>Залог: {rentalTerms.depositKinds.join(" / ")}.</li>
-              <li>Залог возвращается после возврата образа в сохранности.</li>
-              <li>Доставка на прокат не распространяется.</li>
+              <li>{t.rental.inStore}</li>
+              <li>
+                {t.rental.term} — {t.rental.days(rentalTerms.maxDays)}.
+              </li>
+              <li>
+                {t.rental.deposit}: {rentalTerms.depositKinds.join(" / ")}.
+              </li>
+              <li>{t.rental.depositReturn}</li>
+              <li>{t.rental.noDelivery}</li>
             </ul>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <Button href={rentalInquiry} external variant="secondary">
-                Узнать о прокате
+                {t.rental.ask}
               </Button>
               {!purchase ? (
                 <FavoriteButton
@@ -300,11 +298,15 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
           </span>
           {purchase ? (
             <Button onClick={submit} disabled={soldOut} className="shrink-0">
-              {soldOut ? "Нет в наличии" : flash ? "Добавлено" : "В корзину"}
+              {soldOut
+                ? t.product.soldOut
+                : flash
+                  ? t.product.added
+                  : t.product.toCart}
             </Button>
           ) : rental ? (
             <Button href={rentalInquiry} external className="shrink-0">
-              О прокате
+              {t.rental.askShort}
             </Button>
           ) : null}
         </div>

@@ -43,6 +43,9 @@ export async function saveCategoryAction(formData: FormData): Promise<void> {
     ...(String(formData.get("titleTg") ?? "").trim()
       ? { titleTg: String(formData.get("titleTg")).trim() }
       : null),
+    ...(String(formData.get("titleEn") ?? "").trim()
+      ? { titleEn: String(formData.get("titleEn")).trim() }
+      : null),
     ...(String(formData.get("description") ?? "").trim()
       ? { description: String(formData.get("description")).trim() }
       : null),

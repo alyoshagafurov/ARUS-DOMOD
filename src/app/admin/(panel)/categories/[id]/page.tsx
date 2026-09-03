@@ -62,6 +62,9 @@ export default async function AdminCategoryEditPage({
           <Field label="На таджикском">
             <Text name="titleTg" defaultValue={category?.titleTg} />
           </Field>
+          <Field label="На английском">
+            <Text name="titleEn" defaultValue={category?.titleEn} />
+          </Field>
           <Field label="Адрес" hint="Латиницей; пусто — из названия">
             <Text name="slug" defaultValue={category?.slug} />
           </Field>

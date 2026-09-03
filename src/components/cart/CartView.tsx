@@ -1,5 +1,7 @@
 "use client";
 
+import { useDictionary } from "@/lib/i18n/client";
+
 import { CartLines } from "@/components/cart/CartLines";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { useCartProducts } from "@/components/cart/useCartProducts";
@@ -15,6 +17,7 @@ import { Button } from "@/components/ui/Button";
  * крупной вёрстки — только список, итог и одна кнопка.
  */
 export function CartView() {
+  const t = useDictionary();
   const { ready, totals } = useCartProducts();
   const empty = ready && totals.items === 0;
 
@@ -38,10 +41,10 @@ export function CartView() {
       ) : (
         <div className="mt-8 grid gap-x-[var(--gutter)] gap-y-12 lg:mt-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <CartLines title="Покупка" items={totals.purchase} />
+            <CartLines title={t.cart.purchase} items={totals.purchase} />
             <CartLines
-              title="Прокат"
-              note="Образы возвращаются после свадьбы"
+              title={t.cart.rental}
+              note={t.misc.rentalReturns}
               items={totals.rental}
             />
           </div>

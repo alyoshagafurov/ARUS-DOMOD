@@ -1,31 +1,38 @@
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
+import { getDictionary } from "@/lib/i18n/server";
 import { Button } from "@/components/ui/Button";
 import { HowItWorksSteps } from "@/components/home/HowItWorks";
-import { contact, site } from "@/lib/config/site";
+import { contact } from "@/lib/config/site";
 
-export const metadata = {
-  title: "Доставка и получение",
-  description: "Как оформить заказ ARUS DOMOD: подтверждение, оплата, доставка или самовывоз в Душанбе.",
-};
+export async function generateMetadata() {
+  const t = await getDictionary();
+  return { title: t.meta.delivery, description: t.meta.siteDescription };
+}
 
 /**
  * Получение заказа. Ни зон, ни сроков, ни тарифов — их клиент не
  * передавал: стоимость доставки согласуется отдельно при подтверждении.
  */
-export default function DeliveryPage() {
+export default async function DeliveryPage() {
+  const t = await getDictionary();
   return (
     <>
       <Section surface="muted" className="pt-[calc(var(--header-h)+2rem)]">
         <Container width="narrow">
           <Reveal>
-            <p className="t-label-wide text-ink-accent">Доставка и получение</p>
-            <h1 className="t-display-2 mt-5 max-w-[14ch] text-balance">От заказа до примерки</h1>
-            <span aria-hidden="true" className="hoshiya-line mt-7 max-w-[6rem]" />
-            <p className="t-lead mt-7 max-w-[40ch]">
-              Сайт не принимает оплату. Вы отправляете заказ, администратор подтверждает состав и стоимость, дальше — оплата и получение.
+            <p className="t-label-wide text-ink-accent">
+              {t.pages.deliveryLabel}
             </p>
+            <h1 className="t-display-2 mt-5 max-w-[14ch] text-balance">
+              {t.pages.deliveryTitle}
+            </h1>
+            <span
+              aria-hidden="true"
+              className="hoshiya-line mt-7 max-w-[6rem]"
+            />
+            <p className="t-lead mt-7 max-w-[40ch]">{t.pages.deliveryLead}</p>
           </Reveal>
         </Container>
       </Section>
@@ -33,7 +40,7 @@ export default function DeliveryPage() {
       <Section>
         <Container width="narrow">
           <Reveal>
-            <h2 className="t-h2">Как это работает</h2>
+            <h2 className="t-h2">{t.pages.deliveryHow}</h2>
           </Reveal>
           <div className="mt-8">
             <HowItWorksSteps />
@@ -45,22 +52,29 @@ export default function DeliveryPage() {
         <Container width="narrow">
           <div className="grid gap-10 md:grid-cols-2">
             <Reveal>
-              <h2 className="t-h3">Самовывоз</h2>
+              <h2 className="t-h3">{t.pages.pickup}</h2>
               <p className="t-body-sm mt-3 text-ink-secondary">
-                Заберите заказ в магазине в {site.city}. Администратор согласует время при подтверждении.
+                {t.pages.pickupNote}
               </p>
             </Reveal>
             <Reveal delay={60}>
-              <h2 className="t-h3">Доставка</h2>
+              <h2 className="t-h3">{t.pages.courier}</h2>
               <p className="t-body-sm mt-3 text-ink-secondary">
-                Укажите адрес в заказе. Стоимость доставки согласуется отдельно и в сумму заказа на сайте не входит.
+                {t.pages.courierNote}
               </p>
-              <p className="t-caption mt-3">Прокат доставкой не отправляется — только в магазине.</p>
+              <p className="t-caption mt-3">{t.pages.courierRental}</p>
             </Reveal>
           </div>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Button href="/catalog" size="lg">Смотреть образы</Button>
-            <Button href={`tel:${contact.phone}`} external variant="secondary" size="lg">
+            <Button href="/catalog" size="lg">
+              {t.pages.seeLooks}
+            </Button>
+            <Button
+              href={`tel:${contact.phone}`}
+              external
+              variant="secondary"
+              size="lg"
+            >
               {contact.phoneDisplay}
             </Button>
           </div>

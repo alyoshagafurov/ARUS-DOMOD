@@ -1,4 +1,6 @@
-import { contact } from "@/lib/config/site";
+"use client";
+
+import { useDictionary } from "@/lib/i18n/client";
 
 /**
  * Как происходит оплата.
@@ -8,17 +10,17 @@ import { contact } from "@/lib/config/site";
  * клиент переводит деньги напрямую. Этот блок объясняет процесс словами
  * клиента, ничего не обещая сверх него.
  *
+ * Компонент клиентский, потому что живёт внутри клиентской формы
+ * оформления: серверный словарь (next/headers) в клиентский граф попасть
+ * не может.
+ *
  * Это же место — шов для будущего Alif: когда появятся доступы, здесь
  * встанет форма провайдера, а заказ к тому моменту уже будет сохранён
  * (см. /api/orders). Вокруг блока ничего менять не придётся.
  */
 export function PaymentPlaceholder() {
-  const steps = [
-    "Вы отправляете заказ — он сохраняется и уходит администратору в WhatsApp.",
-    `${contact.phoneName} связывается с вами, подтверждает наличие и стоимость.`,
-    "Вы получаете реквизиты и оплачиваете напрямую администратору.",
-    "Заказ передаётся в доставку или ждёт вас в магазине.",
-  ];
+  const t = useDictionary();
+  const steps = t.checkout.paymentSteps;
 
   return (
     <section
@@ -26,7 +28,7 @@ export function PaymentPlaceholder() {
       className="border-t border-hairline pt-7"
     >
       <h2 id="payment-title" className="t-label text-ink-muted">
-        Оплата
+        {t.checkout.payment}
       </h2>
 
       <ol className="mt-5 flex flex-col">
@@ -43,10 +45,7 @@ export function PaymentPlaceholder() {
         ))}
       </ol>
 
-      <p className="t-caption mt-4">
-        Онлайн-оплата на сайте не проводится. Стоимость доставки согласуется
-        отдельно.
-      </p>
+      <p className="t-caption mt-4">{t.checkout.paymentNote}</p>
     </section>
   );
 }

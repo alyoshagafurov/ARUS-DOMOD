@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { useDictionary } from "@/lib/i18n/client";
+import { navLabel } from "@/lib/i18n/labels";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 
 import { Logo } from "@/components/brand/Logo";
@@ -55,6 +58,7 @@ const iconBox = "tap-icon h-11 w-11 shrink-0 items-center justify-center";
  */
 export function SiteHeader() {
   const pathname = usePathname();
+  const t = useDictionary();
   const overlay = OVERLAY_ROUTES.has(pathname);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -105,7 +109,7 @@ export function SiteHeader() {
           className="flex h-8 items-center overflow-hidden"
         >
           <p className="t-label-wide w-full text-center text-[0.625rem] text-ink-secondary">
-            Покупка и прокат · {site.city}
+            {t.nav.marquee} · {t.common.city}
           </p>
         </div>
 
@@ -121,14 +125,14 @@ export function SiteHeader() {
           <div className="mx-auto flex h-[var(--header-h)] w-full max-w-[var(--container-max)] items-center gap-2 bg-transparent px-[var(--gutter)] sm:gap-6">
             <Link
               href="/"
-              aria-label={`${site.name} — главная`}
+              aria-label={`${site.name} — ${t.nav.home}`}
               className="flex h-11 shrink-0 items-center text-[0.85rem] xs:text-[0.95rem] sm:text-[1.05rem]"
             >
               <Logo variant="lockup" />
             </Link>
 
             <nav
-              aria-label="Основная навигация"
+              aria-label={t.nav.catalog}
               /* w-max обязателен: у абсолютного блока с left-1/2 ширина
                  контейнера обрезана правой половиной шапки, и без него
                  последний пункт переносится на вторую строку. */
@@ -140,16 +144,19 @@ export function SiteHeader() {
                   href={link.href}
                   className="tap-row text-ink-secondary hover:text-ink"
                 >
-                  <span className="t-label motion-underline">{link.label}</span>
+                  <span className="t-label motion-underline">
+                    {navLabel(link, t)}
+                  </span>
                 </Link>
               ))}
             </nav>
 
             <div className="ml-auto flex items-center text-[1rem]">
+              <LanguageSwitcher className="mr-1 hidden lg:flex" />
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
-                aria-label="Открыть поиск"
+                aria-label={t.nav.openSearch}
                 aria-expanded={searchOpen}
                 className={cn("inline-flex", iconBox)}
               >
@@ -159,8 +166,8 @@ export function SiteHeader() {
                 href="/favorites"
                 aria-label={
                   favoriteCount > 0
-                    ? `Избранное, ${favoriteCount} шт.`
-                    : "Избранное"
+                    ? `${t.nav.favorites}, ${favoriteCount}`
+                    : t.nav.favorites
                 }
                 className={cn(iconBox, "relative inline-flex")}
               >
@@ -180,7 +187,7 @@ export function SiteHeader() {
                 type="button"
                 onClick={() => setCartOpen(true)}
                 aria-label={
-                  cartCount > 0 ? `Корзина, ${cartCount} шт.` : "Корзина"
+                  cartCount > 0 ? `${t.nav.cart}, ${cartCount}` : t.nav.cart
                 }
                 aria-haspopup="dialog"
                 aria-expanded={cartOpen}

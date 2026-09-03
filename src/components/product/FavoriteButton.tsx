@@ -2,6 +2,7 @@
 
 import { HeartIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 import { useIsFavorite, useToggleFavorite } from "@/lib/favorites";
 
 interface FavoriteButtonProps {
@@ -23,6 +24,7 @@ export function FavoriteButton({
   productTitle,
   className,
 }: FavoriteButtonProps) {
+  const t = useDictionary();
   const active = useIsFavorite(productId);
   const toggle = useToggleFavorite(productId);
 
@@ -32,8 +34,8 @@ export function FavoriteButton({
       aria-pressed={active}
       aria-label={
         active
-          ? `Убрать «${productTitle}» из избранного`
-          : `Добавить «${productTitle}» в избранное`
+          ? t.misc.favoriteRemove(productTitle)
+          : t.misc.favoriteAdd(productTitle)
       }
       onClick={toggle}
       className={cn(

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant, Golos_Text } from "next/font/google";
 
 import { site } from "@/lib/config/site";
+import { LocaleProvider } from "@/lib/i18n/client";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 
 import "./globals.css";
 
@@ -48,22 +50,22 @@ const golos = Golos_Text({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.name} — свадебные наряды`,
-    template: `%s · ${site.name}`,
-  },
-  description: site.description,
-  openGraph: {
-    type: "website",
-    locale: "ru_RU",
-    siteName: site.name,
-    title: `${site.name} — свадебные наряды`,
-    description: site.description,
-    images: [{ url: "/brand/arus-domod-og.jpg", width: 1200, height: 900 }],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return {
+    metadataBase: new URL(site.url),
+    title: { default: t.meta.siteTitle, template: `%s · ${site.name}` },
+    description: t.meta.siteDescription,
+    openGraph: {
+      type: "website",
+      locale: { ru: "ru_RU", tg: "tg_TJ", en: "en_US" }[await getLocale()],
+      siteName: site.name,
+      title: t.meta.siteTitle,
+      description: t.meta.siteDescription,
+      images: [{ url: "/brand/arus-domod-og.jpg", width: 1200, height: 900 }],
+    },
+  };
+}
 
 /**
  * Цвет темы — та самая углублённая бирюза, что служит средой сайта. Строка
@@ -74,14 +76,17 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
   return (
     <html
-      lang="ru"
+      lang={locale}
       className={`${cormorant.variable} ${golos.variable} h-full`}
     >
       {/* Шапку и подвал даёт (site)/layout.tsx: у админки они не нужны */}
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <LocaleProvider locale={locale}>{children}</LocaleProvider>
+      </body>
     </html>
   );
 }

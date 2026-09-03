@@ -63,17 +63,16 @@ export default async function ProductPage({
     }),
   ]);
 
-  const category = categories.find((item) => item.slug === product.categorySlug);
+  const category = categories.find(
+    (item) => item.slug === product.categorySlug,
+  );
 
   // Если в разделе мало образов, добираем остальными из коллекции
   let related = sameCategory.items.filter((item) => item.id !== product.id);
   if (related.length < RELATED_COUNT) {
     const rest = await repository.listProducts({ pageSize: 40 });
     const seen = new Set([product.id, ...related.map((item) => item.id)]);
-    related = [
-      ...related,
-      ...rest.items.filter((item) => !seen.has(item.id)),
-    ];
+    related = [...related, ...rest.items.filter((item) => !seen.has(item.id))];
   }
   related = related.slice(0, RELATED_COUNT);
 

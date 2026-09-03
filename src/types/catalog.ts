@@ -27,10 +27,7 @@ export interface Money {
 export type OfferKind = "purchase" | "rental";
 
 export type Availability =
-  | "in_stock"
-  | "made_to_order"
-  | "rental_only"
-  | "sold_out";
+  "in_stock" | "made_to_order" | "rental_only" | "sold_out";
 
 export interface ProductOffer {
   kind: OfferKind;
@@ -89,8 +86,10 @@ export interface Category {
   id: string;
   slug: string;
   title: string;
-  /** Таджикское имя категории — витрина двуязычная */
+  /** Таджикское имя категории — витрина многоязычная */
   titleTg?: string;
+  /** Английское имя категории */
+  titleEn?: string;
   description?: string;
   image?: ProductImage;
   parentSlug?: string;
@@ -105,11 +104,7 @@ export interface Collection {
   cover?: ProductImage;
 }
 
-export type CatalogSort =
-  | "featured"
-  | "price_asc"
-  | "price_desc"
-  | "newest";
+export type CatalogSort = "featured" | "price_asc" | "price_desc" | "newest";
 
 export interface CatalogQuery {
   categorySlug?: string;

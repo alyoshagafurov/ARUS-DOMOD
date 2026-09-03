@@ -2,6 +2,7 @@
 
 import { OrnamentBand } from "@/components/ornament/Ornament";
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 import type { Category, FacetValue } from "@/types/catalog";
 
 interface CategoryTabsProps {
@@ -30,11 +31,16 @@ export function CategoryTabs({
   onChange,
   total,
 }: CategoryTabsProps) {
+  const t = useDictionary();
   const countOf = new Map(counts.map((c) => [c.value, c.count]));
   const shown = categories.filter((category) => countOf.has(category.slug));
 
   const tabs = [
-    { slug: undefined as string | undefined, label: "Все", count: total },
+    {
+      slug: undefined as string | undefined,
+      label: t.common.all,
+      count: total,
+    },
     ...shown.map((category) => ({
       slug: category.slug,
       label: category.title,
@@ -48,7 +54,7 @@ export function CategoryTabs({
         [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       <nav
-        aria-label="Разделы каталога"
+        aria-label={t.misc.catalogSections}
         className="flex w-max items-end gap-7 border-b border-hairline"
       >
         {tabs.map((tab) => {

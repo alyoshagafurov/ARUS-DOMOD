@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { Container } from "@/components/layout/Container";
 import { OrnamentBand } from "@/components/ornament/Ornament";
+import { getDictionary } from "@/lib/i18n/server";
+import { navLabel } from "@/lib/i18n/labels";
 import {
   contact,
   footerNav,
@@ -12,7 +14,15 @@ import {
   type NavLink,
 } from "@/lib/config/site";
 
-function FooterLink({ link, className }: { link: NavLink; className: string }) {
+function FooterLink({
+  link,
+  className,
+  label,
+}: {
+  link: NavLink;
+  className: string;
+  label: string;
+}) {
   if (link.external) {
     return (
       <a
@@ -21,13 +31,13 @@ function FooterLink({ link, className }: { link: NavLink; className: string }) {
         rel="noreferrer noopener"
         className={className}
       >
-        <span className="t-body-sm motion-underline">{link.label}</span>
+        <span className="t-body-sm motion-underline">{label}</span>
       </a>
     );
   }
   return (
     <Link href={link.href} className={className}>
-      <span className="t-body-sm motion-underline">{link.label}</span>
+      <span className="t-body-sm motion-underline">{label}</span>
     </Link>
   );
 }
@@ -39,7 +49,8 @@ function FooterLink({ link, className }: { link: NavLink; className: string }) {
  * телефон, город и два аккаунта. Адреса, часов работы и перечня услуг тут
  * нет, потому что этих данных клиент не передавал.
  */
-export function SiteFooter() {
+export async function SiteFooter() {
+  const t = await getDictionary();
   const year = new Date().getFullYear();
   // Роль текста переехала на внутренний span: строка отвечает за зону
   // нажатия, span — за подчёркивание, которое обязано остаться под текстом.
@@ -58,20 +69,33 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.1fr_2fr]">
           <div>
             <Logo variant="full" className="w-[12rem]" />
-            <p className="t-lead t-measure mt-6 max-w-sm">{site.tagline}</p>
+            <p className="t-lead t-measure mt-6 max-w-sm">{t.common.tagline}</p>
             <p className="t-body-sm mt-3 text-ink-secondary">
-              {site.positioning}
+              {t.common.positioning}
             </p>
           </div>
 
           <div className="grid gap-10 sm:grid-cols-3">
             {footerNav.map((column) => (
-              <nav key={column.title} aria-label={column.title}>
-                <h2 className="t-label text-ink-muted">{column.title}</h2>
+              <nav
+                key={column.title}
+                aria-label={
+                  column.title === "Дом" ? t.footer.house : t.footer.collection
+                }
+              >
+                <h2 className="t-label text-ink-muted">
+                  {column.title === "Дом"
+                    ? t.footer.house
+                    : t.footer.collection}
+                </h2>
                 <ul className="mt-3 flex flex-col lg:mt-5 lg:gap-3">
                   {column.links.map((link) => (
                     <li key={link.href}>
-                      <FooterLink link={link} className={linkClass} />
+                      <FooterLink
+                        link={link}
+                        className={linkClass}
+                        label={navLabel(link, t)}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -79,7 +103,7 @@ export function SiteFooter() {
             ))}
 
             <div>
-              <h2 className="t-label text-ink-muted">Контакты</h2>
+              <h2 className="t-label text-ink-muted">{t.footer.contacts}</h2>
               <ul className="mt-3 flex flex-col lg:mt-5 lg:gap-3">
                 <li>
                   <a
@@ -92,11 +116,15 @@ export function SiteFooter() {
                   </a>
                 </li>
                 <li className="tap-row t-body-sm text-ink-secondary">
-                  {site.city}
+                  {t.common.city}
                 </li>
                 {socialLinks.map((link) => (
                   <li key={link.href}>
-                    <FooterLink link={link} className={linkClass} />
+                    <FooterLink
+                      link={link}
+                      className={linkClass}
+                      label={link.label}
+                    />
                   </li>
                 ))}
               </ul>
@@ -114,13 +142,9 @@ export function SiteFooter() {
 
         <div className="mt-10 flex flex-col gap-3 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="t-caption">
-            © {year} {site.name} · {site.city}
+            © {year} {site.name} · {t.common.city}
           </p>
-          <p className="t-caption">
-            {isDemoData
-              ? "Названия и цены в каталоге демонстрационные"
-              : site.role}
-          </p>
+          <p className="t-caption">{isDemoData ? t.footer.demo : site.role}</p>
         </div>
       </Container>
     </footer>

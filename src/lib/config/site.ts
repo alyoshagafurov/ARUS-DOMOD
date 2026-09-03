@@ -57,25 +57,40 @@ export const isDemoData = true;
 
 export interface NavLink {
   href: string;
+  /** Русская подпись — запасная; интерфейс берёт перевод по `key` */
   label: string;
+  /** Ключ в словаре nav — по нему пункт переводится на tg/en */
+  key?: NavKey;
   labelTg?: string;
   /** Внешняя ссылка открывается в новой вкладке */
   external?: boolean;
 }
 
+export type NavKey =
+  | "catalog"
+  | "bride"
+  | "groom"
+  | "jewelry"
+  | "rental"
+  | "about"
+  | "delivery"
+  | "contacts"
+  | "favorites"
+  | "cart";
+
 /** В навигации стоят только существующие маршруты. */
 export const primaryNav: NavLink[] = [
-  { href: "/catalog", label: "Коллекции" },
-  { href: "/catalog/arus", label: "Невесте", labelTg: "Арӯс" },
-  { href: "/catalog/domod", label: "Жениху", labelTg: "Домод" },
-  { href: "/rental", label: "Прокат" },
-  { href: "/about", label: "О нас" },
-  { href: "/contacts", label: "Контакты" },
+  { href: "/catalog", label: "Коллекции", key: "catalog" },
+  { href: "/catalog/arus", label: "Невесте", key: "bride", labelTg: "Арӯс" },
+  { href: "/catalog/domod", label: "Жениху", key: "groom", labelTg: "Домод" },
+  { href: "/rental", label: "Прокат", key: "rental" },
+  { href: "/about", label: "О нас", key: "about" },
+  { href: "/contacts", label: "Контакты", key: "contacts" },
 ];
 
 export const utilityNav: NavLink[] = [
-  { href: "/favorites", label: "Избранное" },
-  { href: "/cart", label: "Корзина" },
+  { href: "/favorites", label: "Избранное", key: "favorites" },
+  { href: "/cart", label: "Корзина", key: "cart" },
 ];
 
 export const footerNav: { title: string; links: NavLink[] }[] = [
@@ -92,10 +107,10 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
   {
     title: "Дом",
     links: [
-      { href: "/about", label: "О нас" },
-      { href: "/rental", label: "Прокат" },
-      { href: "/delivery", label: "Доставка и получение" },
-      { href: "/contacts", label: "Контакты" },
+      { href: "/about", label: "О нас", key: "about" },
+      { href: "/rental", label: "Прокат", key: "rental" },
+      { href: "/delivery", label: "Доставка и получение", key: "delivery" },
+      { href: "/contacts", label: "Контакты", key: "contacts" },
     ],
   },
 ];

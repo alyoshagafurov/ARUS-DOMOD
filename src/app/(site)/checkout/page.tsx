@@ -1,10 +1,10 @@
+import { getDictionary } from "@/lib/i18n/server";
 import { CheckoutView } from "@/components/checkout/CheckoutView";
 
-export const metadata = {
-  title: "Оформление заказа",
-  description:
-    "Оформление заказа ARUS DOMOD: оставьте контакты — администратор подтвердит состав и стоимость.",
-};
+export async function generateMetadata() {
+  const t = await getDictionary();
+  return { title: t.meta.checkout };
+}
 
 export default function CheckoutPage() {
   return <CheckoutView />;

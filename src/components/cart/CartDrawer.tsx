@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Drawer } from "@/components/ui/Drawer";
 import { removeLine, setQuantity } from "@/lib/cart";
 import { formatMoney } from "@/lib/format";
+import { useDictionary } from "@/lib/i18n/client";
 
 interface CartDrawerProps {
   open: boolean;
@@ -23,30 +24,30 @@ interface CartDrawerProps {
  * ходила бы за карточками корзины, которую никто не открывал.
  */
 export function CartDrawer({ open, onClose }: CartDrawerProps) {
+  const t = useDictionary();
   return (
-    <Drawer open={open} onClose={onClose} title="Корзина">
+    <Drawer open={open} onClose={onClose} title={t.cart.title}>
       <CartDrawerBody onClose={onClose} />
     </Drawer>
   );
 }
 
 function CartDrawerBody({ onClose }: { onClose: () => void }) {
+  const t = useDictionary();
   const { ready, totals } = useCartProducts();
   const lines = [...totals.purchase, ...totals.rental];
 
   if (!ready) {
-    return <p className="t-caption">Собираем корзину…</p>;
+    return <p className="t-caption">{t.cart.building}</p>;
   }
 
   if (lines.length === 0) {
     return (
       <div className="flex flex-col items-start gap-5">
-        <p className="t-h3">Корзина пуста</p>
-        <p className="t-body-sm text-ink-secondary">
-          Выберите образы в коллекции — они появятся здесь.
-        </p>
+        <p className="t-h3">{t.cart.empty}</p>
+        <p className="t-body-sm text-ink-secondary">{t.cart.emptyHint}</p>
         <Button href="/catalog" onClick={onClose}>
-          Смотреть образы
+          {t.cart.browse}
         </Button>
       </div>
     );
@@ -77,8 +78,10 @@ function CartDrawerBody({ onClose }: { onClose: () => void }) {
                 <span className="t-price shrink-0">{formatMoney(total)}</span>
               </span>
               <span className="t-caption">
-                {offer.kind === "rental" ? "Прокат" : "Покупка"}
-                {line.size ? ` · размер ${line.size}` : ""}
+                {offer.kind === "rental" ? t.cart.rental : t.cart.purchase}
+                {line.size
+                  ? ` · ${t.product.size.toLowerCase()} ${line.size}`
+                  : ""}
               </span>
               <span className="flex items-center justify-between gap-3">
                 <QuantityStepper
@@ -91,7 +94,9 @@ function CartDrawerBody({ onClose }: { onClose: () => void }) {
                   onClick={() => removeLine(line.id)}
                   className="tap-row text-ink-muted hover:text-ink-accent"
                 >
-                  <span className="t-label motion-underline">Удалить</span>
+                  <span className="t-label motion-underline">
+                    {t.cart.remove}
+                  </span>
                 </button>
               </span>
             </span>
@@ -102,7 +107,7 @@ function CartDrawerBody({ onClose }: { onClose: () => void }) {
       <dl className="flex flex-col gap-2">
         {totals.purchaseSum ? (
           <div className="flex items-baseline justify-between">
-            <dt className="t-label">К заказу</dt>
+            <dt className="t-label">{t.cart.toOrder}</dt>
             <dd className="t-price text-[1.0625rem]">
               {formatMoney(totals.purchaseSum)}
             </dd>
@@ -123,10 +128,10 @@ function CartDrawerBody({ onClose }: { onClose: () => void }) {
           onClick={onClose}
           disabled={!totals.purchaseSum}
         >
-          Оформить заказ
+          {t.cart.checkout}
         </Button>
         <Button href="/cart" variant="secondary" fullWidth onClick={onClose}>
-          Открыть корзину
+          {t.cart.openCart}
         </Button>
       </div>
     </div>

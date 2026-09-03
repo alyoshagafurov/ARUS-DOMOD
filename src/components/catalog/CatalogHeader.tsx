@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { getDictionary } from "@/lib/i18n/server";
 import { Media } from "@/components/ui/Media";
 import { photo } from "@/lib/photos";
 import type { Collection } from "@/types/catalog";
@@ -21,11 +22,12 @@ interface CatalogHeaderProps {
  * даёт распорка внутри <SiteHeader>, и второй такой отступ оставлял бы
  * над заголовком пустой экран.
  */
-export function CatalogHeader({
+export async function CatalogHeader({
   collection,
   categoryTitle,
   categoryTitleTg,
 }: CatalogHeaderProps) {
+  const t = await getDictionary();
   const eyebrow = collection?.title ?? "Коллекция 01";
 
   return (
@@ -34,7 +36,7 @@ export function CatalogHeader({
         <div className="lg:col-span-7">
           <p className="t-label text-ink-muted">{eyebrow} · ARUS DOMOD</p>
           <h1 className="t-display-2 mt-6 max-w-[16ch] text-balance">
-            {categoryTitle ?? "Наследие в новом силуэте"}
+            {categoryTitle ?? t.misc.catalogTitle}
           </h1>
           {categoryTitleTg ? (
             <p className="t-label-wide mt-5 text-ink-muted">

@@ -1,6 +1,7 @@
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
+import { getDictionary } from "@/lib/i18n/server";
 import { OrnamentField } from "@/components/ornament/Ornament";
 import { Media } from "@/components/ui/Media";
 import { photo } from "@/lib/photos";
@@ -16,7 +17,8 @@ import { photo } from "@/lib/photos";
  *
  * Тоқча разомкнута влево: кадр выходит за неё и за экран одновременно.
  */
-export function CollectionIntro() {
+export async function CollectionIntro() {
+  const t = await getDictionary();
   return (
     <Section surface="night" className="overflow-hidden">
       <OrnamentField motif="damask" />
@@ -47,9 +49,11 @@ export function CollectionIntro() {
           {/* --- СЛОВО --------------------------------------------------- */}
           <div className="pt-[var(--space-silence)] lg:col-span-4 lg:col-start-9 lg:pt-0">
             <Reveal>
-              <p className="t-label text-ink-accent">Дом ARUS DOMOD</p>
+              <p className="t-label text-ink-accent">
+                {t.editorial.houseLabel}
+              </p>
               <h2 className="t-h1 mt-6 max-w-[16ch] text-balance">
-                Традиция, переосмысленная для сегодня.
+                {t.editorial.traditionTitle}
               </h2>
             </Reveal>
 
@@ -59,11 +63,10 @@ export function CollectionIntro() {
                 className="hoshiya-line mt-8 max-w-[5rem]"
               />
               <p className="t-lead t-measure mt-8">
-                Каждый выход снят целиком: видно посадку, длину и то, как вещь
-                ведёт себя в движении.
+                {t.editorial.traditionLead}
               </p>
               <p className="t-body-sm mt-5 max-w-[38ch] text-ink-secondary">
-                Описания изделий появятся здесь вместе с данными бренда.
+                {t.editorial.traditionNote}
               </p>
             </Reveal>
           </div>

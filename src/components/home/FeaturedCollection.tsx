@@ -1,6 +1,7 @@
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
+import { getDictionary } from "@/lib/i18n/server";
 import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
@@ -56,11 +57,12 @@ interface FeaturedCollectionProps {
   collection?: Collection;
 }
 
-export function FeaturedCollection({
+export async function FeaturedCollection({
   products,
   categoryLabels,
   collection,
 }: FeaturedCollectionProps) {
+  const t = await getDictionary();
   if (products.length === 0) return null;
 
   return (
@@ -69,12 +71,12 @@ export function FeaturedCollection({
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
           <div>
             <p className="t-label text-ink-muted">
-              {collection?.subtitle ?? "Сезон свадеб"}
+              {collection?.subtitle ?? t.home.collectionLabel}
             </p>
             <h2 className="t-h1 mt-4">{collection?.title ?? "Коллекция 01"}</h2>
           </div>
           <Button href="/catalog" variant="ghost">
-            Смотреть все
+            {t.home.seeAll}
           </Button>
         </div>
 
@@ -112,7 +114,7 @@ export function FeaturedCollection({
         <div className="mt-20 flex items-center gap-6 lg:mt-28">
           <span className="h-px flex-1 bg-hairline" aria-hidden="true" />
           <Button href="/catalog" variant="secondary">
-            Вся коллекция
+            {t.home.allCollection}
           </Button>
           <span className="h-px flex-1 bg-hairline" aria-hidden="true" />
         </div>

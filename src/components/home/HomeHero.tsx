@@ -4,7 +4,8 @@ import { Container } from "@/components/layout/Container";
 import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
-import { site } from "@/lib/config/site";
+
+import { getDictionary } from "@/lib/i18n/server";
 import { photo } from "@/lib/photos";
 
 const delay = (ms: number) => ({ "--enter-delay": `${ms}ms` }) as CSSProperties;
@@ -31,7 +32,8 @@ const delay = (ms: number) => ({ "--enter-delay": `${ms}ms` }) as CSSProperties;
  * порядке логотипа. На широком экране колонки расходятся, кадр встаёт справа
  * и продолжается за край окна.
  */
-export function HomeHero() {
+export async function HomeHero() {
+  const t = await getDictionary();
   return (
     <section
       data-surface="green"
@@ -81,7 +83,7 @@ export function HomeHero() {
               className="motion-enter t-label-wide text-ink-accent"
               style={delay(60)}
             >
-              Для самых красивых невест
+              {t.common.tagline}
             </p>
 
             <h1
@@ -103,19 +105,19 @@ export function HomeHero() {
               className="motion-enter t-h3 mt-5 font-sans font-medium tracking-normal lg:mt-7"
               style={delay(240)}
             >
-              Свадебные образы для невест.
+              {t.home.heroLine}
             </p>
 
             <p
               className="motion-enter t-lead mt-3 max-w-[34ch]"
               style={delay(300)}
             >
-              Каталог образов для покупки и проката.
+              {t.home.heroSub}
             </p>
 
             <div className="motion-enter mt-7 lg:mt-9" style={delay(380)}>
               <Button href="/catalog" size="lg">
-                Смотреть образы
+                {t.home.heroCta}
               </Button>
             </div>
 
@@ -124,7 +126,7 @@ export function HomeHero() {
               style={delay(460)}
             >
               <span aria-hidden="true" className="h-px w-8 bg-strong" />
-              {site.positioning} · {site.city}
+              {t.common.positioning} · {t.common.city}
             </p>
           </div>
         </div>

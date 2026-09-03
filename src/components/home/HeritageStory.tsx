@@ -1,15 +1,9 @@
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
+import { getDictionary } from "@/lib/i18n/server";
 import { Media } from "@/components/ui/Media";
 import { photo } from "@/lib/photos";
-
-/** Три слова, ради которых на витрине вообще нужна таджикская типографика */
-const pillars = [
-  { tg: "Мерос", ru: "Наследие", note: "Основа визуального языка" },
-  { tg: "Ҳунар", ru: "Ремесло", note: "Работа, которую видно вблизи" },
-  { tg: "Зебоӣ", ru: "Красота", note: "Силуэт сегодняшнего дня" },
-];
 
 /**
  * Редакционный разворот о культуре свадьбы. Кадр уходит за левый край
@@ -28,7 +22,9 @@ const heritageImage = photo(
   "Невеста в свадебном образе ARUS DOMOD на торжестве",
 );
 
-export function HeritageStory() {
+export async function HeritageStory() {
+  const t = await getDictionary();
+  const pillars = t.editorial.pillars;
   return (
     <Section surface="muted" edge="both" className="overflow-hidden">
       {/*
@@ -60,9 +56,11 @@ export function HeritageStory() {
         <div className="lg:grid lg:grid-cols-12">
           <div className="lg:col-span-6 lg:col-start-7">
             <Reveal>
-              <p className="t-label text-ink-secondary">Мерос · наследие</p>
+              <p className="t-label text-ink-secondary">
+                {t.editorial.heritageLabel}
+              </p>
               <h2 className="t-display-2 mt-7 text-balance">
-                Свадьба, которую помнят поколения
+                {t.editorial.heritageTitle}
               </h2>
             </Reveal>
 
@@ -89,9 +87,7 @@ export function HeritageStory() {
 
             <Reveal delay={100}>
               <p className="t-lead t-measure mt-9">
-                Мы не реконструируем обряд и не пересказываем его историю. Наша
-                работа — показать образ так, как его видят в день свадьбы:
-                целиком, в движении и при своём свете.
+                {t.editorial.heritageLead}
               </p>
             </Reveal>
 

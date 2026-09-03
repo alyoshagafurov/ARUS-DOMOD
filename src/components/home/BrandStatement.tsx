@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/motion/Reveal";
+import { getDictionary } from "@/lib/i18n/server";
 import { Media } from "@/components/ui/Media";
 import { photo } from "@/lib/photos";
 
@@ -34,7 +35,8 @@ import { photo } from "@/lib/photos";
  * Ни одного элемента к секции не добавлено: кнопок, подписей и второго
  * изображения здесь по-прежнему нет.
  */
-export function BrandStatement() {
+export async function BrandStatement() {
+  const t = await getDictionary();
   return (
     <section
       data-surface="day"
@@ -66,9 +68,9 @@ export function BrandStatement() {
       <Container width="narrow" className="relative">
         <Reveal>
           <p className="t-display-2 max-w-[11ch]">
-            Таджикская традиция.
+            {t.editorial.textileTitle}
             <br />
-            <span className="text-ink-accent">Современный силуэт.</span>
+            <span className="text-ink-accent">{t.editorial.textileAccent}</span>
           </p>
         </Reveal>
 

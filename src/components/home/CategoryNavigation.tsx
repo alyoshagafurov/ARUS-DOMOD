@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
+import { getDictionary } from "@/lib/i18n/server";
 import type { OrnamentMotif } from "@/components/ornament/Ornament";
 import type { PlateTone } from "@/components/ui/FabricPlate";
 import { Media } from "@/components/ui/Media";
@@ -75,14 +76,17 @@ interface CategoryNavigationProps {
   categories: Category[];
 }
 
-export function CategoryNavigation({ categories }: CategoryNavigationProps) {
+export async function CategoryNavigation({
+  categories,
+}: CategoryNavigationProps) {
+  const t = await getDictionary();
   if (categories.length === 0) return null;
 
   return (
     <Section surface="muted">
       <Container>
-        <p className="t-label text-ink-muted">Разделы</p>
-        <h2 className="t-h1 mt-4 max-w-[16ch]">Всё для одного дня</h2>
+        <p className="t-label text-ink-muted">{t.home.sectionsLabel}</p>
+        <h2 className="t-h1 mt-4 max-w-[16ch]">{t.home.sectionsTitle}</h2>
 
         <ul className="mt-14 grid grid-cols-2 gap-x-[var(--gutter)] gap-y-12 sm:grid-cols-6 lg:mt-20 lg:grid-cols-12">
           {categories.slice(0, tiles.length).map((category, index) => {

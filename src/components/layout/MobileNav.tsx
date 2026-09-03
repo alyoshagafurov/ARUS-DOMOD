@@ -8,7 +8,10 @@ import { Logo } from "@/components/brand/Logo";
 import { OrnamentBand } from "@/components/ornament/Ornament";
 import { CloseIcon, MenuIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { primaryNav, utilityNav } from "@/lib/config/site";
+import { useDictionary } from "@/lib/i18n/client";
+import { navLabel } from "@/lib/i18n/labels";
 
 /**
  * Мобильная навигация. Панель на всю высоту в ночной поверхности —
@@ -21,6 +24,7 @@ import { primaryNav, utilityNav } from "@/lib/config/site";
  */
 export function MobileNav({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
+  const t = useDictionary();
 
   useEffect(() => {
     if (!open) return;
@@ -53,7 +57,7 @@ export function MobileNav({ className }: { className?: string }) {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          aria-label="Закрыть меню"
+          aria-label={t.nav.closeMenu}
           className="tap-icon -mr-2 inline-flex h-11 w-11 items-center justify-center text-[1rem]"
         >
           <CloseIcon />
@@ -70,10 +74,11 @@ export function MobileNav({ className }: { className?: string }) {
             onClick={() => setOpen(false)}
             className="t-h2 flex min-h-11 items-center py-2"
           >
-            {link.label}
+            {navLabel(link, t)}
           </Link>
         ))}
 
+        <LanguageSwitcher className="mt-8 -ml-2" />
         <span className="mt-auto flex flex-col border-t border-hairline pt-6">
           {utilityNav.map((link) => (
             <Link
@@ -82,7 +87,9 @@ export function MobileNav({ className }: { className?: string }) {
               onClick={() => setOpen(false)}
               className="tap-row text-ink-secondary"
             >
-              <span className="t-label motion-underline">{link.label}</span>
+              <span className="t-label motion-underline">
+                {navLabel(link, t)}
+              </span>
             </Link>
           ))}
         </span>
@@ -95,7 +102,7 @@ export function MobileNav({ className }: { className?: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Открыть меню"
+        aria-label={t.nav.openMenu}
         aria-expanded={open}
         className={cn(
           "tap-icon inline-flex h-11 w-11 shrink-0 items-center justify-center text-[1rem] lg:hidden",

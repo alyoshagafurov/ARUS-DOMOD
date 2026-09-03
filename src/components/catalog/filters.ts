@@ -35,18 +35,6 @@ export const emptyFilters: CatalogFilters = {
   sort: "featured",
 };
 
-export const offerKindLabels: Record<OfferKind, string> = {
-  purchase: "Покупка",
-  rental: "Прокат",
-};
-
-export const availabilityLabels: Record<Availability, string> = {
-  in_stock: "В наличии",
-  made_to_order: "Под заказ",
-  rental_only: "Только прокат",
-  sold_out: "Продано",
-};
-
 export interface PriceBand {
   label: string;
   min?: number;
@@ -80,13 +68,16 @@ export function toQuery(
   bands: PriceBand[],
   pageSize: number,
 ): CatalogQuery {
-  const band = filters.priceBand !== undefined ? bands[filters.priceBand] : undefined;
+  const band =
+    filters.priceBand !== undefined ? bands[filters.priceBand] : undefined;
 
   return {
     categorySlug: filters.categorySlug,
     offerKind: filters.offerKind,
     sizes: filters.sizes.length ? filters.sizes : undefined,
-    availability: filters.availability.length ? filters.availability : undefined,
+    availability: filters.availability.length
+      ? filters.availability
+      : undefined,
     priceMin: band?.min,
     priceMax: band?.max,
     search: filters.search.trim() || undefined,

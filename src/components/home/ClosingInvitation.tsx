@@ -4,6 +4,7 @@ import { OrnamentField } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { Media } from "@/components/ui/Media";
 import { site } from "@/lib/config/site";
+import { getDictionary } from "@/lib/i18n/server";
 import { photo } from "@/lib/photos";
 
 /**
@@ -17,7 +18,8 @@ import { photo } from "@/lib/photos";
  * Композиция замыкает страницу на hero: там кадр тоже справа и тоже уходит
  * за край, только ниша разомкнута в другую сторону.
  */
-export function ClosingInvitation() {
+export async function ClosingInvitation() {
+  const t = await getDictionary();
   return (
     <section
       data-surface="night"
@@ -37,18 +39,16 @@ export function ClosingInvitation() {
               {site.name} · {site.city}
             </p>
             <h2 className="t-display-2 mt-7 max-w-[14ch] text-balance">
-              Найдите образ для своего дня.
+              {t.home.closingTitle}
             </h2>
             <span
               aria-hidden="true"
               className="hoshiya-line mt-8 max-w-[6rem]"
             />
-            <p className="t-lead mt-8 max-w-[34ch]">
-              Продажа и прокат в национальном стиле.
-            </p>
+            <p className="t-lead mt-8 max-w-[34ch]">{t.common.positioning}.</p>
             <div className="mt-10">
               <Button href="/catalog" size="lg">
-                Открыть коллекцию
+                {t.home.closingCta}
               </Button>
             </div>
           </Reveal>

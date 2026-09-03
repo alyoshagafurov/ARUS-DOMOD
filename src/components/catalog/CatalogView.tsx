@@ -1,5 +1,7 @@
 "use client";
 
+import { useDictionary } from "@/lib/i18n/client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ActiveFilters } from "@/components/catalog/ActiveFilters";
@@ -11,10 +13,8 @@ import { FilterPanel } from "@/components/catalog/FilterPanel";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 import {
   activeFilterCount,
-  availabilityLabels,
   CATALOG_PAGE_SIZE,
   emptyFilters,
-  offerKindLabels,
   priceBands,
   queryKey,
   toQuery,
@@ -64,6 +64,7 @@ export function CatalogView({
   initialSearch,
   initial,
 }: CatalogViewProps) {
+  const t = useDictionary();
   const [filters, setFilters] = useState<CatalogFilters>({
     ...emptyFilters,
     categorySlug: initialCategory,
@@ -162,7 +163,8 @@ export function CatalogView({
       ? [
           {
             id: "offer",
-            label: offerKindLabels[filters.offerKind],
+            label:
+              filters.offerKind === "rental" ? t.cart.rental : t.cart.purchase,
             onRemove: () => update({ offerKind: undefined }),
           },
         ]
@@ -178,7 +180,7 @@ export function CatalogView({
       : []),
     ...filters.availability.map((value) => ({
       id: `availability-${value}`,
-      label: availabilityLabels[value],
+      label: t.product.availability[value],
       onRemove: () =>
         update({
           availability: filters.availability.filter((v) => v !== value),

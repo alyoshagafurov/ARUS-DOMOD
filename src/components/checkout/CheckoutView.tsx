@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { clearCart } from "@/lib/cart";
 import { contact } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
+import { useDictionary, useLocale } from "@/lib/i18n/client";
 import type { Order } from "@/lib/orders/types";
 
 type Delivery = "pickup" | "courier";
@@ -45,6 +46,8 @@ const today = () => new Date().toISOString().slice(0, 10);
  * скринридеру и автозаполнению телефона, а они это умеют сами.
  */
 export function CheckoutView() {
+  const t = useDictionary();
+  const locale = useLocale();
   const { ready, totals } = useCartProducts();
   const [delivery, setDelivery] = useState<Delivery>("pickup");
   const [pending, setPending] = useState(false);
@@ -70,7 +73,7 @@ export function CheckoutView() {
       },
       weddingDate: String(form.get("weddingDate") ?? ""),
       comment: String(form.get("comment") ?? ""),
-      locale: "ru",
+      locale,
       lines: totals.purchase.map(({ line }) => ({
         productId: line.productId,
         variantId: line.variantId,
@@ -89,7 +92,7 @@ export function CheckoutView() {
         error?: string;
       };
       if (!response.ok) {
-        setError(data.error ?? "Не удалось отправить заказ");
+        setError(data.error ?? t.checkout.genericError);
         return;
       }
       setResult(data);
@@ -120,18 +123,17 @@ export function CheckoutView() {
     return (
       <Container width="narrow" className="py-16 lg:py-24">
         <div className="mx-auto max-w-[40rem]">
-          <p className="t-label text-ink-accent">Заказ {order.id}</p>
-          <h1 className="t-h1 mt-4 text-balance">Заказ принят</h1>
+          <p className="t-label text-ink-accent">
+            {t.checkout.order} {order.id}
+          </p>
+          <h1 className="t-h1 mt-4 text-balance">{t.checkout.accepted}</h1>
           <span aria-hidden="true" className="hoshiya-line mt-6 max-w-[5rem]" />
 
-          <p className="t-lead mt-6">
-            Отправьте его администратору в WhatsApp — так он увидит заказ сразу
-            и свяжется с вами для подтверждения.
-          </p>
+          <p className="t-lead mt-6">{t.checkout.acceptedLead}</p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button href={result.whatsapp.primary} external size="lg">
-              Отправить в WhatsApp · {contact.phoneName}
+              {t.checkout.sendWhatsApp} · {contact.phoneName}
             </Button>
             {result.whatsapp.secondary ? (
               <Button
@@ -158,7 +160,9 @@ export function CheckoutView() {
                   </span>
                   <span className="t-caption">
                     {line.article ? `${line.article}` : ""}
-                    {line.size ? ` · размер ${line.size}` : ""}
+                    {line.size
+                      ? ` · ${t.product.size.toLowerCase()} ${line.size}`
+                      : ""}
                   </span>
                 </dt>
                 <dd className="t-price shrink-0">
@@ -167,7 +171,7 @@ export function CheckoutView() {
               </div>
             ))}
             <div className="flex items-baseline justify-between gap-4 py-4">
-              <dt className="t-label">Итого</dt>
+              <dt className="t-label">{t.cart.total}</dt>
               <dd className="t-price text-[1.0625rem]">
                 {formatMoney(order.totals.grand)}
               </dd>
@@ -176,29 +180,26 @@ export function CheckoutView() {
 
           <details className="mt-6 border border-hairline">
             <summary className="tap-row cursor-pointer px-4 text-ink-secondary">
-              <span className="t-label">Текст заказа</span>
+              <span className="t-label">{t.checkout.orderText}</span>
             </summary>
             <pre className="t-body-sm max-h-80 overflow-auto whitespace-pre-wrap px-4 pb-4 text-ink-secondary">
               {result.message}
             </pre>
             <div className="px-4 pb-4">
               <Button variant="secondary" size="sm" onClick={copyMessage}>
-                {copied ? "Скопировано" : "Скопировать"}
+                {copied ? t.checkout.copied : t.checkout.copy}
               </Button>
             </div>
           </details>
 
-          <p className="t-caption mt-8">
-            Оплата — после подтверждения, напрямую администратору. Стоимость
-            доставки согласуется отдельно. Номер заказа: {order.id}.
-          </p>
+          <p className="t-caption mt-8">{t.checkout.acceptedNote(order.id)}</p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Button href="/catalog" variant="secondary">
-              Вернуться в коллекцию
+              {t.checkout.backToCatalog}
             </Button>
             <Button href="/" variant="ghost">
-              На главную
+              {t.checkout.toHome}
             </Button>
           </div>
         </div>
@@ -212,15 +213,13 @@ export function CheckoutView() {
       <Container className="flex flex-col items-center py-24 text-center lg:py-32">
         <span aria-hidden="true" className="hoshiya-line max-w-[6rem]" />
         <h1 className="t-h1 mt-9">
-          {totals.rental.length ? "В заказе нет покупок" : "Корзина пуста"}
+          {totals.rental.length ? t.checkout.noPurchases : t.cart.empty}
         </h1>
         <p className="t-body-sm mt-4 max-w-[40ch] text-ink-secondary">
-          {totals.rental.length
-            ? "Прокат оформляется в магазине, а не через сайт. Для заказа выберите образы к покупке."
-            : "Оформлять пока нечего — выберите образы в коллекции."}
+          {totals.rental.length ? t.checkout.noPurchasesHint : t.cart.emptyHint}
         </p>
         <Button href="/catalog" className="mt-8">
-          Смотреть коллекцию
+          {t.cart.browse}
         </Button>
       </Container>
     );
@@ -229,7 +228,7 @@ export function CheckoutView() {
   /* ---------- Форма ------------------------------------------------------ */
   return (
     <Container className="pb-[var(--space-section-y)] pt-4 lg:pt-8">
-      <h1 className="t-h1">Оформление заказа</h1>
+      <h1 className="t-h1">{t.checkout.title}</h1>
 
       <form
         onSubmit={submit}
@@ -238,12 +237,12 @@ export function CheckoutView() {
         <div className="flex flex-col gap-9 lg:col-span-7">
           <section aria-labelledby="contact-title">
             <h2 id="contact-title" className="t-label text-ink-muted">
-              Контактные данные
+              {t.checkout.contact}
             </h2>
 
             <div className="mt-5 grid gap-5 sm:grid-cols-2">
               <label className="block">
-                <span className="t-body-sm">Имя</span>
+                <span className="t-body-sm">{t.checkout.name}</span>
                 <input
                   name="name"
                   type="text"
@@ -255,7 +254,7 @@ export function CheckoutView() {
               </label>
 
               <label className="block">
-                <span className="t-body-sm">Телефон</span>
+                <span className="t-body-sm">{t.checkout.phone}</span>
                 <input
                   name="phone"
                   type="tel"
@@ -267,12 +266,12 @@ export function CheckoutView() {
                   className={field}
                 />
                 <span id="phone-hint" className="t-caption mt-2 block">
-                  По нему администратор подтвердит заказ
+                  {t.checkout.phoneHint}
                 </span>
               </label>
 
               <label className="block sm:col-span-2">
-                <span className="t-body-sm">Дата свадьбы</span>
+                <span className="t-body-sm">{t.checkout.weddingDate}</span>
                 <input
                   name="weddingDate"
                   type="date"
@@ -280,7 +279,7 @@ export function CheckoutView() {
                   className={field}
                 />
                 <span className="t-caption mt-2 block">
-                  Необязательно — поможет спланировать сроки
+                  {t.checkout.weddingHint}
                 </span>
               </label>
             </div>
@@ -288,14 +287,14 @@ export function CheckoutView() {
 
           <fieldset className="border-t border-hairline pt-7">
             <legend className="t-label float-left w-full pb-4 text-ink-muted">
-              Получение
+              {t.checkout.receive}
             </legend>
             <div className="clear-both flex flex-col">
               {(
                 [
-                  ["pickup", "Самовывоз", "Забрать заказ в магазине"],
-                  ["courier", "Доставка", "Стоимость согласуется отдельно"],
-                ] as const
+                  ["pickup", t.checkout.pickup, t.checkout.pickupNote],
+                  ["courier", t.checkout.courier, t.checkout.courierNote],
+                ] as [Delivery, string, string][]
               ).map(([value, label, note]) => (
                 <label
                   key={value}
@@ -319,7 +318,7 @@ export function CheckoutView() {
 
             {delivery === "courier" ? (
               <label className="mt-5 block">
-                <span className="t-body-sm">Адрес доставки</span>
+                <span className="t-body-sm">{t.checkout.address}</span>
                 <input
                   name="address"
                   type="text"
@@ -333,7 +332,7 @@ export function CheckoutView() {
           </fieldset>
 
           <label className="block border-t border-hairline pt-7">
-            <span className="t-label text-ink-muted">Комментарий к заказу</span>
+            <span className="t-label text-ink-muted">{t.checkout.comment}</span>
             <textarea
               name="comment"
               rows={4}
@@ -347,7 +346,7 @@ export function CheckoutView() {
 
         <div className="lg:col-span-4 lg:col-start-9">
           <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
-            <h2 className="t-label text-ink-muted">Состав заказа</h2>
+            <h2 className="t-label text-ink-muted">{t.checkout.summary}</h2>
 
             <ul className="mt-5 flex flex-col border-t border-hairline">
               {totals.purchase.map(({ line, product, total }) => (
@@ -362,7 +361,9 @@ export function CheckoutView() {
                     </span>
                     <span className="t-caption">
                       {product.article ?? ""}
-                      {line.size ? ` · размер ${line.size}` : ""}
+                      {line.size
+                        ? ` · ${t.product.size.toLowerCase()} ${line.size}`
+                        : ""}
                     </span>
                   </span>
                   <span className="t-price shrink-0">{formatMoney(total)}</span>
@@ -372,8 +373,7 @@ export function CheckoutView() {
 
             {totals.rental.length ? (
               <p className="t-caption mt-4 border border-hairline p-3">
-                Прокат ({totals.rental.length}) в заказ не входит — его
-                оформляют в магазине.
+                {t.cart.rentalExcluded(totals.rental.length)}
               </p>
             ) : null}
 
@@ -405,12 +405,9 @@ export function CheckoutView() {
             ) : null}
 
             <Button type="submit" fullWidth className="mt-7" disabled={pending}>
-              {pending ? "Отправляем…" : "Заказать"}
+              {pending ? t.checkout.submitting : t.checkout.submit}
             </Button>
-            <p className="t-caption mt-4">
-              Нажимая кнопку, вы отправляете заказ администратору. Оплата —
-              после подтверждения.
-            </p>
+            <p className="t-caption mt-4">{t.checkout.submitNote}</p>
           </div>
         </div>
       </form>

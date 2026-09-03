@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 
 interface QuantityStepperProps {
   value: number;
@@ -17,6 +18,7 @@ export function QuantityStepper({
   onChange,
   label,
 }: QuantityStepperProps) {
+  const t = useDictionary();
   const button =
     "inline-flex h-11 w-11 items-center justify-center text-ink-secondary transition-colors duration-[var(--dur-fast)] hover:text-ink disabled:opacity-35 disabled:hover:text-ink-secondary";
 
@@ -26,7 +28,7 @@ export function QuantityStepper({
         type="button"
         onClick={() => onChange(value - 1)}
         disabled={value <= 1}
-        aria-label={`Уменьшить количество: ${label}`}
+        aria-label={t.misc.decrease(label)}
         className={button}
       >
         <span aria-hidden="true">−</span>
@@ -40,7 +42,7 @@ export function QuantityStepper({
       <button
         type="button"
         onClick={() => onChange(value + 1)}
-        aria-label={`Увеличить количество: ${label}`}
+        aria-label={t.misc.increase(label)}
         className={button}
       >
         <span aria-hidden="true">+</span>

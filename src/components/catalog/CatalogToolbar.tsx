@@ -2,26 +2,13 @@
 
 import { ArrowIcon, SearchIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { useDictionary } from "@/lib/i18n/client";
 import type { CatalogSort } from "@/types/catalog";
 
 /**
  * Значение по умолчанию должно помещаться в узкий <select> на телефоне
  * целиком — иначе первое, что видит пользователь, это обрезанное слово.
  */
-const sortLabels: Record<CatalogSort, string> = {
-  featured: "Подбор",
-  newest: "Новинки",
-  price_asc: "Цена: от низкой",
-  price_desc: "Цена: от высокой",
-};
-
-function plural(count: number): string {
-  const ten = count % 10;
-  const hundred = count % 100;
-  if (ten === 1 && hundred !== 11) return "образ";
-  if (ten >= 2 && ten <= 4 && (hundred < 12 || hundred > 14)) return "образа";
-  return "образов";
-}
 
 interface CatalogToolbarProps {
   total: number;
@@ -52,11 +39,18 @@ export function CatalogToolbar({
   activeFilterCount,
   searchQuery,
 }: CatalogToolbarProps) {
+  const t = useDictionary();
+  const sortLabels: Record<CatalogSort, string> = {
+    featured: t.catalog.sortFeatured,
+    newest: t.catalog.sortNewest,
+    price_asc: t.catalog.sortPriceAsc,
+    price_desc: t.catalog.sortPriceDesc,
+  };
   return (
     <div className="sticky top-[var(--header-h)] z-30 -mx-[var(--gutter)] border-y border-hairline bg-page/94 px-[var(--gutter)] backdrop-blur-[8px]">
       <div className="flex h-14 items-center justify-between gap-3">
         <p className="t-label min-w-0 shrink text-ink-muted" aria-live="polite">
-          <span className="tabular-nums text-ink">{total}</span> {plural(total)}
+          <span className="tabular-nums text-ink">{total}</span>
           {searchQuery ? (
             <span className="hidden sm:inline"> · «{searchQuery}»</span>
           ) : null}
@@ -70,14 +64,14 @@ export function CatalogToolbar({
               text-ink-secondary hover:text-ink sm:w-auto sm:px-2"
           >
             <SearchIcon className="h-[1.1em] w-[1.1em]" />
-            <span className="hidden sm:inline">Поиск</span>
+            <span className="hidden sm:inline">{t.nav.search}</span>
           </button>
 
           {/* Ширина нативного <select> равна его самому длинному пункту,
               поэтому на узком экране её приходится ограничивать явно —
               иначе «Цена: по возрастанию» выталкивает корзину за край. */}
           <label className="relative inline-flex h-11 min-w-0 items-center">
-            <span className="sr-only">Сортировка</span>
+            <span className="sr-only">{t.catalog.sort}</span>
             <select
               value={sort}
               onChange={(event) =>
@@ -110,7 +104,7 @@ export function CatalogToolbar({
                 : "border-strong text-ink hover:border-accent",
             )}
           >
-            Фильтр
+            {t.catalog.filters}
             {activeFilterCount > 0 ? (
               <span className="tabular-nums">{activeFilterCount}</span>
             ) : null}
