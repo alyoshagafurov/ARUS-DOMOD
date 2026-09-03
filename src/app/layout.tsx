@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant, Golos_Text } from "next/font/google";
 
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
 import { site } from "@/lib/config/site";
 
 import "./globals.css";
@@ -82,11 +80,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ru"
       className={`${cormorant.variable} ${golos.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-      </body>
+      {/* Шапку и подвал даёт (site)/layout.tsx: у админки они не нужны */}
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

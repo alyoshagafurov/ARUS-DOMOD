@@ -73,9 +73,9 @@ export interface NavLink {
  */
 export const primaryNav: NavLink[] = [
   { href: "/catalog", label: "Коллекции" },
-  { href: "/catalog/libos", label: "Платья", labelTg: "Либос" },
+  { href: "/catalog/arus", label: "Невесте", labelTg: "Арӯс" },
+  { href: "/catalog/domod", label: "Жениху", labelTg: "Домод" },
   { href: "/catalog/zewar", label: "Украшения", labelTg: "Зевар" },
-  { href: "/catalog/lavozimot", label: "Аксессуары", labelTg: "Лавозимот" },
 ];
 
 export const utilityNav: NavLink[] = [
@@ -88,7 +88,8 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     title: "Коллекция",
     links: [
       { href: "/catalog", label: "Все образы" },
-      { href: "/catalog/libos", label: "Платья" },
+      { href: "/catalog/arus", label: "Наряды для невесты" },
+      { href: "/catalog/domod", label: "Чапаны для жениха" },
       { href: "/catalog/zewar", label: "Украшения" },
       { href: "/catalog/lavozimot", label: "Аксессуары" },
       { href: "/favorites", label: "Избранное" },
