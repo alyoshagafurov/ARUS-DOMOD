@@ -63,19 +63,14 @@ export interface NavLink {
   external?: boolean;
 }
 
-/**
- * В навигации стоят только существующие маршруты.
- *
- * «О бренде» (/about) и «Контакты» (/contacts) сняты: страниц под ними нет,
- * оба адреса отдавали 404. Заглушек вместо них не заводим — содержимого от
- * клиента нет, а придуманная страница о бренде была бы выдумкой о нём.
- * Пункты вернутся вместе с самими страницами отдельной фазой.
- */
+/** В навигации стоят только существующие маршруты. */
 export const primaryNav: NavLink[] = [
   { href: "/catalog", label: "Коллекции" },
   { href: "/catalog/arus", label: "Невесте", labelTg: "Арӯс" },
   { href: "/catalog/domod", label: "Жениху", labelTg: "Домод" },
-  { href: "/catalog/zewar", label: "Украшения", labelTg: "Зевар" },
+  { href: "/rental", label: "Прокат" },
+  { href: "/about", label: "О нас" },
+  { href: "/contacts", label: "Контакты" },
 ];
 
 export const utilityNav: NavLink[] = [
@@ -91,8 +86,16 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { href: "/catalog/arus", label: "Наряды для невесты" },
       { href: "/catalog/domod", label: "Чапаны для жениха" },
       { href: "/catalog/zewar", label: "Украшения" },
-      { href: "/catalog/lavozimot", label: "Аксессуары" },
       { href: "/favorites", label: "Избранное" },
+    ],
+  },
+  {
+    title: "Дом",
+    links: [
+      { href: "/about", label: "О нас" },
+      { href: "/rental", label: "Прокат" },
+      { href: "/delivery", label: "Доставка и получение" },
+      { href: "/contacts", label: "Контакты" },
     ],
   },
 ];

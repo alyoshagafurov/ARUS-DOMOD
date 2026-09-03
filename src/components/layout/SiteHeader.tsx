@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 
 import { Logo } from "@/components/brand/Logo";
@@ -57,9 +58,11 @@ export function SiteHeader() {
   const overlay = OVERLAY_ROUTES.has(pathname);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const cartCount = useCartCount();
   const favoriteCount = useFavoriteCount();
   const closeSearch = useCallback(() => setSearchOpen(false), []);
+  const closeCart = useCallback(() => setCartOpen(false), []);
 
   useEffect(() => {
     let frame = 0;
@@ -171,11 +174,16 @@ export function SiteHeader() {
                   </span>
                 ) : null}
               </Link>
-              <Link
-                href="/cart"
+              {/* Корзина открывается панелью, не уводя со страницы; полная
+                  страница /cart остаётся доступной из панели и меню. */}
+              <button
+                type="button"
+                onClick={() => setCartOpen(true)}
                 aria-label={
                   cartCount > 0 ? `Корзина, ${cartCount} шт.` : "Корзина"
                 }
+                aria-haspopup="dialog"
+                aria-expanded={cartOpen}
                 className={cn("relative inline-flex", iconBox)}
               >
                 <BagIcon />
@@ -187,7 +195,7 @@ export function SiteHeader() {
                     {cartCount}
                   </span>
                 ) : null}
-              </Link>
+              </button>
               <MobileNav className="-mr-2" />
             </div>
           </div>
@@ -206,6 +214,7 @@ export function SiteHeader() {
       </header>
 
       <SearchOverlay open={searchOpen} onClose={closeSearch} />
+      <CartDrawer open={cartOpen} onClose={closeCart} />
 
       {/* Страницы без тёмного hero не должны уезжать под шапку */}
       {overlay ? null : (

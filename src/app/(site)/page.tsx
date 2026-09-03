@@ -5,6 +5,9 @@ import { CollectionIntro } from "@/components/home/CollectionIntro";
 import { FeaturedCollection } from "@/components/home/FeaturedCollection";
 import { HeritageStory } from "@/components/home/HeritageStory";
 import { HomeHero } from "@/components/home/HomeHero";
+import { HowItWorks } from "@/components/home/HowItWorks";
+import { RentalBand } from "@/components/home/RentalBand";
+import { SocialProof } from "@/components/home/SocialProof";
 import { catalog } from "@/lib/catalog";
 
 /**
@@ -12,13 +15,16 @@ import { catalog } from "@/lib/catalog";
  *
  * Последовательность ролей, а не череда одинаковых прямоугольников:
  *
- *   БРЕНД     hero на поле логотипа — имя, функция, действие
- *   РАЗВОРОТ  крупный план ткани: материал и мастерство вблизи
- *   КОЛЛЕКЦИЯ витрина образов
- *   НАСЛЕДИЕ  кадр торжества, уходящий за край экрана
- *   РАЗДЕЛЫ   плотный ряд категорий на поле логотипа
- *   ТИШИНА    архивный текстиль — единственная светлая пауза страницы
- *   ДЕЙСТВИЕ  финальный кадр пары и одна кнопка
+ *   БРЕНД      hero на поле логотипа — имя, функция, действие
+ *   РАЗВОРОТ   крупный план ткани: материал и мастерство вблизи
+ *   РАЗДЕЛЫ    плотный ряд категорий
+ *   КОЛЛЕКЦИЯ  витрина образов
+ *   НАСЛЕДИЕ   кадр торжества, уходящий за край экрана
+ *   ПРОКАТ     отдельная полоса: прокат — не второй пункт покупки
+ *   КАК КУПИТЬ пять шагов и получение
+ *   ТИШИНА     архивный текстиль — единственная светлая пауза страницы
+ *   СЕТЬ       профиль и ссылки, без поддельной ленты
+ *   ДЕЙСТВИЕ   финальный кадр пары и одна кнопка
  *
  * Меняется не только содержимое: у каждой роли своя плотность, свой масштаб
  * и своя поверхность. Средой служит бирюза логотипа, светлое появляется
@@ -49,6 +55,7 @@ export default async function HomePage() {
     <>
       <HomeHero />
       <CollectionIntro />
+      <CategoryNavigation categories={categories} />
 
       <FeaturedCollection
         products={featured}
@@ -57,8 +64,10 @@ export default async function HomePage() {
       />
 
       <HeritageStory />
-      <CategoryNavigation categories={categories} />
+      <RentalBand />
+      <HowItWorks />
       <BrandStatement />
+      <SocialProof />
       <ClosingInvitation />
     </>
   );

@@ -89,15 +89,23 @@ export function Button({
         rel="noreferrer noopener"
         className={classes}
         aria-label={ariaLabel}
+        onClick={onClick}
       >
         {children}
       </a>
     );
   }
 
+  // onClick и у ссылки: панели закрываются по переходу, а не остаются
+  // висеть поверх новой страницы
   if (href) {
     return (
-      <Link href={href} className={classes} aria-label={ariaLabel}>
+      <Link
+        href={href}
+        className={classes}
+        aria-label={ariaLabel}
+        onClick={onClick}
+      >
         {children}
       </Link>
     );
