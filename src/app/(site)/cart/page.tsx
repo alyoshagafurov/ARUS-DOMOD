@@ -3,7 +3,7 @@ import { CartView } from "@/components/cart/CartView";
 
 export async function generateMetadata() {
   const t = await getDictionary();
-  return { title: t.meta.cart };
+  return { title: t.meta.cart, robots: { index: false, follow: false } };
 }
 
 export default function CartPage() {

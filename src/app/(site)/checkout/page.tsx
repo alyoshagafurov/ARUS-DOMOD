@@ -3,7 +3,7 @@ import { CheckoutView } from "@/components/checkout/CheckoutView";
 
 export async function generateMetadata() {
   const t = await getDictionary();
-  return { title: t.meta.checkout };
+  return { title: t.meta.checkout, robots: { index: false, follow: false } };
 }
 
 export default function CheckoutPage() {

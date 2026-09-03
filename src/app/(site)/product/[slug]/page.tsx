@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { ProductGallery } from "@/components/product/ProductGallery";
+import { ProductJsonLd } from "@/components/product/ProductJsonLd";
 import {
   PRODUCT_STORY_ID,
   ProductPurchase,
@@ -78,6 +79,7 @@ export default async function ProductPage({
 
   return (
     <>
+      <ProductJsonLd product={product} />
       <Container className="pt-4 lg:pt-6">
         <Breadcrumbs
           items={[
