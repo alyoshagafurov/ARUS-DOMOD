@@ -72,6 +72,8 @@ export interface Product {
   slug: string;
   title: string;
   subtitle?: string;
+  /** Артикул изделия вида AD-001 — его называют по телефону и пишут на бирке */
+  article?: string;
   categorySlug: string;
   collectionSlug?: string;
   images: ProductImage[];
@@ -145,6 +147,7 @@ export interface CatalogFacets {
   offerKinds: FacetValue<OfferKind>[];
   availability: FacetValue<Availability>[];
   sizes: FacetValue<string>[];
+  colors: FacetValue<string>[];
   /** Границы цены в минорных единицах; null, если цен в выборке нет */
   price: { min: number; max: number } | null;
 }

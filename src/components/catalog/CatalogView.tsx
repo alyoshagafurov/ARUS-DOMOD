@@ -23,7 +23,7 @@ import {
 import { Container } from "@/components/layout/Container";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 import { Button } from "@/components/ui/Button";
-import { catalog } from "@/lib/catalog";
+import { catalog } from "@/lib/catalog/client";
 import type {
   CatalogFacets,
   Category,

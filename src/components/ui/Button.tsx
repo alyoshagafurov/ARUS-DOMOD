@@ -48,6 +48,8 @@ interface ButtonProps {
   className?: string;
   /** Если задан — рендерится next/link вместо <button> */
   href?: string;
+  /** Внешний адрес (WhatsApp, соцсети): обычная <a> в новой вкладке */
+  external?: boolean;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   onClick?: () => void;
@@ -61,6 +63,7 @@ export function Button({
   fullWidth = false,
   className,
   href,
+  external = false,
   type = "button",
   disabled,
   onClick,
@@ -77,6 +80,20 @@ export function Button({
     fullWidth && "w-full",
     className,
   );
+
+  if (href && external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer noopener"
+        className={classes}
+        aria-label={ariaLabel}
+      >
+        {children}
+      </a>
+    );
+  }
 
   if (href) {
     return (

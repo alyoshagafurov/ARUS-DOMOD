@@ -154,6 +154,8 @@ export function useCartHas(
   );
 }
 
-export function useAddToCart(): (line: Omit<CartLine, "id" | "quantity">) => void {
+export function useAddToCart(): (
+  line: Omit<CartLine, "id" | "quantity">,
+) => void {
   return useCallback((line) => addToCart(line), []);
 }

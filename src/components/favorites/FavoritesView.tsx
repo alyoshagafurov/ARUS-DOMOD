@@ -8,7 +8,7 @@ import { OrnamentBand } from "@/components/ornament/Ornament";
 import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
-import { catalog } from "@/lib/catalog";
+import { catalog } from "@/lib/catalog/client";
 import { useFavoriteIds } from "@/lib/favorites";
 import type { Category, Product } from "@/types/catalog";
 

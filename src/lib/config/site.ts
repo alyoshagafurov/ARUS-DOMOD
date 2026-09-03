@@ -21,10 +21,29 @@ export const site = {
   url: "https://arusdomod.tj", // TODO: подтвердить домен у клиента
 } as const;
 
-/** Телефон: одна строка для набора, одна для показа */
+/**
+ * Контакты для заказов. Основной канал уведомления о заказе — WhatsApp
+ * Азизы; Рустам — дополнительный. Оба номера переданы клиентом.
+ */
 export const contact = {
   phone: "+992949731111",
   phoneDisplay: "+992 94 973 11 11",
+  phoneName: "Азиза",
+  phoneSecondary: "+992907666000",
+  phoneSecondaryDisplay: "+992 90 766 60 00",
+  phoneSecondaryName: "Рустам",
+} as const;
+
+/**
+ * Условия проката — переданы клиентом дословно. Прокат через сайт НЕ
+ * оформляется: клиент смотрит цену и условия, а договор заключает в магазине.
+ */
+export const rental = {
+  maxDays: 3,
+  priceFromMinor: 10000, // от 100 сомони
+  depositKinds: ["деньги", "паспорт", "золото"],
+  inStoreOnly: true,
+  noDelivery: true,
 } as const;
 
 /**

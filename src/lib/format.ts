@@ -24,7 +24,8 @@ export function getPrimaryOffer(
   preferred: OfferKind = "purchase",
 ): ProductOffer | undefined {
   return (
-    product.offers.find((offer) => offer.kind === preferred) ?? product.offers[0]
+    product.offers.find((offer) => offer.kind === preferred) ??
+    product.offers[0]
   );
 }
 

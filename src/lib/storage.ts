@@ -6,7 +6,10 @@
  * случаев не должен ронять витрину, поэтому любое обращение обёрнуто, а
  * непрошедшие проверку данные молча отбрасываются.
  */
-export function readStored<T>(key: string, isValid: (value: unknown) => value is T): T | null {
+export function readStored<T>(
+  key: string,
+  isValid: (value: unknown) => value is T,
+): T | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(key);

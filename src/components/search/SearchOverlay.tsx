@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 import { OrnamentBand } from "@/components/ornament/Ornament";
 import { CloseIcon, SearchIcon } from "@/components/ui/icons";
 import { Media } from "@/components/ui/Media";
-import { catalog } from "@/lib/catalog";
+import { catalog } from "@/lib/catalog/client";
 import { formatMoney, getPrimaryOffer } from "@/lib/format";
 import type { Category, Product } from "@/types/catalog";
 

@@ -9,22 +9,37 @@ import {
 } from "@/components/cart/useCartProducts";
 import { PaymentPlaceholder } from "@/components/checkout/PaymentPlaceholder";
 import { Container } from "@/components/layout/Container";
-import { OrnamentBand } from "@/components/ornament/Ornament";
 import { Button } from "@/components/ui/Button";
 import { clearCart } from "@/lib/cart";
+import { contact } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
+import type { Order } from "@/lib/orders/types";
 
 type Delivery = "pickup" | "courier";
+
+interface OrderResponse {
+  order: Order;
+  whatsapp: { primary: string; secondary: string | null };
+  message: string;
+}
 
 const field =
   "mt-2 h-12 w-full border border-hairline bg-transparent px-4 text-ink outline-none transition-colors duration-[var(--dur-fast)] focus:border-accent";
 
+/** Сегодняшняя дата в формате input[type=date] — раньше неё свадьбы не бывает */
+const today = () => new Date().toISOString().slice(0, 10);
+
 /**
- * Оформление заказа — прототип.
+ * Оформление заказа.
  *
- * Никакого бэкенда, платежа и создания заказа здесь нет: форма проверяется
- * средствами браузера и показывает состояние «принято» без номера заказа,
- * потому что придумывать номер, похожий на настоящий, нельзя.
+ * Форма отправляет черновик в /api/orders; сервер сам собирает цены и
+ * названия из каталога, присваивает номер и сохраняет заказ. В ответ
+ * приходит ссылка на WhatsApp администратора с готовым текстом — клиент
+ * открывает её одним касанием.
+ *
+ * В заказ входят только покупки. Прокат оформляется в магазине, поэтому
+ * строки проката из корзины в черновик не попадают, а форма об этом
+ * говорит прямо.
  *
  * Поля — нативные. Самодельные контролы пришлось бы заново учить клавиатуре,
  * скринридеру и автозаполнению телефона, а они это умеют сами.
@@ -32,50 +47,177 @@ const field =
 export function CheckoutView() {
   const { ready, totals } = useCartProducts();
   const [delivery, setDelivery] = useState<Delivery>("pickup");
-  const [done, setDone] = useState<CartTotals | null>(null);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<OrderResponse | null>(null);
+  const [copied, setCopied] = useState(false);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setDone(totals);
-    clearCart();
+    if (pending) return;
+    const form = new FormData(event.currentTarget);
+    setPending(true);
+    setError(null);
+
+    const draft = {
+      customer: {
+        name: String(form.get("name") ?? ""),
+        phone: String(form.get("phone") ?? ""),
+      },
+      delivery: {
+        method: delivery,
+        address: String(form.get("address") ?? ""),
+      },
+      weddingDate: String(form.get("weddingDate") ?? ""),
+      comment: String(form.get("comment") ?? ""),
+      locale: "ru",
+      lines: totals.purchase.map(({ line }) => ({
+        productId: line.productId,
+        variantId: line.variantId,
+        offerKind: "purchase",
+        quantity: line.quantity,
+      })),
+    };
+
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(draft),
+      });
+      const data = (await response.json()) as OrderResponse & {
+        error?: string;
+      };
+      if (!response.ok) {
+        setError(data.error ?? "Не удалось отправить заказ");
+        return;
+      }
+      setResult(data);
+      clearCart();
+    } catch {
+      setError(
+        "Нет связи с сервером. Проверьте интернет и попробуйте ещё раз.",
+      );
+    } finally {
+      setPending(false);
+    }
   };
 
-  if (done) {
+  const copyMessage = async () => {
+    if (!result) return;
+    try {
+      await navigator.clipboard.writeText(result.message);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // буфер недоступен — текст всё равно виден на экране
+    }
+  };
+
+  /* ---------- Заказ принят ---------------------------------------------- */
+  if (result) {
+    const { order } = result;
     return (
-      <Container className="flex flex-col items-center py-24 text-center lg:py-32">
-        <OrnamentBand motif="chorkhona" height={12} className="max-w-[9rem]" />
-        <h1 className="t-h1 mt-9 max-w-[18ch] text-balance">Спасибо</h1>
-        <p className="t-lead mt-5 max-w-[40ch]">
-          Ваш заказ принят. Мы свяжемся с вами, чтобы подтвердить состав и
-          сроки.
-        </p>
-        <p className="t-caption mt-7 max-w-[46ch]">
-          Это демонстрационный прототип: заказ никуда не отправлен, оплата не
-          проводилась, номер заказа не присваивается — приём заявок появится
-          вместе с бэкендом.
-        </p>
-        {done.grandTotal ? (
-          <p className="t-price mt-8 text-[1.0625rem]">
-            {done.items} образа · {formatMoney(done.grandTotal)}
+      <Container width="narrow" className="py-16 lg:py-24">
+        <div className="mx-auto max-w-[40rem]">
+          <p className="t-label text-ink-accent">Заказ {order.id}</p>
+          <h1 className="t-h1 mt-4 text-balance">Заказ принят</h1>
+          <span aria-hidden="true" className="hoshiya-line mt-6 max-w-[5rem]" />
+
+          <p className="t-lead mt-6">
+            Отправьте его администратору в WhatsApp — так он увидит заказ сразу
+            и свяжется с вами для подтверждения.
           </p>
-        ) : null}
-        <div className="mt-9 flex flex-wrap justify-center gap-3">
-          <Button href="/catalog">Вернуться в коллекцию</Button>
-          <Button href="/" variant="secondary">
-            На главную
-          </Button>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button href={result.whatsapp.primary} external size="lg">
+              Отправить в WhatsApp · {contact.phoneName}
+            </Button>
+            {result.whatsapp.secondary ? (
+              <Button
+                href={result.whatsapp.secondary}
+                external
+                variant="secondary"
+                size="lg"
+              >
+                {contact.phoneSecondaryName}
+              </Button>
+            ) : null}
+          </div>
+
+          <dl className="mt-10 flex flex-col border-t border-hairline">
+            {order.lines.map((line) => (
+              <div
+                key={`${line.productId}-${line.size ?? ""}`}
+                className="flex items-baseline justify-between gap-4 border-b border-hairline py-3"
+              >
+                <dt className="min-w-0">
+                  <span className="t-body-sm block">
+                    {line.title}
+                    {line.quantity > 1 ? ` × ${line.quantity}` : ""}
+                  </span>
+                  <span className="t-caption">
+                    {line.article ? `${line.article}` : ""}
+                    {line.size ? ` · размер ${line.size}` : ""}
+                  </span>
+                </dt>
+                <dd className="t-price shrink-0">
+                  {formatMoney(line.lineTotal)}
+                </dd>
+              </div>
+            ))}
+            <div className="flex items-baseline justify-between gap-4 py-4">
+              <dt className="t-label">Итого</dt>
+              <dd className="t-price text-[1.0625rem]">
+                {formatMoney(order.totals.grand)}
+              </dd>
+            </div>
+          </dl>
+
+          <details className="mt-6 border border-hairline">
+            <summary className="tap-row cursor-pointer px-4 text-ink-secondary">
+              <span className="t-label">Текст заказа</span>
+            </summary>
+            <pre className="t-body-sm max-h-80 overflow-auto whitespace-pre-wrap px-4 pb-4 text-ink-secondary">
+              {result.message}
+            </pre>
+            <div className="px-4 pb-4">
+              <Button variant="secondary" size="sm" onClick={copyMessage}>
+                {copied ? "Скопировано" : "Скопировать"}
+              </Button>
+            </div>
+          </details>
+
+          <p className="t-caption mt-8">
+            Оплата — после подтверждения, напрямую администратору. Стоимость
+            доставки согласуется отдельно. Номер заказа: {order.id}.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button href="/catalog" variant="secondary">
+              Вернуться в коллекцию
+            </Button>
+            <Button href="/" variant="ghost">
+              На главную
+            </Button>
+          </div>
         </div>
       </Container>
     );
   }
 
-  if (ready && totals.items === 0) {
+  /* ---------- Пусто ------------------------------------------------------ */
+  if (ready && totals.purchase.length === 0) {
     return (
       <Container className="flex flex-col items-center py-24 text-center lg:py-32">
-        <OrnamentBand motif="mavj" height={10} className="max-w-[9rem]" />
-        <h1 className="t-h1 mt-9">Корзина пуста</h1>
-        <p className="t-body-sm mt-4 max-w-[38ch] text-ink-secondary">
-          Оформлять пока нечего — выберите образы в коллекции.
+        <span aria-hidden="true" className="hoshiya-line max-w-[6rem]" />
+        <h1 className="t-h1 mt-9">
+          {totals.rental.length ? "В заказе нет покупок" : "Корзина пуста"}
+        </h1>
+        <p className="t-body-sm mt-4 max-w-[40ch] text-ink-secondary">
+          {totals.rental.length
+            ? "Прокат оформляется в магазине, а не через сайт. Для заказа выберите образы к покупке."
+            : "Оформлять пока нечего — выберите образы в коллекции."}
         </p>
         <Button href="/catalog" className="mt-8">
           Смотреть коллекцию
@@ -84,9 +226,10 @@ export function CheckoutView() {
     );
   }
 
+  /* ---------- Форма ------------------------------------------------------ */
   return (
     <Container className="pb-[var(--space-section-y)] pt-4 lg:pt-8">
-      <h1 className="t-h1">Оформление</h1>
+      <h1 className="t-h1">Оформление заказа</h1>
 
       <form
         onSubmit={submit}
@@ -105,6 +248,7 @@ export function CheckoutView() {
                   name="name"
                   type="text"
                   required
+                  minLength={2}
                   autoComplete="name"
                   className={field}
                 />
@@ -123,7 +267,20 @@ export function CheckoutView() {
                   className={field}
                 />
                 <span id="phone-hint" className="t-caption mt-2 block">
-                  Для подтверждения заказа
+                  По нему администратор подтвердит заказ
+                </span>
+              </label>
+
+              <label className="block sm:col-span-2">
+                <span className="t-body-sm">Дата свадьбы</span>
+                <input
+                  name="weddingDate"
+                  type="date"
+                  min={today()}
+                  className={field}
+                />
+                <span className="t-caption mt-2 block">
+                  Необязательно — поможет спланировать сроки
                 </span>
               </label>
             </div>
@@ -136,12 +293,8 @@ export function CheckoutView() {
             <div className="clear-both flex flex-col">
               {(
                 [
-                  ["pickup", "Самовывоз", "Забрать заказ на месте"],
-                  [
-                    "courier",
-                    "Доставка",
-                    "Условия согласуем при подтверждении",
-                  ],
+                  ["pickup", "Самовывоз", "Забрать заказ в магазине"],
+                  ["courier", "Доставка", "Стоимость согласуется отдельно"],
                 ] as const
               ).map(([value, label, note]) => (
                 <label
@@ -171,6 +324,7 @@ export function CheckoutView() {
                   name="address"
                   type="text"
                   required
+                  minLength={4}
                   autoComplete="street-address"
                   className={field}
                 />
@@ -183,6 +337,7 @@ export function CheckoutView() {
             <textarea
               name="comment"
               rows={4}
+              maxLength={1000}
               className="mt-4 w-full resize-y border border-hairline bg-transparent p-4 text-ink outline-none transition-colors duration-[var(--dur-fast)] focus:border-accent"
             />
           </label>
@@ -195,40 +350,66 @@ export function CheckoutView() {
             <h2 className="t-label text-ink-muted">Состав заказа</h2>
 
             <ul className="mt-5 flex flex-col border-t border-hairline">
-              {[...totals.purchase, ...totals.rental].map(
-                ({ line, product, offer, total }) => (
-                  <li
-                    key={line.id}
-                    className="flex items-baseline justify-between gap-4 border-b border-hairline py-3"
-                  >
-                    <span className="min-w-0">
-                      <span className="t-body-sm block truncate">
-                        {product.title}
-                        {line.quantity > 1 ? ` × ${line.quantity}` : ""}
-                      </span>
-                      <span className="t-caption">
-                        {offer.kind === "rental" ? "Прокат" : "Покупка"}
-                        {line.size ? ` · размер ${line.size}` : ""}
-                      </span>
+              {totals.purchase.map(({ line, product, total }) => (
+                <li
+                  key={line.id}
+                  className="flex items-baseline justify-between gap-4 border-b border-hairline py-3"
+                >
+                  <span className="min-w-0">
+                    <span className="t-body-sm block truncate">
+                      {product.title}
+                      {line.quantity > 1 ? ` × ${line.quantity}` : ""}
                     </span>
-                    <span className="t-price shrink-0">
-                      {formatMoney(total)}
+                    <span className="t-caption">
+                      {product.article ?? ""}
+                      {line.size ? ` · размер ${line.size}` : ""}
                     </span>
-                  </li>
-                ),
-              )}
+                  </span>
+                  <span className="t-price shrink-0">{formatMoney(total)}</span>
+                </li>
+              ))}
             </ul>
 
+            {totals.rental.length ? (
+              <p className="t-caption mt-4 border border-hairline p-3">
+                Прокат ({totals.rental.length}) в заказ не входит — его
+                оформляют в магазине.
+              </p>
+            ) : null}
+
             <div className="mt-5">
-              <CartSummary totals={totals} />
+              <CartSummary
+                totals={
+                  {
+                    ...totals,
+                    rental: [],
+                    rentalSum: null,
+                    depositSum: null,
+                    grandTotal: totals.purchaseSum,
+                    items: totals.purchase.reduce(
+                      (n, { line }) => n + line.quantity,
+                      0,
+                    ),
+                  } satisfies CartTotals
+                }
+              />
             </div>
 
-            <Button type="submit" fullWidth className="mt-7">
-              Оформить заказ
+            {error ? (
+              <p
+                role="alert"
+                className="t-body-sm mt-5 border border-danger px-4 py-3 text-danger"
+              >
+                {error}
+              </p>
+            ) : null}
+
+            <Button type="submit" fullWidth className="mt-7" disabled={pending}>
+              {pending ? "Отправляем…" : "Заказать"}
             </Button>
             <p className="t-caption mt-4">
-              Нажимая кнопку, вы оставляете заявку — оплата на сайте пока не
-              проводится.
+              Нажимая кнопку, вы отправляете заказ администратору. Оплата —
+              после подтверждения.
             </p>
           </div>
         </div>

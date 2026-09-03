@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { catalog } from "@/lib/catalog";
+import { catalog } from "@/lib/catalog/client";
 import { useCartLines, type CartLine } from "@/lib/cart";
 import { getPrimaryOffer } from "@/lib/format";
 import type { Money, Product, ProductOffer } from "@/types/catalog";
