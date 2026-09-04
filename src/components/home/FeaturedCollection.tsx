@@ -15,8 +15,6 @@ interface FeaturedCollectionProps {
   collection?: Collection;
 }
 
-const pad = (n: number) => String(n).padStart(2, "0");
-
 /**
  * Подборка — айвон с рейкой предметов.
  *
@@ -44,13 +42,6 @@ export async function FeaturedCollection({
         >
           <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 px-[var(--block-pad)] pt-[var(--block-pad)]">
             <Reveal>
-              <p className="t-label flex items-center gap-3 text-ink-accent">
-                <span className="t-num text-[1.35rem] text-gold-ink">
-                  {pad(products.length)}
-                </span>
-                <span aria-hidden="true" className="h-px w-8 bg-gold/60" />
-                {collection?.subtitle ?? t.home.collectionLabel}
-              </p>
               <h2 className="t-display-2 mt-5 max-w-[14ch] text-balance">
                 {collection?.title ?? t.misc.catalogLabel}
               </h2>
@@ -85,7 +76,6 @@ export async function FeaturedCollection({
                       : "(min-width: 1024px) 19rem, 62vw"
                   }
                   priority={index < 2}
-                  framed
                   action={
                     <FavoriteButton
                       productId={product.id}

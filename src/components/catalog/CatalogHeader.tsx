@@ -28,14 +28,12 @@ export async function CatalogHeader({
   categoryTitleTg,
 }: CatalogHeaderProps) {
   const t = await getDictionary();
-  const eyebrow = collection?.title ?? t.misc.catalogLabel;
 
   return (
     <Container className="pb-12 pt-6 lg:pb-16 lg:pt-10">
       <div className="grid items-end gap-x-[var(--gutter)] gap-y-10 lg:grid-cols-12">
         <div className="lg:col-span-7">
-          <p className="t-label text-ink-muted">{eyebrow} · ARUS DOMOD</p>
-          <h1 className="t-display-2 mt-6 max-w-[16ch] text-balance">
+          <h1 className="t-display-2 max-w-[16ch] text-balance">
             {categoryTitle ?? t.misc.catalogTitle}
           </h1>
           {categoryTitleTg ? (

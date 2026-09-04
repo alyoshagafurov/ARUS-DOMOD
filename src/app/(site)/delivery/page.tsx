@@ -23,10 +23,7 @@ export default async function DeliveryPage() {
       <Section rhythm="block">
         <Container width="narrow">
           <Reveal>
-            <p className="t-label-wide text-gold-ink">
-              {t.pages.deliveryLabel}
-            </p>
-            <h1 className="t-display-2 mt-5 max-w-[14ch] text-balance">
+            <h1 className="t-display-2 max-w-[14ch] text-balance">
               {t.pages.deliveryTitle}
             </h1>
             <span

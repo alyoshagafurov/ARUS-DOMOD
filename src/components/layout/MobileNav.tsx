@@ -13,7 +13,6 @@ import { contact, primaryNav, utilityNav } from "@/lib/config/site";
 import { useDictionary } from "@/lib/i18n/client";
 import { navLabel } from "@/lib/i18n/labels";
 
-const pad = (n: number) => String(n + 1).padStart(2, "0");
 
 /**
  * Мобильная навигация — глубокая ниша на весь экран.
@@ -81,16 +80,13 @@ export function MobileNav({ className }: { className?: string }) {
 
       <nav className="relative flex flex-1 flex-col overflow-y-auto px-[var(--gutter)] pb-8 pt-6">
         <ul className="flex flex-col">
-          {primaryNav.map((link, index) => (
+          {primaryNav.map((link) => (
             <li key={link.href} className="border-b border-hairline">
               <Link
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className="group flex min-h-16 items-baseline gap-4 py-3"
               >
-                <span className="t-num text-[1rem] text-ink-accent">
-                  {pad(index)}
-                </span>
                 <span className="t-display-2 text-[clamp(2rem,9vw,3rem)]">
                   {navLabel(link, t)}
                 </span>

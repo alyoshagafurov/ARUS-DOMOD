@@ -46,8 +46,7 @@ export async function StoreBlock() {
           className="grid gap-10 lg:grid-cols-12 lg:gap-x-[var(--gutter)]"
         >
           <Reveal className="lg:col-span-5">
-            <p className="t-label text-ink-accent">{t.home.storeLabel}</p>
-            <h2 className="t-display-2 mt-5 max-w-[10ch] text-balance">
+            <h2 className="t-display-2 max-w-[10ch] text-balance">
               {t.home.storeTitle}
             </h2>
             <p className="t-lead mt-6 max-w-[36ch]">{t.home.storeLead}</p>

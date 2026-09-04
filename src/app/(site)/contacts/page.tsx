@@ -33,8 +33,7 @@ export default async function ContactsPage() {
       <Section rhythm="block">
         <Container width="narrow">
           <Reveal>
-            <p className="t-label-wide text-gold-ink">{t.nav.contacts}</p>
-            <h1 className="t-display-2 mt-5">{t.pages.contactsTitle}</h1>
+            <h1 className="t-display-2">{t.pages.contactsTitle}</h1>
             <span
               aria-hidden="true"
               className="hoshiya-line mt-7 max-w-[6rem]"

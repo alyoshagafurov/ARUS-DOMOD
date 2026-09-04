@@ -40,7 +40,6 @@ export async function ClosingInvitation() {
                 data-surface="day"
                 className="card card--float absolute inset-x-4 bottom-4 flex flex-col gap-5 p-6 sm:inset-x-auto sm:left-[var(--block-pad)] sm:bottom-[var(--block-pad)] sm:max-w-[26rem] lg:p-8"
               >
-                <p className="t-label text-gold-ink">{t.misc.catalogLabel}</p>
                 <h2 className="t-h1 text-balance">{t.home.closingTitle}</h2>
                 <div>
                   <Button href="/catalog" arrow>

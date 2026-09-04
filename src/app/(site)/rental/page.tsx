@@ -37,8 +37,7 @@ export default async function RentalPage() {
       <Section rhythm="block">
         <Container width="narrow">
           <Reveal>
-            <p className="t-label-wide text-gold-ink">{t.nav.rental}</p>
-            <h1 className="t-display-2 mt-5 max-w-[14ch] text-balance">
+            <h1 className="t-display-2 max-w-[14ch] text-balance">
               {t.pages.rentalTitle}
             </h1>
             <span
@@ -77,7 +76,7 @@ export default async function RentalPage() {
                 ornament="corner"
                 ornamentOrigin={[100, 0]}
               >
-                <p className="t-label text-ink-accent">{t.pages.rentalHow}</p>
+                <h2 className="t-label text-ink-accent">{t.pages.rentalHow}</h2>
                 <ol className="t-body-sm mt-4 flex flex-col gap-3 text-ink-secondary">
                   {t.pages.rentalSteps.map((s) => (
                     <li key={s}>{s}</li>

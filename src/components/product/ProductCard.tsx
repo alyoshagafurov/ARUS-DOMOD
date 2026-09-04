@@ -5,9 +5,7 @@ import type { ReactNode } from "react";
 
 import type { OrnamentMotif } from "@/components/ornament/Ornament";
 import type { PlateTone } from "@/components/ui/FabricPlate";
-import { ArrowIcon } from "@/components/ui/icons";
 import { Media } from "@/components/ui/Media";
-import { Tag } from "@/components/ui/Tag";
 import { cn } from "@/lib/cn";
 import { useDictionary } from "@/lib/i18n/client";
 import { discountPercent, formatMoney, getPrimaryOffer } from "@/lib/format";
@@ -37,24 +35,26 @@ interface ProductCardProps {
   plateMotif?: OrnamentMotif;
   priority?: boolean;
   sizes?: string;
-  /**
-   * Карточка как предмет на поверхности: белая подложка с тенью вокруг
-   * кадра и подписи. Включается внутри зелёных айвонов; на белом дворе
-   * поднимается сам кадр.
-   */
-  framed?: boolean;
   className?: string;
 }
 
 /**
- * Базовая карточка товара — опора каталога, подборок и избранного.
+ * Карточка товара — опора каталога, подборок и избранного.
  *
- * Ссылка растянута через ::after на всю карточку, поэтому `action` и подсказка
- * «Смотреть» не вкладываются в <a> и остаются доступны с клавиатуры.
+ * Карточки здесь нет намеренно. Кадр стоит на холсте под тоқча — куполом
+ * ниши — и держит композицию собственным силуэтом. Белая подложка с тенью
+ * вокруг кадра, который и сам уже прямоугольник со скруглением, давала три
+ * вложенные поверхности подряд: это самый заметный признак интерфейса,
+ * собранного из готовых блоков, а не нарисованного.
  *
- * Взаимодействие ровно одно и составное: кадр медленно наезжает, под ним
- * проступает крупный план ткани, снизу выезжает подсказка. Всё — на transform
- * и opacity, всё глушится prefers-reduced-motion.
+ * Плашки состояния сняты с фотографии и переехали под неё, в строку с
+ * ценой: «продано» — факт о товаре, а не наклейка на снимке. Наверху кадра
+ * их держать всё равно нельзя — там дуга купола.
+ *
+ * Ссылка растянута через ::after на всю карточку, поэтому `action` не
+ * вкладывается в <a> и остаётся доступен с клавиатуры. Взаимодействие одно
+ * и составное: кадр наезжает, проступает второй план, дуга обводится
+ * золотой нитью, подчёркивание названия прорастает.
  */
 export function ProductCard({
   product,
@@ -66,7 +66,6 @@ export function ProductCard({
   plateMotif,
   priority = false,
   sizes,
-  framed = false,
   className,
 }: ProductCardProps) {
   const t = useDictionary();
@@ -84,76 +83,38 @@ export function ProductCard({
 
   return (
     <article
-      data-surface={framed ? "day" : undefined}
-      className={cn(
-        "group relative flex flex-col",
-        framed ? "card lift p-3 pb-4" : "lift rounded-[var(--radius-card)]",
-        className,
-      )}
+      className={cn("group relative flex flex-col", className)}
+      data-sold={soldOut ? "true" : undefined}
     >
-      <div
-        className={cn(
-          "relative overflow-hidden",
-          framed
-            ? "rounded-[calc(var(--radius-card)-0.5rem)]"
-            : "rounded-[var(--radius-card)] shadow-card",
-        )}
-      >
+      {/* Кадр под куполом. Обрезка и радиус — на самом <Media>, отдельного
+          обрезающего слоя нет: он был бы второй поверхностью вокруг первой. */}
+      <div className="lift relative">
         <Media
           image={cover}
           secondary={second}
           ratio={ratio}
-          radius={framed ? "sm" : "card"}
+          radius="arch"
           sizes={sizes}
           priority={priority}
           hoverReveal
           seed={product.slug}
           tone={tone}
           plateMotif={plateMotif}
+          className={cn(
+            "arch-hoshiya [&::after]:border-transparent",
+            "[&::after]:transition-colors [&::after]:duration-[var(--dur-base)]",
+            "group-hover:[&::after]:border-[var(--hoshiya-color-strong)]",
+            soldOut && "opacity-70",
+          )}
         />
 
-        <div className="pointer-events-none absolute left-3 top-3 flex flex-col items-start gap-1.5">
-          {soldOut ? (
-            <Tag tone="neutral">{t.product.availability.sold_out}</Tag>
-          ) : null}
-          {discount ? <Tag tone="accent">−{discount}%</Tag> : null}
-          {rentalOnly ? (
-            <Tag tone="gold">{t.product.availability.rental_only}</Tag>
-          ) : null}
-          {product.badges?.map((badge) => (
-            <Tag key={badge.label} tone={badge.tone}>
-              {badge.label}
-            </Tag>
-          ))}
-        </div>
-
+        {/* Избранное — у основания купола, где кромка прямая */}
         {action ? (
-          <div className="absolute right-3 top-3 z-10">{action}</div>
+          <div className="absolute bottom-3 right-3 z-10">{action}</div>
         ) : null}
-
-        {/* Подсказка проявляется только на устройствах с курсором — на тач-экране
-            карточка и так открывается касанием, лишняя полоса там не нужна. */}
-        <div
-          aria-hidden="true"
-          className={cn(
-            "pointer-events-none absolute bottom-3 left-3 hidden items-center gap-3",
-            "rounded-pill bg-white px-4 py-2.5 text-[var(--firuza-950)] shadow-raise lg:flex",
-            "translate-y-3 opacity-0 transition-[transform,opacity]",
-            "duration-[var(--dur-base)] ease-[var(--ease-quiet)]",
-            "group-hover:translate-y-0 group-hover:opacity-100",
-            "group-focus-within:translate-y-0 group-focus-within:opacity-100",
-          )}
-        >
-          <span className="t-label">{t.product.view}</span>
-          <ArrowIcon className="h-[0.9em] w-[0.9em]" />
-        </div>
       </div>
 
-      <div className={cn("flex flex-1 flex-col gap-1 pt-3", framed && "px-1")}>
-        {categoryLabel ? (
-          <span className="t-label text-ink-muted">{categoryLabel}</span>
-        ) : null}
-
+      <div className="flex flex-1 flex-col gap-1.5 pt-4">
         <h3 className="t-h3">
           <Link
             href={`/product/${product.slug}`}
@@ -163,14 +124,34 @@ export function ProductCard({
           </Link>
         </h3>
 
+        {categoryLabel ? (
+          <span className="t-caption">{categoryLabel}</span>
+        ) : null}
+
         {offer ? (
-          <p className="t-price mt-0.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+          <p className="t-price mt-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
             <span>{formatMoney(offer.price)}</span>
             {offer.compareAtPrice ? (
               <span className="t-caption line-through">
                 {formatMoney(offer.compareAtPrice)}
               </span>
             ) : null}
+            {discount ? (
+              <span className="t-label text-gold-ink">−{discount}%</span>
+            ) : null}
+          </p>
+        ) : null}
+
+        {/* Состояние — строкой, а не наклейкой поверх фотографии */}
+        {soldOut || rentalOnly || product.badges?.length ? (
+          <p className="t-caption flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-accent">
+            {soldOut ? <span>{t.product.availability.sold_out}</span> : null}
+            {rentalOnly ? (
+              <span>{t.product.availability.rental_only}</span>
+            ) : null}
+            {product.badges?.map((badge) => (
+              <span key={badge.label}>{badge.label}</span>
+            ))}
           </p>
         ) : null}
 

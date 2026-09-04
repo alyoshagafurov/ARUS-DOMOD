@@ -13,8 +13,6 @@ import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { hasPhoto, photo } from "@/lib/photos";
 import type { Category } from "@/types/catalog";
 
-const pad = (n: number) => String(n).padStart(2, "0");
-
 /**
  * Раскладка семи плиток на 12 колонках. Первая — большая и высокая,
  * остальные стоят лесенкой: сдвиги по вертикали делают ряд разворотом,
@@ -82,8 +80,7 @@ export async function CategoryNavigation({
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
           <Reveal>
-            <p className="t-label text-gold-ink">{t.home.sectionsLabel}</p>
-            <h2 className="t-h1 mt-4 max-w-[14ch] text-balance">
+            <h2 className="t-h1 max-w-[14ch] text-balance">
               {t.home.sectionsTitle}
             </h2>
           </Reveal>
@@ -101,7 +98,6 @@ export async function CategoryNavigation({
             const title = categoryTitle(category, locale);
             const secondary =
               locale === "tg" ? category.title : category.titleTg;
-            const number = pad(index + 1);
 
             if (!hasPhoto(slug)) {
               return (
@@ -122,9 +118,7 @@ export async function CategoryNavigation({
                       ornamentOrigin={[100, 100]}
                       className="lift flex aspect-[var(--ratio-square)] flex-col justify-between"
                     >
-                      <span className="t-num text-[clamp(3rem,7vw,5rem)] text-gold-ink">
-                        {number}
-                      </span>
+                      <span aria-hidden="true" className="hoshiya-line w-10" />
                       <span className="flex items-end justify-between gap-3">
                         <span className="flex flex-col gap-1">
                           <span className="t-h2">{title}</span>
@@ -149,32 +143,30 @@ export async function CategoryNavigation({
               >
                 <Link
                   href={`/catalog/${category.slug}`}
-                  className="group relative block"
+                  className="group block"
                 >
+                  {/* Кадр под куполом ниши. Подпись стоит ПОД ним на холсте:
+                      белая карточка, наполовину лежащая на фотографии, давала
+                      вторую поверхность поверх первой и закрывала подол. */}
                   <Media
                     image={photo(slug, title)}
                     ratio={tile.ratio}
-                    radius="card"
+                    radius="arch"
                     sizes={tile.sizes}
                     priority={index === 0}
-                    className="lift shadow-card"
+                    className="lift arch-hoshiya [&::after]:border-transparent [&::after]:transition-colors [&::after]:duration-[var(--dur-base)] group-hover:[&::after]:border-[var(--hoshiya-color-strong)]"
                   />
 
-                  {/* Подпись — белая карточка, наполовину лежащая на кадре */}
-                  <span
-                    data-surface="day"
-                    className="card card--float absolute -bottom-5 left-4 flex max-w-[calc(100%-2rem)] items-center gap-3 px-4 py-3 lg:left-6"
-                  >
-                    <span className="t-num text-[1.5rem] text-gold-ink">
-                      {number}
-                    </span>
-                    <span className="flex min-w-0 flex-col">
-                      <span className="t-h3 truncate">{title}</span>
+                  <span className="mt-4 flex items-baseline justify-between gap-3">
+                    <span className="flex min-w-0 flex-col gap-0.5">
+                      <span className="t-h3 motion-underline self-start">
+                        {title}
+                      </span>
                       {secondary ? (
-                        <span className="t-caption truncate">{secondary}</span>
+                        <span className="t-caption">{secondary}</span>
                       ) : null}
                     </span>
-                    <ArrowIcon className="motion-arrow ml-1 h-[1em] w-[1em] shrink-0 text-ink-accent" />
+                    <ArrowIcon className="motion-arrow h-[1em] w-[1em] shrink-0 translate-y-[0.1em] text-ink-accent" />
                   </span>
                 </Link>
               </Reveal>
@@ -199,9 +191,7 @@ export async function CategoryNavigation({
                 className="lift flex min-h-[12rem] flex-col justify-between lg:aspect-[var(--ratio-portrait)]"
                 style={{ "--corner-size": "1.5rem" } as CSSProperties}
               >
-                <span className="t-label text-ink-accent">
-                  {t.misc.catalogLabel}
-                </span>
+                <span aria-hidden="true" className="hoshiya-line w-10" />
                 <span className="flex items-end justify-between gap-3">
                   <span className="t-display-2 max-w-[8ch] text-balance">
                     {t.home.allCollection}

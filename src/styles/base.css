@@ -33,9 +33,74 @@
     color: var(--text-primary);
   }
 
+  /* -----------------------------------------------------------------------
+     Поверхности, которые рисует браузер, а не мы: выделение, каретка,
+     плейсхолдер, маркер списка, галочка, полоса прокрутки, подсветка
+     касания. Каждая из них по умолчанию приходит из чужой системы —
+     синяя галочка Chrome посреди бирюзы видна сразу. Это дешевле любой
+     другой правки и заметнее большинства.
+     ----------------------------------------------------------------------- */
   ::selection {
     background-color: var(--accent);
     color: var(--accent-contrast);
+  }
+
+  input,
+  textarea,
+  [contenteditable] {
+    caret-color: var(--caret);
+  }
+
+  ::placeholder {
+    color: var(--text-muted);
+    opacity: 1; /* Firefox гасит плейсхолдер до 54% — контраст падает ниже нормы */
+  }
+
+  ::marker {
+    color: var(--gold);
+  }
+
+  /* Галочки, радио и ползунки — брендовые, а не системные синие */
+  input,
+  progress {
+    accent-color: var(--accent);
+  }
+
+  /* Своя подсветка касания: серый прямоугольник поверх арки её ломает */
+  a,
+  button,
+  [role="button"],
+  label,
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Полоса прокрутки живёт в цвете поверхности, а не поверх неё */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: var(--radius-pill);
+  }
+
+  /* Подчёркивание не режет выносные буквы кириллицы (у, р, ф) */
+  a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: from-font;
   }
 
   :focus-visible {
@@ -207,6 +272,36 @@
   .aivan--arch {
     border-top-left-radius: var(--radius-arch);
     border-top-right-radius: var(--radius-arch);
+  }
+
+  /* ---------- Тоқча: арка как форма самой фотографии --------------------
+     Главный ход системы. Кадр не лежит в карточке и не обведён рамкой —
+     у него собственный силуэт: купол ниши. Горизонтальный радиус ровно
+     50%, поэтому верхние углы смыкаются в середине и дают настоящую
+     дугу, а не «скруглённый прямоугольник». Высота купола — единственное,
+     что отличает вертикальный кадр от широкого свода портала.
+
+     Класс вешается на обрезающий контейнер кадра. Карточки под ним нет
+     и быть не должно: вложенные поверхности — самый заметный признак
+     сборки из готовых блоков. */
+  .arch {
+    border-radius: 50% 50% var(--radius-card) var(--radius-card) /
+      var(--arch-rise) var(--arch-rise) var(--radius-card) var(--radius-card);
+    overflow: hidden;
+  }
+
+  .arch--low {
+    --arch-rise: var(--arch-rise-low);
+  }
+
+  /* Ҳошия, повторяющая дугу: золотая нить по кромке ниши, не рамка */
+  .arch-hoshiya::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: var(--hoshiya-line) solid var(--hoshiya-color);
+    border-radius: inherit;
   }
 
   /* Карточка — белый предмет, лежащий на поверхности */
@@ -407,6 +502,44 @@
     }
   }
 
+  /*
+   * Единственный авторский момент страницы: купол ниши раскрывается.
+   * Не «появление снизу вверх», которое одинаково на каждой секции, а
+   * рост самой арки — маска идёт от основания к замку свода. Работает
+   * только на первом экране; ниже по странице движения не осталось.
+   */
+  @keyframes arus-unveil {
+    from {
+      clip-path: inset(100% 0 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .motion-unveil {
+    animation: arus-unveil var(--dur-veil) var(--ease-silk) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  /* Край рейки: кадр уходит под кромку — видно, что лента продолжается */
+  .rail-edge {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--gutter),
+      #000 calc(100% - var(--gutter) * 1.2),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--gutter),
+      #000 calc(100% - var(--gutter) * 1.2),
+      transparent 100%
+    );
+  }
+
   /* Зона нажатия строчной ссылки: 44px пальцу, плотная строка курсору */
   .tap-row {
     display: flex;
@@ -480,7 +613,12 @@
     transform: none;
   }
 
-  .motion-drift {
+  .motion-drift,
+  .motion-unveil {
     animation: none;
+  }
+
+  .motion-unveil {
+    clip-path: none;
   }
 }

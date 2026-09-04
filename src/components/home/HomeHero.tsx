@@ -19,16 +19,26 @@ interface HomeHeroProps {
 }
 
 /**
- * Первый экран — айвон на белом дворе.
+ * Первый экран — айвон на белом дворе, и в нём тоқча: купол ниши.
  *
- * Это не «текст слева, фото справа»: на дворе стоит зелёный объём с арочным
- * верхом, имя дома набрано больше объёма и упирается в его край, а кадр
- * невесты стоит в нише и ВЫХОДИТ из айвона вниз, на белое, — как шлейф на
- * логотипе пересекает венок. На кадре лежит плавающая карточка с условиями
- * проката: главный факт бизнеса виден в первую секунду.
+ * Композиций две, разметка одна. Так и должно быть: два набора узлов
+ * заставили бы браузер декодировать скрытый кадр заодно с видимым, а
+ * телефон — платить за десктопную сцену трафиком.
  *
- * На телефоне это вертикальная сцена в том же порядке: имя → слово → кадр,
- * кадр так же свешивается за нижний край блока.
+ * ТЕЛЕФОН. Кадр венчает нишу: он стоит первым, под собственным куполом,
+ * и занимает верхнюю половину экрана — у дома моды первый экран телефона
+ * обязан начинаться с одежды, а не с двух кнопок под заголовком. Имя дома
+ * идёт под кадром, на чистой бирюзе. Слово поверх фотографии не кладётся
+ * ни при какой завесе: под ним оказалась бы вышивка, и строка потеряла бы
+ * контраст ровно там, где кадр интереснее всего.
+ *
+ * ШИРОКИЙ ЭКРАН. Кадр отделяется в правую колонку, встаёт под собственным
+ * куполом и выходит за нижний край айвона на белое — как шлейф на знаке
+ * пересекает венок. Имя дома уходит влево и набрано крупнее объёма.
+ *
+ * Кикера над заголовком нет: имя дома держит первый экран само. Настоящее
+ * число образов и условия проката стоят под кнопками — как факты, а не как
+ * надпись, которой заголовок оправдывается.
  */
 export async function HomeHero({ lookCount }: HomeHeroProps) {
   const t = await getDictionary();
@@ -49,29 +59,30 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
           ornamentOrigin={[0, 0]}
           className="mb-16 lg:mb-24"
         >
-          <div className="relative grid grid-cols-12 gap-x-[var(--gutter)] px-[var(--block-pad)] pb-0 pt-[calc(var(--block-pad)+1.5rem)] lg:min-h-[min(82svh,820px)] lg:pb-[var(--block-pad)]">
-            {/* Рейка: вертикальная подпись вдоль левого края (широкий экран) */}
-            <p
-              className="motion-enter t-label-wide t-vertical hidden self-end pb-2 text-ink-accent lg:col-span-1 lg:block"
-              style={delay(500)}
-            >
-              {t.common.positioning} · {t.common.city}
-            </p>
+          <div className="relative grid grid-cols-12 gap-x-[var(--gutter)] px-[var(--block-pad)] pb-[var(--block-pad)] pt-[var(--block-pad)] lg:min-h-[min(82svh,820px)] lg:pt-[calc(var(--block-pad)+1rem)]">
+            {/* --- КАДР -------------------------------------------------
+                Телефон: первый ряд, купол венчает нишу.
+                Широкий экран: правая колонка, свешивается за нижнюю кромку. */}
+            <div className="order-1 col-span-12 lg:order-2 lg:col-span-4 lg:col-start-9 lg:-mr-[calc(var(--block-pad)*0.5)] lg:self-end">
+              <div className="motion-unveil relative lg:-mb-24 lg:translate-y-4">
+                <Media
+                  image={photo("hero-tajik-royal-bride", t.alts.hero)}
+                  ratio="auto"
+                  radius="arch"
+                  priority
+                  zoomOnHover={false}
+                  imageClassName="object-[68%_22%] lg:object-[78%_36%]"
+                  sizes="(min-width: 1024px) 34vw, 92vw"
+                  className="h-[46svh] min-h-[300px] lg:aspect-[var(--ratio-portrait)] lg:h-auto lg:min-h-0 lg:shadow-float"
+                />
+              </div>
+            </div>
 
-            {/* Слово */}
-            <div className="col-span-12 flex flex-col justify-end lg:col-span-6 lg:col-start-2">
-              <p
-                className="motion-enter t-label flex items-center gap-3 text-ink-accent"
-                style={delay(60)}
-              >
-                <span className="t-num text-[1.35rem] text-gold-ink">01</span>
-                <span aria-hidden="true" className="h-px w-8 bg-gold/60" />
-                {t.misc.catalogLabel} · {t.home.facts.looks(lookCount)}
-              </p>
-
+            {/* --- СЛОВО ------------------------------------------------ */}
+            <div className="order-2 col-span-12 mt-8 flex flex-col justify-end lg:order-1 lg:col-span-7 lg:col-start-1 lg:mt-0 lg:justify-center">
               <h1
-                className="motion-enter t-display-1 mt-6 -ml-[0.04em] lg:mt-8"
-                style={delay(140)}
+                className="motion-enter t-display-1 -ml-[0.04em]"
+                style={delay(120)}
               >
                 ARUS
                 <br />
@@ -79,14 +90,14 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
               </h1>
 
               <p
-                className="motion-enter t-lead mt-6 max-w-[30ch] lg:mt-8"
+                className="motion-enter t-lead mt-5 max-w-[30ch] lg:mt-8"
                 style={delay(260)}
               >
                 {t.home.heroLine} {t.home.heroSub}
               </p>
 
               <div
-                className="motion-enter mt-8 flex flex-wrap gap-3 lg:mt-10"
+                className="motion-enter mt-7 flex flex-wrap gap-3 lg:mt-10"
                 style={delay(360)}
               >
                 <Button href="/catalog" size="lg" arrow>
@@ -96,45 +107,30 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
                   {t.nav.rental}
                 </Button>
               </div>
-            </div>
 
-            {/* Кадр в нише: выходит за нижний край айвона на белый двор */}
-            <div className="relative col-span-12 mt-10 lg:col-span-4 lg:col-start-9 lg:-mr-[calc(var(--block-pad)*0.5)] lg:mt-0 lg:self-end">
-              <div className="motion-veil relative -mb-12 lg:-mb-24 lg:translate-y-4">
-                <span
-                  aria-hidden="true"
-                  data-open="bottom"
-                  className="toqcha -inset-x-3 -top-3 bottom-8 lg:-inset-x-4 lg:-top-4"
-                />
-                <Media
-                  image={photo("hero-tajik-royal-bride", t.alts.hero)}
-                  ratio="portrait"
-                  radius="card"
-                  priority
-                  zoomOnHover={false}
-                  imageClassName="object-[78%_36%]"
-                  sizes="(min-width: 1024px) 34vw, 92vw"
-                  className="shadow-float"
-                />
-
-                {/* Плавающая карточка: условия проката — факт, а не слоган */}
+              {/* Факты под кнопками: настоящее число образов и условия
+                  проката. Строка на золотой нити — не карточка поверх кадра. */}
+              <div
+                className="motion-enter mt-8 border-t border-hairline pt-4 lg:mt-10"
+                style={delay(460)}
+              >
                 <Link
                   href="/rental"
-                  className="card card--float lift group absolute -left-3 bottom-7 flex max-w-[15rem] items-center gap-4 p-4 sm:-left-6 lg:-left-10"
-                  data-surface="day"
+                  className="group flex items-baseline gap-x-3 py-1"
                 >
-                  <span className="flex flex-col gap-1">
-                    <span className="t-label text-gold-ink">
+                  <span className="t-body-sm">
+                    <span className="t-label mr-2 text-ink-accent">
                       {t.nav.rental}
                     </span>
-                    <span className="t-h3">
-                      {t.rental.days(rental.maxDays)} · {t.rental.from}{" "}
-                      {priceFrom}
-                    </span>
-                    <span className="t-caption">{t.rental.inStoreShort}</span>
+                    {t.rental.days(rental.maxDays)} · {t.rental.from}{" "}
+                    {priceFrom} · {t.rental.inStoreShort}
                   </span>
-                  <ArrowIcon className="motion-arrow h-[1em] w-[1em] shrink-0 text-ink-accent" />
+                  <ArrowIcon className="motion-arrow h-[0.9em] w-[0.9em] shrink-0 translate-y-[0.1em] text-ink-accent" />
                 </Link>
+                <p className="t-caption mt-2">
+                  {t.home.facts.looks(lookCount)} · {t.common.positioning} ·{" "}
+                  {t.common.city}
+                </p>
               </div>
             </div>
           </div>

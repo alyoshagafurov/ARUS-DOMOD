@@ -12,13 +12,20 @@ import type { ProductImage } from "@/types/catalog";
 
 type MediaRatio =
   "portrait" | "editorial" | "wide" | "square" | "tall" | "auto";
-type MediaRadius = "card" | "block" | "sm" | "none";
+type MediaRadius = "card" | "block" | "sm" | "none" | "arch" | "arch-low";
 
+/**
+ * `arch` — тоқча: купол ниши становится силуэтом самого кадра. Под таким
+ * кадром не должно быть карточки: он стоит на холсте сам. `arch-low` —
+ * пологий свод портала для широких кадров.
+ */
 const radiusClass: Record<MediaRadius, string> = {
   card: "rounded-[var(--radius-card)]",
   block: "rounded-[var(--radius-block)]",
   sm: "rounded-sm",
   none: "rounded-none",
+  arch: "arch",
+  "arch-low": "arch arch--low",
 };
 
 const ratioClass: Record<MediaRatio, string> = {

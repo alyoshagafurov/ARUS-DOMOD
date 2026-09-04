@@ -72,10 +72,7 @@ export async function HeritageStory({
             className="-mt-12 lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:mt-28 lg:pl-[calc(var(--block-pad)+9%)]"
           >
             <Reveal className="pt-8 lg:pt-0">
-              <p className="t-label text-ink-accent">
-                {t.editorial.heritageLabel}
-              </p>
-              <h2 className="t-display-2 mt-6 max-w-[12ch] text-balance">
+              <h2 className="t-display-2 max-w-[12ch] text-balance">
                 {t.editorial.heritageTitle}
               </h2>
               <p className="t-lead mt-6 max-w-[42ch]">

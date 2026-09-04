@@ -19,8 +19,7 @@ export async function CollectionIntro() {
       <Container>
         <div className="grid grid-cols-12 items-end gap-x-[var(--gutter)] gap-y-10">
           <Reveal className="col-span-12 lg:col-span-9">
-            <p className="t-label text-gold-ink">{t.editorial.houseLabel}</p>
-            <h2 className="t-display-2 mt-6 max-w-[16ch] text-balance">
+            <h2 className="t-display-2 max-w-[16ch] text-balance">
               {t.editorial.traditionTitle}
             </h2>
           </Reveal>

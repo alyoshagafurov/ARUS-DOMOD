@@ -134,10 +134,11 @@ export default async function ProductPage({
           >
             <div className="grid gap-x-[var(--gutter)] gap-y-8 lg:grid-cols-12">
               <Reveal className="lg:col-span-4">
-                <p className="t-label text-ink-accent">{t.misc.lookLabel}</p>
-                <p className="t-num mt-6 text-[clamp(3rem,8vw,6rem)] text-gold-ink">
-                  {product.article?.replace(/\D/g, "") || "01"}
-                </p>
+                <h2 className="t-h3">{t.misc.lookLabel}</h2>
+                <span
+                  aria-hidden="true"
+                  className="hoshiya-line mt-5 block max-w-[4rem]"
+                />
               </Reveal>
               <Reveal className="lg:col-span-7 lg:col-start-6" delay={80}>
                 <p className="t-h2 t-measure text-balance">{t.misc.lookLead}</p>

@@ -52,8 +52,7 @@ export async function TwoWays() {
               ornament="corner"
               ornamentOrigin={[0, 100]}
             >
-              <p className="t-label text-ink-accent">{t.product.purchase}</p>
-              <h2 className="t-display-2 mt-5 max-w-[12ch] text-balance">
+              <h2 className="t-display-2 max-w-[12ch] text-balance">
                 {t.home.buyTitle}
               </h2>
               <p className="t-lead mt-5 max-w-[38ch]">{t.home.buyLead}</p>
@@ -123,15 +122,13 @@ export async function TwoWays() {
                 <Media
                   image={photo("textile-detail-couture", t.alts.textile)}
                   ratio="square"
-                  radius="card"
+                  radius="arch"
                   zoomOnHover={false}
                   sizes="7rem"
-                  className="shadow-card"
                 />
               </div>
 
-              <p className="t-label text-gold-ink">{t.product.rental}</p>
-              <h2 className="t-h1 mt-5 max-w-[12ch] text-balance">
+              <h2 className="t-h1 max-w-[12ch] text-balance">
                 {t.home.rentTitle}
               </h2>
               <p className="t-body-sm mt-4 text-ink-secondary">

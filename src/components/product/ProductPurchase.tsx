@@ -135,10 +135,12 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
   return (
     <>
       <div className="flex flex-col">
-        <p className="t-label text-gold-ink">
-          ARUS DOMOD{product.article ? ` · ${product.article}` : ""}
-        </p>
-        <h1 className="t-h1 mt-3">{product.title}</h1>
+        <h1 className="t-h1">{product.title}</h1>
+        {product.article ? (
+          <p className="t-caption mt-2">
+            {t.product.article} {product.article}
+          </p>
+        ) : null}
 
         {/* ---------- ПОКУПКА ------------------------------------------ */}
         {purchase ? (

@@ -37,10 +37,7 @@ export default async function AboutPage() {
           <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-[var(--gutter)]">
             <div className="lg:col-span-5">
               <Reveal>
-                <p className="t-label-wide text-gold-ink">
-                  {t.pages.aboutLabel}
-                </p>
-                <h1 className="t-display-2 mt-5 text-balance">
+                <h1 className="t-display-2 text-balance">
                   {t.pages.aboutTitle}
                 </h1>
                 <span
