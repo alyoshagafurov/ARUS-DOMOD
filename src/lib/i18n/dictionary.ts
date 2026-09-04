@@ -391,6 +391,7 @@ export const ru = {
     catalogDetail: "Фрагмент кадра из коллекции ARUS DOMOD",
   },
   footer: {
+    admin: "Админка",
     collection: "Коллекция",
     house: "Дом",
     contacts: "Контакты",

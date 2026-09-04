@@ -11,6 +11,7 @@ import {
   socialLinks,
   type NavLink,
 } from "@/lib/config/site";
+import { LockIcon } from "@/components/ui/icons";
 import { navLabel } from "@/lib/i18n/labels";
 import { getDictionary } from "@/lib/i18n/server";
 
@@ -147,13 +148,30 @@ export async function SiteFooter() {
             </div>
           </div>
 
-          <div className="mt-14 flex flex-col gap-3 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between lg:mt-20">
+          <div className="mt-14 flex flex-col gap-4 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between lg:mt-20">
             <p className="t-caption">
               © {year} {site.name} · {t.common.city}
             </p>
-            <p className="t-caption">
-              {isDemoData ? t.footer.demo : site.role}
-            </p>
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <p className="t-caption">
+                {isDemoData ? t.footer.demo : site.role}
+              </p>
+
+              {/*
+                Вход в админку стоит в служебной полосе, а не в навигации:
+                он для владельца, а не для покупателя. Поисковикам закрыт
+                дважды — nofollow здесь и disallow в robots.ts.
+              */}
+              <Link
+                href="/admin"
+                rel="nofollow"
+                className="t-label inline-flex h-11 shrink-0 items-center gap-2 rounded-pill border border-hairline px-4 text-ink-secondary transition-[border-color,color,background-color] duration-[var(--dur-fast)] ease-[var(--ease-quiet)] hover:border-strong hover:bg-white/8 hover:text-ink"
+              >
+                <LockIcon className="h-[1em] w-[1em]" />
+                {t.footer.admin}
+              </Link>
+            </div>
           </div>
         </Container>
 

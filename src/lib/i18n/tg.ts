@@ -388,6 +388,7 @@ export const tg: Dictionary = {
     catalogDetail: "Порчаи кадр аз коллексияи ARUS DOMOD",
   },
   footer: {
+    admin: "Маъмурият",
     collection: "Коллексия",
     house: "Хона",
     contacts: "Тамос",

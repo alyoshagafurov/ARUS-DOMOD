@@ -385,6 +385,7 @@ export const en: Dictionary = {
     catalogDetail: "Detail of a frame from the ARUS DOMOD collection",
   },
   footer: {
+    admin: "Admin",
     collection: "Collection",
     house: "House",
     contacts: "Contacts",
