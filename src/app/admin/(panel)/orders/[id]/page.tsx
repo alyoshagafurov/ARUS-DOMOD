@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SubmitButton } from "@/components/admin/pending";
 import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
@@ -184,9 +185,9 @@ export default async function AdminOrderPage({
                 }))}
               />
             </label>
-            <Button type="submit" fullWidth className="mt-4">
+            <SubmitButton pendingLabel="Сохраняю…" fullWidth className="mt-4">
               Сохранить статус
-            </Button>
+            </SubmitButton>
             <p className="t-caption mt-3">
               Обновлён: {fmtDate(order.updatedAt)}
             </p>

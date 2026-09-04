@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DeleteButton, SubmitButton } from "@/components/admin/pending";
 import { notFound } from "next/navigation";
 
 import { ImageField } from "@/components/admin/ImageField";
@@ -206,7 +207,7 @@ export default async function AdminProductEditPage({
         </section>
 
         <div className="flex flex-wrap gap-3 border-t border-hairline pt-6">
-          <Button type="submit">Сохранить</Button>
+          <SubmitButton pendingLabel="Сохраняю…">Сохранить</SubmitButton>
           <Button href="/admin/products" variant="ghost">
             Отмена
           </Button>
@@ -219,9 +220,10 @@ export default async function AdminProductEditPage({
           className="mt-10 border-t border-hairline pt-6"
         >
           <input type="hidden" name="id" value={product.id} />
-          <Button type="submit" variant="ghost" className="text-danger">
-            Удалить товар
-          </Button>
+          <DeleteButton
+            label="Удалить товар"
+            confirmText={`Удалить «${product?.title ?? "товар"}» без возможности вернуть?`}
+          />
         </form>
       ) : null}
     </>

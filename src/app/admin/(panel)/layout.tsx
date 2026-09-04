@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { Logo } from "@/components/brand/Logo";
+import { AdminNav } from "@/components/admin/pending";
 import { requireAdmin } from "@/lib/admin/auth";
 
 import { logout } from "../login/actions";
@@ -48,15 +49,7 @@ export default async function AdminLayout({
           aria-label="Разделы админки"
           className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:px-3"
         >
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex h-11 shrink-0 items-center rounded-md px-3 text-ink-secondary transition-[background-color,color] duration-[var(--dur-fast)] hover:bg-white hover:text-ink hover:shadow-raise"
-            >
-              <span className="t-label">{item.label}</span>
-            </Link>
-          ))}
+          <AdminNav items={nav} />
           <Link
             href="/"
             className="tap-icon flex h-11 shrink-0 items-center rounded-md px-3 text-ink-secondary hover:text-ink lg:mt-auto"

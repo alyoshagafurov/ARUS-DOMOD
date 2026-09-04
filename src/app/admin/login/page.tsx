@@ -1,5 +1,5 @@
 import { Logo } from "@/components/brand/Logo";
-import { Button } from "@/components/ui/Button";
+import { SubmitButton } from "@/components/admin/pending";
 import { isAdmin, isAdminConfigured } from "@/lib/admin/auth";
 import { redirect } from "next/navigation";
 
@@ -48,9 +48,9 @@ export default async function AdminLoginPage({
                 Неверный пароль
               </p>
             ) : null}
-            <Button type="submit" fullWidth className="mt-6">
+            <SubmitButton pendingLabel="Проверяю…" fullWidth className="mt-6">
               Войти
-            </Button>
+            </SubmitButton>
           </form>
         ) : (
           <p className="t-body-sm mt-6 text-ink-secondary">

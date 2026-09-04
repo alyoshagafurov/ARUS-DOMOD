@@ -114,10 +114,7 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
                 className="motion-enter mt-8 border-t border-hairline pt-4 lg:mt-10"
                 style={delay(460)}
               >
-                <Link
-                  href="/rental"
-                  className="group flex items-baseline gap-x-3 py-1"
-                >
+                <Link href="/rental" className="tap-row group gap-x-3">
                   <span className="t-body-sm">
                     <span className="t-label mr-2 text-ink-accent">
                       {t.nav.rental}

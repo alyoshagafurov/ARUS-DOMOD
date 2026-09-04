@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Empty, StatusChip } from "@/components/admin/form";
 import { cn } from "@/lib/cn";
 import { formatMoney } from "@/lib/format";
 import { ORDER_STATUS_LABELS } from "@/lib/orders/labels";
@@ -42,7 +43,7 @@ export default async function AdminOrdersPage({
                   href={s ? `/admin/orders?status=${s}` : "/admin/orders"}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "t-label inline-flex h-10 items-center gap-2 rounded-pill border px-4",
+                    "t-label inline-flex h-11 items-center gap-2 rounded-pill border px-4",
                     active
                       ? "border-accent text-ink-accent"
                       : "border-hairline text-ink-secondary hover:border-strong",
@@ -58,16 +59,31 @@ export default async function AdminOrdersPage({
       </nav>
 
       {orders.length === 0 ? (
-        <p className="t-body-sm mt-8 text-ink-secondary">Заказов нет.</p>
+        <Empty
+          title={status ? "В этом статусе заказов нет" : "Заказов пока нет"}
+          hint={
+            status
+              ? "Снимите фильтр, чтобы увидеть остальные заказы."
+              : "Заказы приходят с сайта: покупатель оформляет корзину, заказ появляется здесь со статусом «Новый», и вам приходит сообщение в WhatsApp. Прокат сюда не попадает — он оформляется в магазине."
+          }
+        />
       ) : (
         <ul className="mt-6 flex flex-col border-t border-hairline">
           {orders.map((o) => (
             <li key={o.id} className="border-b border-hairline">
               <Link
                 href={`/admin/orders/${o.id}`}
-                className="grid gap-1 py-4 hover:bg-muted md:grid-cols-[6rem_1fr_10rem_9rem_7rem] md:items-baseline md:gap-4"
+                className="flex flex-col gap-2 py-4 transition-colors duration-[var(--dur-fast)] hover:bg-muted md:grid md:grid-cols-[6rem_1fr_11rem_8rem_7rem] md:items-center md:gap-4"
               >
-                <span className="t-price">{o.id}</span>
+                {/* Телефон: номер и сумма в одной строке, статус под ними.
+                    Пятиколоночная сетка на 390px давала пять строк по одному
+                    слову — прочесть список было невозможно. */}
+                <span className="flex items-baseline justify-between gap-3 md:block">
+                  <span className="t-price tabular-nums">{o.id}</span>
+                  <span className="t-price tabular-nums md:hidden">
+                    {formatMoney(o.totals.grand)}
+                  </span>
+                </span>
                 <span className="min-w-0">
                   <span className="t-body-sm block truncate">
                     {o.customer.name}
@@ -76,11 +92,16 @@ export default async function AdminOrdersPage({
                     {o.customer.phone} · {o.totals.items} поз.
                   </span>
                 </span>
-                <span className="t-caption">
-                  {ORDER_STATUS_LABELS[o.status]}
+                <span className="flex items-center gap-3">
+                  <StatusChip status={o.status} />
+                  <span className="t-caption md:hidden">
+                    {fmtDate(o.createdAt)}
+                  </span>
                 </span>
-                <span className="t-caption">{fmtDate(o.createdAt)}</span>
-                <span className="t-price md:text-right">
+                <span className="t-caption hidden md:block">
+                  {fmtDate(o.createdAt)}
+                </span>
+                <span className="t-price hidden tabular-nums md:block md:text-right">
                   {formatMoney(o.totals.grand)}
                 </span>
               </Link>

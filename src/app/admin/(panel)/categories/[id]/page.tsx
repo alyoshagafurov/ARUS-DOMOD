@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DeleteButton, SubmitButton } from "@/components/admin/pending";
 import { notFound } from "next/navigation";
 
 import { ImageField } from "@/components/admin/ImageField";
@@ -96,7 +97,7 @@ export default async function AdminCategoryEditPage({
           </div>
         </section>
         <div className="flex flex-wrap gap-3 border-t border-hairline pt-6">
-          <Button type="submit">Сохранить</Button>
+          <SubmitButton pendingLabel="Сохраняю…">Сохранить</SubmitButton>
           <Button href="/admin/categories" variant="ghost">
             Отмена
           </Button>
@@ -109,9 +110,10 @@ export default async function AdminCategoryEditPage({
           className="mt-10 border-t border-hairline pt-6"
         >
           <input type="hidden" name="id" value={category.id} />
-          <Button type="submit" variant="ghost" className="text-danger">
-            Удалить категорию
-          </Button>
+          <DeleteButton
+            label="Удалить раздел"
+            confirmText={`Удалить раздел «${category?.title ?? "раздел"}»? Товары в нём останутся без раздела.`}
+          />
         </form>
       ) : null}
     </>

@@ -1,8 +1,8 @@
 import Link from "next/link";
 
+import { Empty, StatusChip } from "@/components/admin/form";
 import { catalog } from "@/lib/catalog";
 import { countOrders, listOrders } from "@/lib/orders/store";
-import { ORDER_STATUS_LABELS } from "@/lib/orders/labels";
 import { formatMoney } from "@/lib/format";
 
 export const metadata = { title: "Обзор" };
@@ -30,12 +30,20 @@ export default async function AdminDashboard() {
     <>
       <h1 className="t-h1">Обзор</h1>
 
-      <ul className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {/* Не «большая цифра с подписью» вчетвером: счётчик и есть ссылка на
+          отфильтрованный список, поэтому он набран рабочей гарнитурой с
+          табличными цифрами и стоит в строке с названием раздела. Витринная
+          антиква в рабочем месте читается медленнее, а четыре одинаковые
+          плитки с крупным числом — готовый шаблон панели, а не решение. */}
+      <ul className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {tiles.map((tile) => (
-          <li key={tile.label} className="card lift">
-            <Link href={tile.href} className="block p-5">
-              <span className="t-label text-ink-muted">{tile.label}</span>
-              <span className="t-num mt-3 block text-[clamp(2.5rem,4vw,3.5rem)] text-ink-accent">
+          <li key={tile.label}>
+            <Link
+              href={tile.href}
+              className="flex items-baseline justify-between gap-4 rounded-md border border-hairline px-4 py-4 transition-colors duration-[var(--dur-fast)] hover:border-strong hover:bg-muted"
+            >
+              <span className="t-label text-ink-secondary">{tile.label}</span>
+              <span className="t-price text-[1.5rem] tabular-nums text-ink">
                 {tile.value}
               </span>
             </Link>
@@ -54,23 +62,24 @@ export default async function AdminDashboard() {
           </Link>
         </div>
         {latest.length === 0 ? (
-          <p className="t-body-sm mt-5 text-ink-secondary">Заказов пока нет.</p>
+          <Empty
+            title="Заказов пока нет"
+            hint="Как только покупатель оформит корзину на сайте, заказ появится здесь со статусом «Новый»."
+          />
         ) : (
           <ul className="mt-5 flex flex-col border-t border-hairline">
             {latest.map((order) => (
               <li key={order.id} className="border-b border-hairline">
                 <Link
                   href={`/admin/orders/${order.id}`}
-                  className="grid gap-1 py-4 hover:bg-muted sm:grid-cols-[7rem_1fr_9rem_8rem] sm:items-baseline sm:gap-4"
+                  className="flex flex-col gap-2 py-4 transition-colors duration-[var(--dur-fast)] hover:bg-muted sm:grid sm:grid-cols-[7rem_1fr_11rem_8rem] sm:items-center sm:gap-4"
                 >
-                  <span className="t-price">{order.id}</span>
+                  <span className="t-price tabular-nums">{order.id}</span>
                   <span className="t-body-sm truncate">
                     {order.customer.name} · {order.customer.phone}
                   </span>
-                  <span className="t-caption">
-                    {ORDER_STATUS_LABELS[order.status]}
-                  </span>
-                  <span className="t-price sm:text-right">
+                  <StatusChip status={order.status} />
+                  <span className="t-price tabular-nums sm:text-right">
                     {formatMoney(order.totals.grand)}
                   </span>
                 </Link>
