@@ -31,7 +31,7 @@ export default async function AdminOrdersPage({
 
       <nav
         aria-label="Фильтр по статусу"
-        className="-mx-[var(--gutter)] mt-6 overflow-x-auto px-[var(--gutter)]"
+        className="rail-edge -mx-[var(--gutter)] mt-6 overflow-x-auto px-[var(--gutter)]"
       >
         <ul className="flex w-max gap-2">
           {[undefined, ...ORDER_STATUSES].map((s) => {

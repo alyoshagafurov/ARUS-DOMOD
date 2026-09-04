@@ -159,7 +159,7 @@ const statusDot: Record<OrderStatus, string> = {
 export function StatusChip({ status }: { status: OrderStatus }) {
   return (
     <span
-      className={`t-label inline-flex items-center gap-2 rounded-pill border px-3 py-1.5 ${statusTone[status]}`}
+      className={`t-label inline-flex items-center gap-2 whitespace-nowrap rounded-pill border px-3 py-1.5 ${statusTone[status]}`}
     >
       <span
         aria-hidden="true"
