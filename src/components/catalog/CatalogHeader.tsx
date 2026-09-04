@@ -2,10 +2,8 @@ import { Container } from "@/components/layout/Container";
 import { getDictionary } from "@/lib/i18n/server";
 import { Media } from "@/components/ui/Media";
 import { photo } from "@/lib/photos";
-import type { Collection } from "@/types/catalog";
 
 interface CatalogHeaderProps {
-  collection?: Collection;
   /** Заголовок раздела, если открыта конкретная категория */
   categoryTitle?: string;
   categoryTitleTg?: string;
@@ -23,7 +21,6 @@ interface CatalogHeaderProps {
  * над заголовком пустой экран.
  */
 export async function CatalogHeader({
-  collection,
   categoryTitle,
   categoryTitleTg,
 }: CatalogHeaderProps) {
