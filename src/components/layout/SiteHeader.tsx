@@ -9,7 +9,12 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
-import { BagIcon, HeartIcon, SearchIcon } from "@/components/ui/icons";
+import {
+  BagIcon,
+  HeartIcon,
+  LockIcon,
+  SearchIcon,
+} from "@/components/ui/icons";
 import { useCartCount } from "@/lib/cart";
 import { cn } from "@/lib/cn";
 import { primaryNav, site } from "@/lib/config/site";
@@ -122,6 +127,19 @@ export function SiteHeader() {
           </nav>
 
           <div className="ml-auto flex items-center text-[1rem]">
+            {/* Вход в админку — для владельца, поэтому иконкой и без
+                подписи. На телефоне строку иконок занимать нечем: логотип
+                и четыре иконки уже занимают 388px из 390, — там пункт
+                стоит в меню. display задаётся здесь, а не в iconBox:
+                у `hidden` и `inline-flex` одинаковый вес. */}
+            <Link
+              href="/admin"
+              rel="nofollow"
+              aria-label={t.nav.admin}
+              className={cn("hidden lg:inline-flex", iconBox)}
+            >
+              <LockIcon />
+            </Link>
             <LanguageSwitcher className="mr-2 hidden lg:flex" />
             <button
               type="button"

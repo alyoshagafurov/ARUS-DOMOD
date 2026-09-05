@@ -23,6 +23,7 @@ export const ru = {
     loading: "Загрузка…",
   },
   nav: {
+    admin: "Админка",
     allLooks: "Все образы",
     brideOutfits: "Наряды для невесты",
     groomChapans: "Чапаны для жениха",
@@ -391,7 +392,6 @@ export const ru = {
     catalogDetail: "Фрагмент кадра из коллекции ARUS DOMOD",
   },
   footer: {
-    admin: "Админка",
     collection: "Коллекция",
     house: "Дом",
     contacts: "Контакты",

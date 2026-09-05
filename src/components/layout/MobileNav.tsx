@@ -13,7 +13,6 @@ import { contact, primaryNav, utilityNav } from "@/lib/config/site";
 import { useDictionary } from "@/lib/i18n/client";
 import { navLabel } from "@/lib/i18n/labels";
 
-
 /**
  * Мобильная навигация — глубокая ниша на весь экран.
  *
@@ -108,6 +107,16 @@ export function MobileNav({ className }: { className?: string }) {
               </span>
             </Link>
           ))}
+
+          {/* В шапке телефона места под пятую иконку нет — вход живёт здесь */}
+          <Link
+            href="/admin"
+            rel="nofollow"
+            onClick={() => setOpen(false)}
+            className="tap-row text-ink-secondary hover:text-ink"
+          >
+            <span className="t-label motion-underline">{t.nav.admin}</span>
+          </Link>
         </div>
 
         <div className="mt-auto flex flex-wrap items-end justify-between gap-6 pt-10">

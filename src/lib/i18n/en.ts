@@ -16,6 +16,7 @@ export const en: Dictionary = {
     loading: "Loading…",
   },
   nav: {
+    admin: "Admin",
     allLooks: "All looks",
     brideOutfits: "Bridal outfits",
     groomChapans: "Groom's chapans",
@@ -385,7 +386,6 @@ export const en: Dictionary = {
     catalogDetail: "Detail of a frame from the ARUS DOMOD collection",
   },
   footer: {
-    admin: "Admin",
     collection: "Collection",
     house: "House",
     contacts: "Contacts",

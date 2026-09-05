@@ -20,6 +20,7 @@ export const tg: Dictionary = {
     loading: "Боркунӣ…",
   },
   nav: {
+    admin: "Маъмурият",
     allLooks: "Ҳамаи образҳо",
     brideOutfits: "Либоси арӯс",
     groomChapans: "Ҷомаи домод",
@@ -388,7 +389,6 @@ export const tg: Dictionary = {
     catalogDetail: "Порчаи кадр аз коллексияи ARUS DOMOD",
   },
   footer: {
-    admin: "Маъмурият",
     collection: "Коллексия",
     house: "Хона",
     contacts: "Тамос",
