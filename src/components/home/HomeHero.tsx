@@ -1,13 +1,9 @@
-import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { Aivan } from "@/components/layout/Aivan";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
-import { ArrowIcon } from "@/components/ui/icons";
 import { Media } from "@/components/ui/Media";
-import { rental } from "@/lib/config/site";
-import { formatMoney } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/server";
 import { photo } from "@/lib/photos";
 
@@ -19,29 +15,31 @@ interface HomeHeroProps {
 }
 
 /**
- * Первый экран — тоқча посреди двора.
+ * Первый экран — встреча.
  *
- * Композиция осевая: всё стоит по центру, как портал айвона стоит по оси
- * двора. Порядок один на всех экранах — кадр, имя дома, обещание,
- * действие, — и меняется только пропорция купола: на телефоне высокий, на
- * широком экране пологий свод. Двух раскладок нет намеренно: они заставили
- * бы браузер решать, какой кадр грузить, уже после разбора CSS.
+ * Человек, открывший сайт, за одну секунду должен увидеть три вещи: знак
+ * дома (он в шапке), обещание и одежду. Поэтому кадр здесь не предмет в
+ * нише, а СРЕДА: он заполняет весь айвон, а слово стоит на нём по оси.
  *
- * За кадром стоит ПУСТАЯ золотая дуга, смещённая вверх и наружу. Это сама
- * ниша: портал в таджикском дворе всегда двойной — арка проёма и арка
- * обрамления. Она же даёт композиции глубину без единого лишнего пикселя
- * изображения и без тени, которой ночью всё равно не видно.
+ * Завеса — не «затемнение фото», а тот же цвет, что и стены айвона.
+ * Фотография уходит под зелень двора и становится его глубиной; текст
+ * лежит на однородном поле и читается при любом кадре. Это принципиально:
+ * на съёмке есть и светлый песок, и тёмный бархат, и без завесы строка
+ * теряла бы контраст ровно там, где кадр интереснее всего.
  *
- * Кикера над заголовком нет: имя дома держит первый экран само. Настоящее
- * число образов и условия проката стоят под кнопками — как факты, а не как
- * надпись, которой заголовок оправдывается.
+ * Два начертания работают вместе: обещание набрано витринной антиквой,
+ * пояснение — рабочей гарнитурой. Разный голос отделяет то, что человек
+ * почувствует, от того, что ему нужно знать.
+ *
+ * Заголовок говорит о пользе, а не о сайте. «Каталог образов для покупки
+ * и проката» описывал витрину; невеста приходит не за каталогом.
+ *
+ * Кнопка одна. Вторая («Прокат») уводила в сторону раньше, чем человек
+ * успел посмотреть хоть один образ, — прокат ждёт его отдельной секцией
+ * ниже и отдельной страницей.
  */
 export async function HomeHero({ lookCount }: HomeHeroProps) {
   const t = await getDictionary();
-  const priceFrom = formatMoney({
-    amount: rental.priceFromMinor,
-    currency: "TJS",
-  });
 
   return (
     <section className="relative pt-[calc(var(--header-h)+0.75rem)]">
@@ -50,94 +48,69 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
           surface="green"
           pad="none"
           arch
-          clip={false}
           ornament="corner"
           ornamentOrigin={[0, 0]}
-          className="mb-16 lg:mb-24"
+          className="relative isolate mb-16 overflow-hidden lg:mb-24"
         >
-          <div className="relative flex flex-col items-center px-[var(--block-pad)] pb-[var(--block-pad)] pt-[calc(var(--block-pad)+0.5rem)] text-center">
-            {/* --- КУПОЛ -------------------------------------------------
-                Кадр и пустая дуга ниши вокруг него. */}
+          {/* --- КАДР: среда, а не предмет ------------------------------- */}
+          <div aria-hidden="true" className="absolute inset-0 -z-10">
+            <Media
+              image={photo("hero-tajik-royal-bride", t.alts.hero)}
+              ratio="auto"
+              radius="none"
+              priority
+              zoomOnHover={false}
+              imageClassName="object-[68%_16%] lg:object-[70%_20%]"
+              sizes="100vw"
+              className="h-full"
+            />
+
             {/*
-              Размер задаётся ШИРИНОЙ, а не высотой.
+              Завеса работает ТОЛЬКО внизу, под словом.
 
-              Раньше стояло `w-fit` у родителя и `h-… w-auto` у кадра: ширина
-              выводилась из высоты через aspect-ratio. Chrome так умеет,
-              Safari — нет: он считает fit-content без учёта пропорции, и
-              портал схлопывался в полоску, а фотография исчезала. Ширина —
-              направление, поддержанное везде; экран учтён третьим членом
-              min(): при 4:5 высоте 44svh соответствует ширина 35svh.
+              Сначала я закрыл кадр ровной зелёной пеленой, потом пятном в
+              центре — оба раза текст читался, но платье превращалось в
+              плоское зелёное пятно. На сайте дома моды это потеря дороже
+              выигрыша: человек пришёл смотреть одежду.
+
+              Поэтому верхние две трети снимка не тронуты вовсе — лицо,
+              вышивка и цвет бархата видны как есть, — а плотность растёт
+              только к низу, где стоит слово. Цвет завесы — стены айвона,
+              чёрного нет ни грамма: он выбелил бы бирюзу.
             */}
-            <div className="relative w-[min(88vw,26rem)] lg:w-[min(26rem,35svh)]">
-              {/* Обрамляющая дуга: та же геометрия, смещённая наружу */}
-              <span
-                aria-hidden="true"
-                className="arch-outline pointer-events-none absolute -inset-x-4 -top-5 bottom-6 sm:-inset-x-6 sm:-top-7"
-              />
-              <div className="motion-unveil relative">
-                <Media
-                  image={photo("hero-tajik-royal-bride", t.alts.hero)}
-                  ratio="auto"
-                  radius="arch"
-                  priority
-                  zoomOnHover={false}
-                  imageClassName="object-[68%_22%]"
-                  sizes="(min-width: 640px) 26rem, 88vw"
-                  className="aspect-[4/5]"
-                />
-              </div>
-            </div>
+            <span className="absolute inset-0 bg-gradient-to-t from-[var(--firuza-900)] from-[18%] via-[var(--firuza-900)]/72 via-[46%] to-transparent to-[72%]" />
+            {/* Тонкая ровная дымка сверху — только чтобы шапка не спорила
+                со светлой архитектурой на снимке */}
+            <span className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[var(--firuza-900)]/55 to-transparent" />
+          </div>
 
-            {/* --- СЛОВО -------------------------------------------------- */}
+          {/* --- СЛОВО --------------------------------------------------- */}
+          <div className="relative flex min-h-[76svh] flex-col items-center justify-end px-[var(--block-pad)] pb-[var(--block-pad)] pt-[calc(var(--block-pad)+2rem)] text-center lg:min-h-[min(86svh,900px)]">
             <h1
-              className="motion-enter t-display-1 mt-8 lg:mt-10"
+              className="motion-enter t-display-2 max-w-[16ch] text-balance"
               style={delay(120)}
             >
-              ARUS DOMOD
+              {t.home.heroLine}
             </h1>
 
+            {/* Рабочая гарнитура против витринной антиквы заголовка */}
             <p
-              className="motion-enter t-lead mt-5 max-w-[38ch] text-balance"
+              className="motion-enter t-lead mt-5 max-w-[42ch] text-balance font-sans text-ink-primary lg:mt-6"
               style={delay(260)}
             >
-              {t.home.heroLine} {t.home.heroSub}
+              {t.home.heroSub}
             </p>
 
-            <div
-              className="motion-enter mt-8 flex flex-wrap justify-center gap-3"
-              style={delay(360)}
-            >
+            <div className="motion-enter mt-8 lg:mt-10" style={delay(380)}>
               <Button href="/catalog" size="lg" arrow>
                 {t.home.heroCta}
               </Button>
-              <Button href="/rental" variant="secondary" size="lg">
-                {t.nav.rental}
-              </Button>
             </div>
 
-            {/* Факты под кнопками: настоящее число образов и условия проката */}
-            <div
-              className="motion-enter mt-9 w-full max-w-[42rem] border-t border-hairline pt-4"
-              style={delay(460)}
-            >
-              <Link
-                href="/rental"
-                className="tap-row group justify-center gap-x-3"
-              >
-                <span className="t-body-sm">
-                  <span className="t-label mr-2 text-ink-accent">
-                    {t.nav.rental}
-                  </span>
-                  {t.rental.days(rental.maxDays)} · {t.rental.from} {priceFrom}{" "}
-                  · {t.rental.inStoreShort}
-                </span>
-                <ArrowIcon className="motion-arrow h-[0.9em] w-[0.9em] shrink-0 translate-y-[0.1em] text-ink-accent" />
-              </Link>
-              <p className="t-caption mt-2">
-                {t.home.facts.looks(lookCount)} · {t.common.positioning} ·{" "}
-                {t.common.city}
-              </p>
-            </div>
+            {/* Настоящее число из базы — тихой строкой под действием */}
+            <p className="motion-enter t-caption mt-6" style={delay(480)}>
+              {t.home.facts.looks(lookCount)} · {t.common.positioning}
+            </p>
           </div>
         </Aivan>
       </Container>
