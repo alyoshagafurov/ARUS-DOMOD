@@ -76,10 +76,21 @@ const SCHEMA = `
  * и правки из админки переживают перезапуск.
  */
 function seed(db: DatabaseSync): void {
+  /*
+   * BEGIN IMMEDIATE берёт блокировку записи сразу, поэтому проверка «база
+   * уже засеяна» и сами вставки происходят под одной блокировкой. Обычный
+   * BEGIN этого не даёт: два процесса успели бы прочитать нулевой счётчик
+   * и оба пошли бы вставлять — второй упал бы на UNIQUE. Проигравший здесь
+   * просто ждёт busy_timeout, затем видит непустую таблицу и выходит.
+   */
+  db.exec("BEGIN IMMEDIATE");
   const count = db.prepare("SELECT COUNT(*) AS n FROM products").get() as {
     n: number;
   };
-  if (count.n > 0) return;
+  if (count.n > 0) {
+    db.exec("COMMIT");
+    return;
+  }
 
   const insCat = db.prepare(
     "INSERT INTO categories (id, slug, sort, doc) VALUES (?, ?, ?, ?)",
@@ -91,7 +102,6 @@ function seed(db: DatabaseSync): void {
     "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
   );
 
-  db.exec("BEGIN");
   try {
     for (const c of seedCategories) {
       insCat.run(c.id, c.slug, c.order, JSON.stringify(c));
@@ -113,8 +123,21 @@ export function getDb(): DatabaseSync {
 
   mkdirSync(DATA_DIR, { recursive: true });
   const db = new DatabaseSync(DB_PATH);
+
+  /*
+   * busy_timeout выставляется ПЕРВЫМ и отдельным вызовом — до любой записи.
+   *
+   * `PRAGMA journal_mode = WAL` сам по себе пишет в заголовок базы. Раньше
+   * он стоял в одном exec с busy_timeout, то есть таймаут к моменту записи
+   * ещё не действовал: процесс, не выигравший гонку за блокировку, падал
+   * мгновенно с SQLITE_BUSY вместо того, чтобы подождать. Именно так
+   * разваливалась сборка на Railway: `next build` собирает данные страниц
+   * в 29 параллельных процессах, база в чистом контейнере отсутствует, и
+   * все 29 одновременно бросались её создавать.
+   */
+  db.exec("PRAGMA busy_timeout = 10000");
   // WAL: читатели не ждут писателя — витрина не замирает, пока админ сохраняет
-  db.exec("PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 3000;");
+  db.exec("PRAGMA journal_mode = WAL");
   db.exec(SCHEMA);
   seed(db);
 

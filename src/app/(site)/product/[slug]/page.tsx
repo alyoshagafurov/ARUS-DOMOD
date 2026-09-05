@@ -18,12 +18,18 @@ import { getDictionary, getLocale } from "@/lib/i18n/server";
 
 const RELATED_COUNT = 4;
 
-/** Образы известны заранее — страницы отрисовываются при сборке */
-export async function generateStaticParams() {
-  const page = await catalog().listProducts({ pageSize: 200 });
-  return page.items.map((product) => ({ slug: product.slug }));
-}
-
+/*
+ * generateStaticParams здесь НЕТ намеренно.
+ *
+ * Страница читает куку локали, поэтому она серверная по запросу
+ * (в сборке — ƒ Dynamic). Параметры, собранные заранее, всё равно
+ * отбрасывались: предрисовки не происходит. Платой за них была попытка
+ * открыть базу во время `next build` — а сборка собирает данные страниц
+ * в 29 параллельных процессах. В чистом контейнере Railway базы ещё нет,
+ * и все 29 бросались создавать и засевать её одновременно: один выигрывал
+ * блокировку записи, остальные падали с «database is locked», и деплой
+ * разваливался. Сборка не должна знать о базе вообще.
+ */
 export async function generateMetadata({
   params,
 }: PageProps<"/product/[slug]">) {
