@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 import {
@@ -17,7 +18,7 @@ import {
 } from "@/components/ui/icons";
 import { useCartCount } from "@/lib/cart";
 import { cn } from "@/lib/cn";
-import { primaryNav, site } from "@/lib/config/site";
+import { headerNav, site } from "@/lib/config/site";
 import { useFavoriteCount } from "@/lib/favorites";
 import { useDictionary } from "@/lib/i18n/client";
 import { navLabel } from "@/lib/i18n/labels";
@@ -83,11 +84,20 @@ export function SiteHeader() {
           "fixed inset-x-0 top-0 z-40 transition-[background-color,box-shadow]",
           "duration-[var(--dur-base)] ease-[var(--ease-quiet)]",
           scrolled
-            ? "bg-white/88 shadow-raise backdrop-blur-[10px]"
+            ? "bg-page/88 shadow-raise backdrop-blur-[10px]"
             : "bg-transparent",
         )}
       >
-        <div className="relative mx-auto flex h-[var(--header-h)] w-full max-w-[var(--container-max)] items-center gap-2 px-[var(--gutter)] sm:gap-4">
+        {/*
+          Три колонки, а не flex с абсолютным меню посередине.
+
+          Меню стояло `absolute left-1/2 w-max` — вне потока, поэтому его
+          ширина ни на что не влияла. На таджикском подписи длиннее, капсула
+          разрасталась и НАКРЫВАЛА правые контролы вместе с иконкой входа:
+          её просто не было видно. В сетке средняя колонка ограничена
+          `minmax(0,1fr)`, и наложение стало невозможным геометрически.
+        */}
+        <div className="relative mx-auto grid h-[var(--header-h)] w-full max-w-[var(--container-max)] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-[var(--gutter)] sm:gap-4">
           <Link
             href="/"
             aria-label={`${site.name} — ${t.nav.home}`}
@@ -96,23 +106,21 @@ export function SiteHeader() {
             <Logo variant="lockup" />
           </Link>
 
-          {/* Капсула навигации. w-max обязателен: у абсолютного блока с
-              left-1/2 ширина обрезана правой половиной шапки. */}
           <nav
             aria-label={t.nav.catalog}
-            className="absolute left-1/2 hidden w-max -translate-x-1/2 lg:block"
+            className="hidden min-w-0 justify-center lg:flex"
           >
             <ul
               data-surface="night"
-              className="flex items-center gap-0.5 rounded-pill bg-page p-1 shadow-raise"
+              className="flex min-w-0 items-center gap-0.5 rounded-pill bg-page p-1 shadow-raise"
             >
-              {primaryNav.map((link) => (
-                <li key={link.href}>
+              {headerNav.map((link) => (
+                <li key={link.href} className="min-w-0">
                   <Link
                     href={link.href}
                     aria-current={isActive(link.href) ? "page" : undefined}
                     className={cn(
-                      "t-label inline-flex h-9 items-center whitespace-nowrap rounded-pill px-4",
+                      "t-label inline-flex h-9 items-center whitespace-nowrap rounded-pill px-3.5 xl:px-4",
                       "transition-[background-color,color] duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
                       isActive(link.href)
                         ? "bg-white/12 text-ink"
@@ -126,12 +134,13 @@ export function SiteHeader() {
             </ul>
           </nav>
 
-          <div className="ml-auto flex items-center text-[1rem]">
+          <div className="flex items-center justify-end text-[1rem]">
             {/* Вход в админку — для владельца, поэтому иконкой и без
                 подписи. На телефоне строку иконок занимать нечем: логотип
                 и четыре иконки уже занимают 388px из 390, — там пункт
                 стоит в меню. display задаётся здесь, а не в iconBox:
                 у `hidden` и `inline-flex` одинаковый вес. */}
+            <ThemeToggle className={cn("inline-flex", iconBox)} />
             <Link
               href="/admin"
               rel="nofollow"
@@ -140,7 +149,7 @@ export function SiteHeader() {
             >
               <LockIcon />
             </Link>
-            <LanguageSwitcher className="mr-2 hidden lg:flex" />
+            <LanguageSwitcher className="mr-1 hidden lg:flex" />
             <button
               type="button"
               onClick={() => setSearchOpen(true)}

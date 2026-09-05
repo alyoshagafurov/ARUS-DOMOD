@@ -341,6 +341,143 @@
 }
 
 /* =========================================================================
+   САҲН ШАБОНА — двор ночью.
+
+   Тёмная тема не «инверсия белого». Двор гасит свет: белое поле становится
+   глубокой зеленовато-чёрной ночью, айвоны СВЕТЛЕЮТ относительно него —
+   в них горит лампа, — а золото из тонкой линии превращается в сам свет.
+   Так ночная схема остаётся тем же двором, а не другим сайтом.
+
+   Ключевая правка светокоррекции: днём объём отделяется от белого тенью,
+   а ночью тень не видна вовсе. Поэтому у айвона появляется золотая кромка,
+   и граница объёма читается по свету, а не по падающей тени.
+
+   Тема ставится атрибутом data-theme на <html> и всегда явная: скрипт в
+   <head> читает выбор из localStorage, иначе берёт системный. Медиазапрос
+   prefers-color-scheme в CSS не дублируется — иначе значения жили бы в
+   двух местах и расходились.
+   ========================================================================= */
+
+:root {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Ночной двор: не чёрный, а глубокая зелень с теплом */
+  --surface-page: #0b1513;
+  --surface-raised: #101e1b;
+  --surface-muted: #14211e;
+  --surface-sunken: #070f0e;
+  --surface-invert: var(--cream);
+
+  --text-primary: #efe7d8; /* 15.8:1 на ночном дворе */
+  --text-secondary: rgba(239, 231, 216, 0.78);
+  --text-muted: rgba(239, 231, 216, 0.76); /* 0.62 давало 3.93:1 — ниже нормы */
+  --text-invert: #0b1513;
+  --text-accent: var(--zar-300);
+
+  --border-hairline: rgba(232, 194, 117, 0.16);
+  --border-strong: rgba(232, 194, 117, 0.42);
+  --border-accent: var(--zar-300);
+
+  /* Кнопка ночью кремовая с тёмным текстом: зелёная на зелёно-чёрном
+     потерялась бы, а золотая заливка запрещена системой. */
+  --accent: var(--cream);
+  --accent-hover: var(--white);
+  --accent-quiet: rgba(242, 234, 219, 0.1);
+  --accent-contrast: #0b1513;
+
+  --gold: var(--zar-300);
+  --gold-bright: var(--zar-500);
+  --gold-ink: var(--zar-300); /* 9.8:1 — ночью золото читается текстом */
+  --gold-quiet: rgba(232, 194, 117, 0.14);
+
+  --state-success: #9fd3ac;
+  --state-warning: var(--zar-300);
+  --state-danger: #f0a094;
+  --state-info: var(--firuza-300);
+
+  --focus-ring: var(--zar-300);
+
+  --caret: var(--zar-300);
+  --scrollbar-thumb: rgba(239, 231, 216, 0.24);
+
+  --hoshiya-color: rgba(232, 194, 117, 0.3);
+  --hoshiya-color-strong: rgba(232, 194, 117, 0.66);
+  --ornament-opacity: 0.06;
+  --ornament-opacity-strong: 0.09;
+
+  /* Ночью тень не работает: объём отделяет свет, а не падающая тень */
+  --shadow-block:
+    0 1px 0 rgba(232, 194, 117, 0.14) inset,
+    0 24px 60px -30px rgba(0, 0, 0, 0.9);
+  --shadow-card: 0 12px 32px -20px rgba(0, 0, 0, 0.8);
+  --shadow-card-hover: 0 20px 44px -22px rgba(0, 0, 0, 0.9);
+  --shadow-float: 0 24px 64px -28px rgba(0, 0, 0, 0.95);
+  --shadow-overlay: 0 32px 80px -28px rgba(0, 0, 0, 0.95);
+  --shadow-raise: 0 2px 10px -4px rgba(0, 0, 0, 0.7);
+  --shadow-inset: inset 0 1px 0 rgba(232, 194, 117, 0.12);
+}
+
+/* Белый двор внутри тёмной темы тоже ночной — иначе островки света
+   вспыхивали бы посреди страницы. */
+[data-theme="dark"] [data-surface="day"] {
+  --surface-page: #0b1513;
+  --surface-raised: #101e1b;
+  --surface-muted: #14211e;
+  --surface-sunken: #070f0e;
+  --surface-invert: var(--cream);
+
+  --text-primary: #efe7d8;
+  --text-secondary: rgba(239, 231, 216, 0.78);
+  --text-muted: rgba(239, 231, 216, 0.76); /* 0.62 давало 3.93:1 — ниже нормы */
+  --text-invert: #0b1513;
+  --text-accent: var(--zar-300);
+
+  --border-hairline: rgba(232, 194, 117, 0.16);
+  --border-strong: rgba(232, 194, 117, 0.42);
+  --border-accent: var(--zar-300);
+
+  --accent: var(--cream);
+  --accent-hover: var(--white);
+  --accent-quiet: rgba(242, 234, 219, 0.1);
+  --accent-contrast: #0b1513;
+
+  --gold: var(--zar-300);
+  --gold-ink: var(--zar-300);
+  --gold-quiet: rgba(232, 194, 117, 0.14);
+  --focus-ring: var(--zar-300);
+  --caret: var(--zar-300);
+
+  --hoshiya-color: rgba(232, 194, 117, 0.3);
+  --hoshiya-color-strong: rgba(232, 194, 117, 0.66);
+}
+
+/* Айвон ночью СВЕТЛЕЕТ: на зелёно-чёрном дворе #054745 почти сливается,
+   а --firuza-700 даёт отделение 2.2:1 и оставляет крем на нём 6.9:1. */
+[data-theme="dark"] [data-surface="green"] {
+  --surface-page: var(--firuza-700);
+  --surface-raised: var(--firuza-600);
+  --surface-muted: var(--firuza-800);
+  --surface-sunken: var(--firuza-900);
+
+  /* Айвон ночью светлее дневного, поэтому прежняя прозрачность подписей
+     перестаёт дотягивать: 0.64 давало 3.93:1 при норме 4.5. */
+  --text-secondary: rgba(242, 234, 219, 0.88);
+  --text-muted: rgba(242, 234, 219, 0.8);
+}
+
+/* Ниша ночью не может быть темнее двора — она перестала бы быть нишей */
+[data-theme="dark"] [data-surface="night"] {
+  --surface-page: var(--firuza-900);
+  --surface-raised: var(--firuza-800);
+  --surface-muted: var(--firuza-800);
+  --surface-sunken: var(--firuza-950);
+}
+
+/* =========================================================================
    Мост в Tailwind v4. `inline` обязателен: утилиты компилируются в var(),
    поэтому смена поверхности переключает цвета без пересборки классов.
    ========================================================================= */

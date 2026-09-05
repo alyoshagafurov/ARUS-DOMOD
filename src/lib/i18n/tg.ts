@@ -20,6 +20,8 @@ export const tg: Dictionary = {
     loading: "Боркунӣ…",
   },
   nav: {
+    themeDark: "Мавзӯи шабона",
+    themeLight: "Мавзӯи рӯзона",
     admin: "Маъмурият",
     allLooks: "Ҳамаи образҳо",
     brideOutfits: "Либоси арӯс",

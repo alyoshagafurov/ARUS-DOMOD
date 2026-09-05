@@ -81,7 +81,23 @@ export type NavKey =
   | "brideOutfits"
   | "groomChapans";
 
-/** В навигации стоят только существующие маршруты. */
+/**
+ * Шапка держит четыре пункта, а не шесть.
+ *
+ * Причина измеримая: на таджикском подписи длиннее русских примерно на
+ * треть («КОЛЛЕКСИЯҲО», «ДАР БОРАИ МО»), и шесть пунктов переставали
+ * помещаться между логотипом и правыми контролами. «О нас» и «Контакты»
+ * остаются в подвале и в меню телефона — это справочные страницы, а не
+ * покупательский путь.
+ */
+export const headerNav: NavLink[] = [
+  { href: "/catalog", label: "Коллекции", key: "catalog" },
+  { href: "/catalog/arus", label: "Невесте", key: "bride", labelTg: "Арӯс" },
+  { href: "/catalog/domod", label: "Жениху", key: "groom", labelTg: "Домод" },
+  { href: "/rental", label: "Прокат", key: "rental" },
+];
+
+/** Полный список — меню телефона и подвал. */
 export const primaryNav: NavLink[] = [
   { href: "/catalog", label: "Коллекции", key: "catalog" },
   { href: "/catalog/arus", label: "Невесте", key: "bride", labelTg: "Арӯс" },

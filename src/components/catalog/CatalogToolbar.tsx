@@ -49,7 +49,7 @@ export function CatalogToolbar({
   return (
     <div
       data-surface="day"
-      className="sticky top-[calc(var(--header-h)+0.5rem)] z-30 rounded-[var(--radius-card)] bg-white/90 px-4 shadow-raise backdrop-blur-[10px] sm:px-5"
+      className="sticky top-[calc(var(--header-h)+0.5rem)] z-30 rounded-[var(--radius-card)] bg-raised/90 px-4 shadow-raise backdrop-blur-[10px] sm:px-5"
     >
       <div className="flex h-14 items-center justify-between gap-3">
         <p className="t-label min-w-0 shrink text-ink-muted" aria-live="polite">

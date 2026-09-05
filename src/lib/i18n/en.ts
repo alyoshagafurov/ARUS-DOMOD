@@ -16,6 +16,8 @@ export const en: Dictionary = {
     loading: "Loading…",
   },
   nav: {
+    themeDark: "Dark theme",
+    themeLight: "Light theme",
     admin: "Admin",
     allLooks: "All looks",
     brideOutfits: "Bridal outfits",

@@ -63,6 +63,16 @@ export const categories: Category[] = [
     order: 2,
   },
   {
+    id: "cat-chodar",
+    slug: "chodar",
+    title: "Чодар",
+    titleTg: "Чодар",
+    titleEn: "Chodar",
+    // Кадра у раздела пока нет, и выдумывать его нельзя: CategoryNavigation
+    // отрисует зелёную плитку с именем, пока клиент не пришлёт съёмку.
+    order: 3,
+  },
+  {
     id: "cat-zewar",
     slug: "zewar",
     title: "Украшения",
@@ -70,7 +80,7 @@ export const categories: Category[] = [
     titleEn: "Jewellery",
     description: "Комплекты украшений к образу.",
     image: photo("cat-zewar", "Украшения из коллекции ARUS DOMOD"),
-    order: 3,
+    order: 4,
   },
   {
     id: "cat-toqi",
@@ -79,7 +89,7 @@ export const categories: Category[] = [
     titleTg: "Тоқӣ",
     titleEn: "Skullcaps",
     description: "Головные уборы.",
-    order: 4,
+    order: 5,
   },
   {
     id: "cat-tur",
@@ -88,7 +98,7 @@ export const categories: Category[] = [
     titleTg: "Сафари тӯёна",
     titleEn: "Wedding tours",
     description: "Свадебные туры и программы.",
-    order: 5,
+    order: 6,
   },
   {
     id: "cat-tuy",
@@ -98,7 +108,7 @@ export const categories: Category[] = [
     titleEn: "Couple looks",
     description: "Согласованные образы невесты и жениха.",
     image: photo("cat-tuy", "Парный образ из коллекции ARUS DOMOD"),
-    order: 6,
+    order: 7,
   },
   {
     id: "cat-lavozimot",
@@ -108,7 +118,7 @@ export const categories: Category[] = [
     titleEn: "Other accessories",
     description: "Дополнения к образу и свадебные товары.",
     image: photo("cat-lavozimot", "Аксессуар из коллекции ARUS DOMOD"),
-    order: 7,
+    order: 8,
   },
 ];
 

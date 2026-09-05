@@ -23,6 +23,8 @@ export const ru = {
     loading: "Загрузка…",
   },
   nav: {
+    themeDark: "Ночная тема",
+    themeLight: "Дневная тема",
     admin: "Админка",
     allLooks: "Все образы",
     brideOutfits: "Наряды для невесты",

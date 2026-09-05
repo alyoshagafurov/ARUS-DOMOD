@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant, Golos_Text } from "next/font/google";
 
+import { themeScript } from "@/components/layout/ThemeToggle";
 import { site } from "@/lib/config/site";
 import { LocaleProvider } from "@/lib/i18n/client";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
@@ -37,16 +38,29 @@ import "./globals.css";
  * Подмножество cyrillic-ext обязательно для обеих гарнитур: таджикские буквы
  * лежат именно там (проверяется измерением глифов в браузере, не по описанию).
  */
+/*
+ * Начертаний ровно столько, сколько система использует.
+ *
+ * Антиква идёт ТОЛЬКО весом 400: так объявлены все роли в base.css
+ * (.t-giant, .t-display-*, .t-h*, .t-num). Веса 500 и 600 грузились и не
+ * применялись никогда — это чистая потеря на первом экране. Веса 500 и 600
+ * нужны рабочей гарнитуре (.t-label, .t-label-wide, .t-price), и она их
+ * получает из своего переменного файла.
+ *
+ * latin-ext снят у обеих: он покрывает восточноевропейскую латиницу
+ * (ā, ć, ę, ł), а сайт говорит по-русски, по-таджикски и по-английски —
+ * ни один из этих глифов в него не попадает.
+ */
 const cormorant = Cormorant({
   variable: "--font-cormorant",
-  weight: ["400", "500", "600"],
-  subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
+  weight: ["400"],
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   display: "swap",
 });
 
 const golos = Golos_Text({
   variable: "--font-golos",
-  subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   display: "swap",
 });
 
@@ -72,8 +86,11 @@ export async function generateMetadata(): Promise<Metadata> {
  * адреса на телефоне продолжает поле логотипа, а не спорит с ним.
  */
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1513" },
+  ],
+  colorScheme: "light dark",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -81,8 +98,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale}
+      // Скрипт темы ставит data-theme на <html> ДО гидратации, поэтому
+      // разметка сервера и клиента здесь расходятся на один атрибут —
+      // намеренно. Это единственный узел, где расхождение допустимо.
+      suppressHydrationWarning
       className={`${cormorant.variable} ${golos.variable} h-full`}
     >
+      <head>
+        {/* Тема ставится ДО первой отрисовки, иначе ночной посетитель
+            получает кадр белого. Скрипт синхронный и однострочный —
+            откладывать его нельзя, в этом весь смысл. */}
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       {/* Шапку и подвал даёт (site)/layout.tsx: у админки они не нужны */}
       <body className="flex min-h-full flex-col">
         <LocaleProvider locale={locale}>{children}</LocaleProvider>

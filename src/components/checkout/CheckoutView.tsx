@@ -25,7 +25,7 @@ interface OrderResponse {
 }
 
 const field =
-  "mt-2 h-12 w-full rounded-md border border-strong bg-white px-4 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] ease-[var(--ease-quiet)] placeholder:text-ink-muted focus:border-accent focus:shadow-raise";
+  "mt-2 h-12 w-full rounded-md border border-strong bg-raised px-4 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] ease-[var(--ease-quiet)] placeholder:text-ink-muted focus:border-accent focus:shadow-raise";
 
 /** Сегодняшняя дата в формате input[type=date] — раньше неё свадьбы не бывает */
 const today = () => new Date().toISOString().slice(0, 10);
@@ -344,7 +344,7 @@ export function CheckoutView() {
               name="comment"
               rows={4}
               maxLength={1000}
-              className="mt-4 w-full resize-y rounded-md border border-strong bg-white p-4 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise"
+              className="mt-4 w-full resize-y rounded-md border border-strong bg-raised p-4 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise"
             />
           </label>
 
