@@ -58,10 +58,17 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
           <div className="relative flex flex-col items-center px-[var(--block-pad)] pb-[var(--block-pad)] pt-[calc(var(--block-pad)+0.5rem)] text-center">
             {/* --- КУПОЛ -------------------------------------------------
                 Кадр и пустая дуга ниши вокруг него. */}
-            {/* Высота портала считается от экрана, а не от ширины: иначе на
-                ноутбуке 900px имя дома уезжает за сгиб, и первый экран
-                перестаёт быть первым экраном. */}
-            <div className="relative w-fit max-w-full">
+            {/*
+              Размер задаётся ШИРИНОЙ, а не высотой.
+
+              Раньше стояло `w-fit` у родителя и `h-… w-auto` у кадра: ширина
+              выводилась из высоты через aspect-ratio. Chrome так умеет,
+              Safari — нет: он считает fit-content без учёта пропорции, и
+              портал схлопывался в полоску, а фотография исчезала. Ширина —
+              направление, поддержанное везде; экран учтён третьим членом
+              min(): при 4:5 высоте 44svh соответствует ширина 35svh.
+            */}
+            <div className="relative w-[min(88vw,26rem)] lg:w-[min(26rem,35svh)]">
               {/* Обрамляющая дуга: та же геометрия, смещённая наружу */}
               <span
                 aria-hidden="true"
@@ -76,7 +83,7 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
                   zoomOnHover={false}
                   imageClassName="object-[68%_22%]"
                   sizes="(min-width: 640px) 26rem, 88vw"
-                  className="aspect-[4/5] h-[min(44svh,26rem)] w-auto max-w-full"
+                  className="aspect-[4/5]"
                 />
               </div>
             </div>
