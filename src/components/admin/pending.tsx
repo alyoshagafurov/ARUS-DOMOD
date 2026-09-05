@@ -123,9 +123,13 @@ export function AdminNav({
               className={cn(
                 "relative flex h-11 items-center rounded-md px-3",
                 "transition-[background-color,color] duration-[var(--dur-fast)]",
+                // Фон брался из белого гвоздём, а текст — из токена: ночью
+                // кремовая надпись ложилась на белую плашку и исчезала.
+                // accent-quiet — единственный тон, который читается на обеих
+                // темах: зелёная дымка днём, светлая ночью.
                 active
-                  ? "bg-white text-ink shadow-raise"
-                  : "text-ink-secondary hover:bg-white/60 hover:text-ink",
+                  ? "bg-accent-quiet text-ink shadow-raise"
+                  : "text-ink-secondary hover:bg-accent-quiet hover:text-ink",
               )}
             >
               {active ? (

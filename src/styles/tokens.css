@@ -455,6 +455,11 @@
   --hoshiya-color-strong: rgba(232, 194, 117, 0.66);
 }
 
+/* Ночной столбец диаграммы: #35827E на #0B1513 проходит 3:1 */
+[data-theme="dark"] [data-chart-bar] {
+  background-color: var(--firuza-500);
+}
+
 /* Айвон ночью СВЕТЛЕЕТ: на зелёно-чёрном дворе #054745 почти сливается,
    а --firuza-700 даёт отделение 2.2:1 и оставляет крем на нём 6.9:1. */
 [data-theme="dark"] [data-surface="green"] {

@@ -9,7 +9,7 @@ import type { OrderStatus } from "@/lib/orders/types";
  * состояние держит браузер.
  */
 export const input =
-  "mt-2 h-11 w-full rounded-md border border-strong bg-white px-3 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise";
+  "mt-2 h-11 w-full rounded-md border border-strong bg-raised px-3 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise";
 
 export function Field({
   label,
@@ -97,7 +97,7 @@ export function TextArea({
       name={name}
       defaultValue={defaultValue}
       rows={rows}
-      className="mt-2 w-full resize-y rounded-md border border-strong bg-white p-3 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise"
+      className="mt-2 w-full resize-y rounded-md border border-strong bg-raised p-3 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise"
     />
   );
 }

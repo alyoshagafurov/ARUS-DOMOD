@@ -8,7 +8,7 @@ import { login } from "./actions";
 export const metadata = { title: "Вход в админку", robots: { index: false } };
 
 const field =
-  "mt-2 h-11 w-full rounded-md border border-strong bg-white px-3 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise";
+  "mt-2 h-11 w-full rounded-md border border-strong bg-raised px-3 text-ink outline-none transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:border-accent focus:shadow-raise";
 
 export default async function AdminLoginPage({
   searchParams,

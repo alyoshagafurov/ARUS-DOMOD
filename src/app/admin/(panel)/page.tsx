@@ -1,15 +1,66 @@
 import Link from "next/link";
 
+import {
+  ColumnChart,
+  StatusChart,
+  type Bucket,
+} from "@/components/admin/Charts";
 import { Empty, StatusChip } from "@/components/admin/form";
 import { catalog } from "@/lib/catalog";
 import { countOrders, listOrders } from "@/lib/orders/store";
+import { ORDER_STATUSES } from "@/lib/orders/types";
 import { formatMoney } from "@/lib/format";
 
 export const metadata = { title: "Обзор" };
 
+/** Дни считаются по времени магазина, а не по UTC: заказ в 02:00 в
+ *  Душанбе иначе попал бы во вчерашний столбец. */
+const DAY = new Intl.DateTimeFormat("ru-RU", {
+  timeZone: "Asia/Dushanbe",
+  day: "numeric",
+  month: "long",
+});
+const SHORT = new Intl.DateTimeFormat("ru-RU", {
+  timeZone: "Asia/Dushanbe",
+  day: "numeric",
+  month: "2-digit",
+});
+const KEY = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Dushanbe",
+  dateStyle: "short",
+});
+
+/** Четырнадцать дней подряд, включая пустые: провал в череде заказов —
+ *  тоже факт, и пропускать такие дни значило бы его спрятать. */
+function daily(orders: { createdAt: string }[], days = 14): Bucket[] {
+  const counted = new Map<string, number>();
+  for (const order of orders) {
+    const key = KEY.format(new Date(order.createdAt));
+    counted.set(key, (counted.get(key) ?? 0) + 1);
+  }
+
+  const out: Bucket[] = [];
+  const now = Date.now();
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const date = new Date(now - i * 86_400_000);
+    out.push({
+      label: SHORT.format(date),
+      full: DAY.format(date),
+      value: counted.get(KEY.format(date)) ?? 0,
+    });
+  }
+  return out;
+}
+
 export default async function AdminDashboard() {
   const counts = countOrders();
-  const latest = listOrders().slice(0, 6);
+  const all = listOrders();
+  const latest = all.slice(0, 6);
+  const byDay = daily(all);
+  const byStatus = ORDER_STATUSES.map((status) => ({
+    status,
+    value: counts[status],
+  }));
   const [products, categories] = await Promise.all([
     catalog().listProducts({ pageSize: 1000 }),
     catalog().listCategories(),
@@ -50,6 +101,19 @@ export default async function AdminDashboard() {
           </li>
         ))}
       </ul>
+
+      {/* Диаграммы стоят на настоящих числах из базы. Пока заказов нет,
+          рисовать нечего — пустая сетка честнее «примерного» графика. */}
+      {all.length > 0 ? (
+        <div className="mt-10 grid gap-4 lg:grid-cols-2">
+          <ColumnChart
+            title="Заказы по дням · 14 дней"
+            buckets={byDay}
+            unit="за период"
+          />
+          <StatusChart title="Заказы по статусам" rows={byStatus} />
+        </div>
+      ) : null}
 
       <section className="mt-12">
         <div className="flex items-baseline justify-between">
