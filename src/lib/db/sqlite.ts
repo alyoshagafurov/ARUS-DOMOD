@@ -2,6 +2,7 @@ import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
+import { buildDemoOrders, demoOrdersEnabled } from "@/lib/orders/demo";
 import {
   categories as seedCategories,
   collections as seedCollections,
@@ -111,6 +112,28 @@ function seed(db: DatabaseSync): void {
     });
     insSetting.run("collections", JSON.stringify(seedCollections));
     insSetting.run("featuredSlugs", JSON.stringify(seedFeatured));
+
+    /*
+     * Демо-заказы для показа панели — только при ARUS_DEMO_ORDERS=1.
+     * По умолчанию их нет и быть не может: владелец магазина не отличил бы
+     * выдуманного клиента от настоящего. Переменная — осознанное действие.
+     */
+    if (demoOrdersEnabled()) {
+      const insOrder = db.prepare(
+        "INSERT INTO orders (id, number, status, created_at, updated_at, doc) VALUES (?, ?, ?, ?, ?, ?)",
+      );
+      for (const o of buildDemoOrders(seedProducts, 0)) {
+        insOrder.run(
+          o.id,
+          o.number,
+          o.status,
+          o.createdAt,
+          o.updatedAt,
+          JSON.stringify(o),
+        );
+      }
+    }
+
     db.exec("COMMIT");
   } catch (error) {
     db.exec("ROLLBACK");
