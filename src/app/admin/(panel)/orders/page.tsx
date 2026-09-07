@@ -73,7 +73,7 @@ export default async function AdminOrdersPage({
             <li key={o.id} className="border-b border-hairline">
               <Link
                 href={`/admin/orders/${o.id}`}
-                className="flex flex-col gap-2 py-4 transition-colors duration-[var(--dur-fast)] hover:bg-muted md:grid md:grid-cols-[6rem_1fr_11rem_8rem_7rem] md:items-center md:gap-4"
+                className="flex flex-col gap-2 py-4 transition-colors duration-[var(--dur-fast)] hover:bg-muted md:grid md:grid-cols-[6rem_1fr_auto_8rem_7rem] md:items-center md:gap-4"
               >
                 {/* Телефон: номер и сумма в одной строке, статус под ними.
                     Пятиколоночная сетка на 390px давала пять строк по одному

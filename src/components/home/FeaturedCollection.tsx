@@ -86,17 +86,10 @@ export async function FeaturedCollection({
               </Reveal>
             ))}
 
-            {/* Хвост рейки: ссылка на всю коллекцию как ещё один предмет */}
-            <li className="flex w-[44vw] max-w-[14rem] items-stretch sm:w-[12rem]">
-              <Button
-                href="/catalog"
-                variant="secondary"
-                className="h-auto w-full flex-col gap-3 rounded-[var(--radius-card)] py-10"
-                arrow
-              >
-                {t.home.allCollection}
-              </Button>
-            </li>
+            {/* Хвоста у рейки нет намеренно: кнопка «Смотреть все» в шапке
+                секции ведёт туда же. Растянутая на всю высоту карточки
+                кнопка в конце ленты давала пустую зелёную панель размером
+                с фотографию и дублировала уже существующее действие. */}
           </ul>
         </Aivan>
       </Container>

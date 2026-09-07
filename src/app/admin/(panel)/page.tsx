@@ -136,7 +136,7 @@ export default async function AdminDashboard() {
               <li key={order.id} className="border-b border-hairline">
                 <Link
                   href={`/admin/orders/${order.id}`}
-                  className="flex flex-col gap-2 py-4 transition-colors duration-[var(--dur-fast)] hover:bg-muted sm:grid sm:grid-cols-[7rem_1fr_11rem_8rem] sm:items-center sm:gap-4"
+                  className="flex flex-col gap-2 py-4 transition-colors duration-[var(--dur-fast)] hover:bg-muted sm:grid sm:grid-cols-[7rem_1fr_auto_8rem] sm:items-center sm:gap-4"
                 >
                   <span className="t-price tabular-nums">{order.id}</span>
                   <span className="t-body-sm truncate">
