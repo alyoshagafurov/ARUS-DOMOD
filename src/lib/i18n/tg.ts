@@ -132,6 +132,8 @@ export const tg: Dictionary = {
     rental: "Иҷора",
     size: "Андоза",
     color: "Ранг",
+    sale: "Тахфиф",
+    saleUntil: (date: string) => `то ${date}`,
     addToCart: "Ба сабад илова кардан",
     added: "Илова шуд",
     toCart: "Ба сабад",

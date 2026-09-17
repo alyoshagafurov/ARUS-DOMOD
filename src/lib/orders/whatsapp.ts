@@ -41,6 +41,7 @@ export function formatOrderMessage(order: Order): string {
     if (line.color) push(`Цвет: ${line.color}`);
     push(`Количество: ${line.quantity}`);
     push(`Цена: ${formatMoney(line.unitPrice)}`);
+    if (line.discountPercent) push(`Скидка: ${line.discountPercent}%`);
     if (line.quantity > 1) push(`Сумма: ${formatMoney(line.lineTotal)}`);
   });
   push();

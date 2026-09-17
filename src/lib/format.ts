@@ -29,6 +29,34 @@ export function getPrimaryOffer(
   );
 }
 
+const SHORT_DATE = new Intl.DateTimeFormat("ru-RU", {
+  timeZone: "Asia/Dushanbe",
+  day: "2-digit",
+  month: "2-digit",
+});
+
+/**
+ * «01.10» — дата по времени магазина. Числом, а не названием месяца:
+ * так одна строка годится для всех трёх языков, и сервер с браузером
+ * не расходятся в названиях месяцев на таджикском.
+ */
+export const formatShortDate = (iso: string): string =>
+  SHORT_DATE.format(new Date(iso));
+
+/** 1 товар, 3 товара, 5 товаров */
+export function pluralRu(
+  n: number,
+  forms: readonly [one: string, few: string, many: string],
+): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return forms[0];
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
+    return forms[1];
+  }
+  return forms[2];
+}
+
 export function hasDiscount(offer: ProductOffer): boolean {
   return (
     offer.compareAtPrice !== undefined &&

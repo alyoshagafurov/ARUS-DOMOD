@@ -4,13 +4,14 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { FavoriteButton } from "@/components/product/FavoriteButton";
 import { useProductColor } from "@/components/product/ProductColor";
+import { SaleRibbon } from "@/components/product/SaleRibbon";
 import { Button } from "@/components/ui/Button";
 import { productColors, productSizes } from "@/lib/catalog/variants";
 import { cn } from "@/lib/cn";
 import { useDictionary } from "@/lib/i18n/client";
 import { useAddToCart, useCartHas } from "@/lib/cart";
 import { contact, rental as rentalTerms } from "@/lib/config/site";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, formatShortDate } from "@/lib/format";
 import { whatsappLink } from "@/lib/orders/whatsapp";
 import type { Product } from "@/types/catalog";
 
@@ -171,6 +172,20 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
                 ) : null}
               </p>
             </div>
+
+            {/* Скидка — той же лентой, что на кадре, и со сроком: «до 01.10»
+                отвечает на вопрос, который покупатель задал бы первым */}
+            {product.sale ? (
+              <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <SaleRibbon
+                  label={t.product.sale}
+                  percent={product.sale.percent}
+                />
+                <span className="t-caption">
+                  {t.product.saleUntil(formatShortDate(product.sale.endsAt))}
+                </span>
+              </p>
+            ) : null}
 
             {/* Цвета — только если они у изделия есть. Образец без
                 оттенка пишется словом: пустой кружок ничего не сообщает. */}

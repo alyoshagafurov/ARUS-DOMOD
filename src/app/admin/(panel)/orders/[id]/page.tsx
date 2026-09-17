@@ -106,6 +106,11 @@ export default async function AdminOrderPage({
                       {l.article ?? ""}
                       {l.size ? ` · размер ${l.size}` : ""}
                       {l.color ? ` · ${l.color}` : ""}
+                      {l.discountPercent ? (
+                        <span className="text-danger">
+                          {` · скидка ${l.discountPercent}%`}
+                        </span>
+                      ) : null}
                     </span>
                   </span>
                   <span className="t-caption tabular-nums">

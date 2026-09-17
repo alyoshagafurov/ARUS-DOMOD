@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { OrnamentMotif } from "@/components/ornament/Ornament";
+import { SaleRibbon } from "@/components/product/SaleRibbon";
 import type { PlateTone } from "@/components/ui/FabricPlate";
 import { Media } from "@/components/ui/Media";
 import { cn } from "@/lib/cn";
@@ -108,6 +109,17 @@ export function ProductCard({
           )}
         />
 
+        {/* Лента скидки — на прямой кромке кадра, выше кнопки избранного:
+            под куполом её срезала бы дуга, у основания на узкой карточке
+            телефона она наехала бы на сердце. */}
+        {product.sale ? (
+          <SaleRibbon
+            label={t.product.sale}
+            percent={product.sale.percent}
+            className="pointer-events-none absolute bottom-[4.25rem] left-0 z-10"
+          />
+        ) : null}
+
         {/* Избранное — у основания купола, где кромка прямая */}
         {action ? (
           <div className="absolute bottom-3 right-3 z-10">{action}</div>
@@ -136,7 +148,9 @@ export function ProductCard({
                 {formatMoney(offer.compareAtPrice)}
               </span>
             ) : null}
-            {discount ? (
+            {/* Процент уже на ленте; строкой он остаётся только у старой
+                цены, заданной вручную без скидки из админки */}
+            {discount && !product.sale ? (
               <span className="t-label text-gold-ink">−{discount}%</span>
             ) : null}
           </p>

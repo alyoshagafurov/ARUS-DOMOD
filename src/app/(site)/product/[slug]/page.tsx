@@ -116,7 +116,11 @@ export default async function ProductPage({
         <ProductColorProvider initial={productColors(product)[0]?.name}>
           <div className="mt-6 grid gap-x-[var(--gutter)] gap-y-10 pb-[var(--space-block-y)] lg:mt-8 lg:grid-cols-12">
             <div className="lg:col-span-7">
-              <ProductGallery images={product.images} title={product.title} />
+              <ProductGallery
+                images={product.images}
+                title={product.title}
+                sale={product.sale}
+              />
             </div>
 
             {/* Панель покупки — белая плавающая карточка, прилипающая к шапке:

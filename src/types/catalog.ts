@@ -87,6 +87,44 @@ export interface Product {
   description?: string;
   /** Свободные характеристики: ткань, вышивка, регион, состав */
   attributes?: Record<string, string>;
+  /**
+   * Скидка, которая действует прямо сейчас. В базе не хранится: её
+   * выставляет каталог при чтении из таблицы скидок, вместе со сниженной
+   * ценой покупки и старой ценой в `compareAtPrice`.
+   */
+  sale?: ProductSale;
+}
+
+export interface ProductSale {
+  percent: number;
+  /** Когда скидка закончится, ISO */
+  endsAt: string;
+}
+
+/** На что распространяется скидка */
+export type DiscountScope = "all" | "categories" | "products";
+
+/**
+ * Скидка из админки: процент, товары и срок.
+ *
+ * Срок задаётся днями, а хранится моментами: начало первого дня и конец
+ * последнего по времени Душанбе. Скидка снижает только цену покупки —
+ * прокат обсуждается в магазине, и образ «только в прокат» её не получает.
+ */
+export interface Discount {
+  id: string;
+  /** 1–90 */
+  percent: number;
+  scope: DiscountScope;
+  /** Для scope: "categories" */
+  categorySlugs: string[];
+  /** Для scope: "products" */
+  productIds: string[];
+  startsAt: string;
+  endsAt: string;
+  createdAt: string;
+  /** Демонстрационная скидка — помечена, чтобы её можно было найти */
+  demo?: true;
 }
 
 export interface Category {

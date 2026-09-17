@@ -79,6 +79,12 @@
   --state-danger: #b8433a;
   --state-info: var(--firuza-600);
 
+  /* Лента скидки — единственная красная заливка в системе, по решению
+     клиента. Одна на обе темы: она лежит на фотографии, а не на поле
+     страницы. Белая надпись на ней — 6.5:1. */
+  --sale: #b3261e;
+  --sale-contrast: #ffffff;
+
   --focus-ring: var(--firuza-700);
 
   /* ---------- Тени: свет сверху, мягкий рассеянный, без чёрного --------
@@ -515,6 +521,8 @@
   --color-warning: var(--state-warning);
   --color-danger: var(--state-danger);
   --color-info: var(--state-info);
+  --color-sale: var(--sale);
+  --color-sale-contrast: var(--sale-contrast);
 
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);

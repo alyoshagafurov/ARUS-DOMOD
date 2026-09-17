@@ -5,14 +5,17 @@ import { useDictionary } from "@/lib/i18n/client";
 
 import { useProductColor } from "@/components/product/ProductColor";
 import { ProductViewer } from "@/components/product/ProductViewer";
+import { SaleRibbon } from "@/components/product/SaleRibbon";
 import { Media } from "@/components/ui/Media";
 import { imagesForColor } from "@/lib/catalog/variants";
 import { cn } from "@/lib/cn";
-import type { ProductImage } from "@/types/catalog";
+import type { ProductImage, ProductSale } from "@/types/catalog";
 
 interface ProductGalleryProps {
   images: ProductImage[];
   title: string;
+  /** Действующая скидка — лента на первом кадре */
+  sale?: ProductSale;
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -35,13 +38,20 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * открытый просмотр начинаются с первого кадра, а не застревают на
  * номере, которого у нового цвета может не быть.
  */
-export function ProductGallery({ images, title }: ProductGalleryProps) {
+export function ProductGallery({ images, title, sale }: ProductGalleryProps) {
   const { color } = useProductColor();
   const visible = useMemo(() => imagesForColor(images, color), [images, color]);
-  return <GalleryStrip key={color ?? "all"} images={visible} title={title} />;
+  return (
+    <GalleryStrip
+      key={color ?? "all"}
+      images={visible}
+      title={title}
+      sale={sale}
+    />
+  );
 }
 
-function GalleryStrip({ images, title }: ProductGalleryProps) {
+function GalleryStrip({ images, title, sale }: ProductGalleryProps) {
   const t = useDictionary();
   const stripRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
@@ -90,10 +100,19 @@ function GalleryStrip({ images, title }: ProductGalleryProps) {
               slideRefs.current[position] = node;
             }}
             className={cn(
-              "w-[88%] shrink-0 snap-start xs:w-[78%] lg:shrink",
+              "relative w-[88%] shrink-0 snap-start xs:w-[78%] lg:shrink",
               position === 0 ? "lg:w-full" : "lg:-mt-16 lg:w-[72%] lg:self-end",
             )}
           >
+            {/* Лента — только на первом кадре: на каждом она превращалась
+                бы в узор, а не в сообщение */}
+            {sale && position === 0 ? (
+              <SaleRibbon
+                label={t.product.sale}
+                percent={sale.percent}
+                className="pointer-events-none absolute left-0 top-8 z-10"
+              />
+            ) : null}
             <button
               type="button"
               onClick={() => setViewer(position)}

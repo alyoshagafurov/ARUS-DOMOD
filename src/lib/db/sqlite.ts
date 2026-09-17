@@ -6,6 +6,7 @@ import { buildDemoOrders, demoOrdersEnabled } from "@/lib/orders/demo";
 import {
   categories as seedCategories,
   collections as seedCollections,
+  demoDiscounts,
   featuredSlugs as seedFeatured,
   products as seedProducts,
 } from "@/lib/catalog/mock-data";
@@ -69,7 +70,46 @@ const SCHEMA = `
   );
   CREATE INDEX IF NOT EXISTS orders_created ON orders (created_at DESC);
   CREATE INDEX IF NOT EXISTS orders_status  ON orders (status);
+  CREATE TABLE IF NOT EXISTS discounts (
+    id        TEXT PRIMARY KEY,
+    starts_at TEXT NOT NULL,
+    ends_at   TEXT NOT NULL,
+    doc       TEXT NOT NULL
+  );
 `;
+
+/** Отметка «демо-скидки уже засеяны» */
+const DEMO_DISCOUNTS_KEY = "demoDiscountsSeeded";
+
+/**
+ * Демо-скидки — один раз на базу, в том числе на уже работающую: таблица
+ * скидок появилась позже товаров, и засев по пустым товарам сюда не дошёл
+ * бы. Признак — отметка в settings, а не пустая таблица: иначе, удалив
+ * все скидки, владелец получил бы демо обратно при следующем запуске.
+ */
+function seedDemoDiscounts(db: DatabaseSync): void {
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    const done = db
+      .prepare("SELECT 1 AS done FROM settings WHERE key = ?")
+      .get(DEMO_DISCOUNTS_KEY);
+    if (!done) {
+      const insert = db.prepare(
+        "INSERT OR IGNORE INTO discounts (id, starts_at, ends_at, doc) VALUES (?, ?, ?, ?)",
+      );
+      for (const d of demoDiscounts(Date.now())) {
+        insert.run(d.id, d.startsAt, d.endsAt, JSON.stringify(d));
+      }
+      db.prepare(
+        "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
+      ).run(DEMO_DISCOUNTS_KEY, "true");
+    }
+    db.exec("COMMIT");
+  } catch (error) {
+    db.exec("ROLLBACK");
+    throw error;
+  }
+}
 
 /**
  * Первичное наполнение — демонстрационные данные из mock-data.ts. Идёт один
@@ -163,6 +203,7 @@ export function getDb(): DatabaseSync {
   db.exec("PRAGMA journal_mode = WAL");
   db.exec(SCHEMA);
   seed(db);
+  seedDemoDiscounts(db);
 
   globalThis.__arusDb = db;
   return db;

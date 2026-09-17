@@ -142,6 +142,8 @@ export const ru = {
     rental: "Прокат",
     size: "Размер",
     color: "Цвет",
+    sale: "Скидка",
+    saleUntil: (date: string) => `до ${date}`,
     addToCart: "Добавить в корзину",
     added: "Добавлено",
     toCart: "В корзину",

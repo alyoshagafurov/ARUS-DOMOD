@@ -49,13 +49,12 @@ export default async function AdminProductEditPage({
   const { id } = await params;
   const query = await searchParams;
   const isNew = id === "new";
-  const [{ items }, categories] = await Promise.all([
-    catalog().listProducts({ pageSize: 1000 }),
-    catalog().listCategories(),
-  ]);
+  // Товары — прямо из базы, без скидок. Через catalog() сюда пришла бы
+  // сниженная цена, и «Сохранить» записал бы её как обычную.
+  const { products: items, featuredSlugs } = readCatalog();
+  const categories = await catalog().listCategories();
   const product = isNew ? null : items.find((p) => p.id === id);
   if (!isNew && !product) notFound();
-  const { featuredSlugs } = readCatalog();
 
   const buy = product?.offers.find((o) => o.kind === "purchase");
   const rent = product?.offers.find((o) => o.kind === "rental");

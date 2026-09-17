@@ -72,8 +72,15 @@ export default async function AdminProductsPage() {
                 <span className="t-caption hidden md:block">
                   {availability[state]}
                 </span>
+                {/* Каталог отдаёт цену с действующей скидкой — рядом видно,
+                    что она снижена и на сколько */}
                 <span className="t-price hidden md:block">
                   {buy ? formatMoney(buy.price) : "—"}
+                  {p.sale ? (
+                    <span className="t-caption block text-danger">
+                      скидка {p.sale.percent}%
+                    </span>
+                  ) : null}
                 </span>
                 <span className="t-caption hidden md:block">
                   {rent ? `прокат ${formatMoney(rent.price)}` : "—"}

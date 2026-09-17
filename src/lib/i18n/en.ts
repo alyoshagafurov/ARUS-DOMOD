@@ -128,6 +128,8 @@ export const en: Dictionary = {
     rental: "Rental",
     size: "Size",
     color: "Colour",
+    sale: "Sale",
+    saleUntil: (date: string) => `until ${date}`,
     addToCart: "Add to cart",
     added: "Added",
     toCart: "Add",

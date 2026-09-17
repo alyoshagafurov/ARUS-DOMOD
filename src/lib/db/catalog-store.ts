@@ -1,6 +1,11 @@
 import type { CatalogData } from "@/lib/catalog/engine";
 import { getDb } from "@/lib/db/sqlite";
-import type { Category, Collection, Product } from "@/types/catalog";
+import type {
+  Category,
+  Collection,
+  Discount,
+  Product,
+} from "@/types/catalog";
 
 /**
  * Каталог из базы — с кэшем на процесс.
@@ -10,8 +15,19 @@ import type { Category, Collection, Product } from "@/types/catalog";
  * любая мутация ниже сбрасывает его, и следующий читатель получает свежие
  * данные. Никакого TTL — устаревание выводится из факта записи, а не из
  * таймера, который надо не забыть.
+ *
+ * Кэши лежат в globalThis, а не в переменных модуля. Next собирает
+ * страницы с серверными действиями и route handlers (/api/catalog,
+ * /api/orders) в разные бандлы, и у каждого своя копия модуля: переменная
+ * сбрасывалась только там, где прошла запись. Так и случилось — админка
+ * сохранила скидку, витрина её показала, а приём заказа читал старый
+ * снимок и взял с покупателя полную цену. Соединение с базой по той же
+ * причине уже живёт в globalThis (sqlite.ts).
  */
-let cache: CatalogData | null = null;
+declare global {
+  var __arusCatalogCache: CatalogData | null | undefined;
+  var __arusDiscountCache: Discount[] | null | undefined;
+}
 
 type Row = { doc: string };
 
@@ -27,9 +43,9 @@ function setting<T>(key: string, fallback: T): T {
 }
 
 export function readCatalog(): CatalogData {
-  if (cache) return cache;
+  if (globalThis.__arusCatalogCache) return globalThis.__arusCatalogCache;
   const db = getDb();
-  cache = {
+  const snapshot: CatalogData = {
     products: parseAll<Product>(
       db.prepare("SELECT doc FROM products ORDER BY sort, slug").all() as Row[],
     ),
@@ -41,11 +57,12 @@ export function readCatalog(): CatalogData {
     collections: setting<Collection[]>("collections", []),
     featuredSlugs: setting<string[]>("featuredSlugs", []),
   };
-  return cache;
+  globalThis.__arusCatalogCache = snapshot;
+  return snapshot;
 }
 
 export function invalidateCatalog(): void {
-  cache = null;
+  globalThis.__arusCatalogCache = null;
 }
 
 /* ---------- Товары ------------------------------------------------------- */
@@ -90,6 +107,48 @@ export function saveCategory(category: Category): void {
 export function removeCategory(id: string): void {
   getDb().prepare("DELETE FROM categories WHERE id = ?").run(id);
   invalidateCatalog();
+}
+
+/* ---------- Скидки ------------------------------------------------------- */
+
+/**
+ * Скидки кэшируются так же, как каталог: до первой записи. Сниженные цены
+ * из них считаются на каждое чтение (`applySales`), поэтому кэш не мешает
+ * скидке начаться и закончиться вовремя.
+ */
+export function readDiscounts(): Discount[] {
+  if (globalThis.__arusDiscountCache) return globalThis.__arusDiscountCache;
+  const discounts = parseAll<Discount>(
+    getDb()
+      .prepare("SELECT doc FROM discounts ORDER BY starts_at DESC")
+      .all() as Row[],
+  );
+  globalThis.__arusDiscountCache = discounts;
+  return discounts;
+}
+
+export const getDiscount = (id: string): Discount | null =>
+  readDiscounts().find((d) => d.id === id) ?? null;
+
+export function saveDiscount(discount: Discount): void {
+  getDb()
+    .prepare(
+      `INSERT INTO discounts (id, starts_at, ends_at, doc) VALUES (?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET starts_at = excluded.starts_at,
+         ends_at = excluded.ends_at, doc = excluded.doc`,
+    )
+    .run(
+      discount.id,
+      discount.startsAt,
+      discount.endsAt,
+      JSON.stringify(discount),
+    );
+  globalThis.__arusDiscountCache = null;
+}
+
+export function removeDiscount(id: string): void {
+  getDb().prepare("DELETE FROM discounts WHERE id = ?").run(id);
+  globalThis.__arusDiscountCache = null;
 }
 
 /* ---------- Витрина ------------------------------------------------------ */

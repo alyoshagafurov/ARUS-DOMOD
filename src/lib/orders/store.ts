@@ -116,6 +116,9 @@ async function enrich(draft: OrderDraft): Promise<OrderLine[]> {
       offerKind: "purchase",
       ...(variant?.size ? { size: variant.size } : null),
       ...(variant?.colorName ? { color: variant.colorName } : null),
+      // Каталог уже отдал цену со скидкой; процент запоминается рядом, чтобы
+      // администратор видел, откуда цена ниже обычной
+      ...(product.sale ? { discountPercent: product.sale.percent } : null),
       quantity: item.quantity,
       unitPrice: offer.price,
       lineTotal: money(offer.price.amount * item.quantity),

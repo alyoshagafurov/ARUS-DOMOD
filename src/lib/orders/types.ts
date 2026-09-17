@@ -39,6 +39,8 @@ export interface OrderLine {
   offerKind: OfferKind;
   size?: string;
   color?: string;
+  /** Скидка, действовавшая в момент заказа; цена в unitPrice уже с ней */
+  discountPercent?: number;
   quantity: number;
   unitPrice: Money;
   lineTotal: Money;
