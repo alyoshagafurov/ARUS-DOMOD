@@ -15,12 +15,14 @@ import { contact } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
 import { useDictionary, useLocale } from "@/lib/i18n/client";
 import type { Order } from "@/lib/orders/types";
+import { plainOrderMessage } from "@/lib/orders/whatsapp";
 
 type Delivery = "pickup" | "courier";
 
 interface OrderResponse {
   order: Order;
-  whatsapp: { primary: string; secondary: string | null };
+  /** Ссылка на WhatsApp Рустама с готовым текстом заказа */
+  whatsapp: { primary: string };
   message: string;
 }
 
@@ -136,20 +138,12 @@ export function CheckoutView() {
           </h1>
           <p className="t-lead mt-6 max-w-[40ch]">{t.checkout.acceptedLead}</p>
 
+          {/* Одна кнопка: заказ уходит только Рустаму. Второй номер
+              здесь только путал — кому из двоих писать */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button href={result.whatsapp.primary} external size="lg">
               {t.checkout.sendWhatsApp} · {contact.phoneName}
             </Button>
-            {result.whatsapp.secondary ? (
-              <Button
-                href={result.whatsapp.secondary}
-                external
-                variant="secondary"
-                size="lg"
-              >
-                {contact.phoneSecondaryName}
-              </Button>
-            ) : null}
           </div>
         </div>
 
@@ -191,7 +185,7 @@ export function CheckoutView() {
               <span className="t-label">{t.checkout.orderText}</span>
             </summary>
             <pre className="t-body-sm max-h-80 overflow-auto whitespace-pre-wrap px-4 pb-4 text-ink-secondary">
-              {result.message}
+              {plainOrderMessage(result.message)}
             </pre>
             <div className="px-4 pb-4">
               <Button variant="secondary" size="sm" onClick={copyMessage}>

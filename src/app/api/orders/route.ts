@@ -29,11 +29,9 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         order,
+        // Каждый заказ уходит только на главный номер — Рустаму
         whatsapp: {
           primary: whatsappLink(contact.phone, message),
-          secondary: contact.phoneSecondary
-            ? whatsappLink(contact.phoneSecondary, message)
-            : null,
         },
         message,
       },

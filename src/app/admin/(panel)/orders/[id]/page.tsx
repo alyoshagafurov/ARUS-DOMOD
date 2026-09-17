@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/Button";
 import { contact } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
 import { getOrder } from "@/lib/orders/store";
-import { formatOrderMessage, whatsappLink } from "@/lib/orders/whatsapp";
+import {
+  formatOrderMessage,
+  plainOrderMessage,
+  whatsappLink,
+} from "@/lib/orders/whatsapp";
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("ru-RU", {
@@ -147,7 +151,7 @@ export default async function AdminOrderPage({
           <section className="border-t border-hairline pt-6">
             <h2 className="t-label text-ink-muted">Текст для WhatsApp</h2>
             <pre className="t-body-sm mt-4 max-h-96 overflow-auto whitespace-pre-wrap border border-hairline bg-raised p-4 text-ink-secondary">
-              {message}
+              {plainOrderMessage(message)}
             </pre>
             <div className="mt-4 flex flex-wrap gap-3">
               <Button
@@ -157,14 +161,6 @@ export default async function AdminOrderPage({
                 size="sm"
               >
                 Открыть в WhatsApp · {contact.phoneName}
-              </Button>
-              <Button
-                href={whatsappLink(contact.phoneSecondary, message)}
-                external
-                variant="ghost"
-                size="sm"
-              >
-                {contact.phoneSecondaryName}
               </Button>
             </div>
           </section>
