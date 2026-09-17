@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
 
-import { StatusChip } from "@/components/admin/form";
 import { cn } from "@/lib/cn";
-import type { OrderStatus } from "@/lib/orders/types";
 
 /* -------------------------------------------------------------------------
    Диаграммы обзора.
@@ -179,34 +177,42 @@ export function ColumnChart({
 }
 
 /**
- * Разбивка по статусам — горизонтальные полосы.
+ * Рейтинг — горизонтальные полосы с подписью слева.
  *
- * Полосы одного цвета намеренно: статусы не порядковая шкала, и разные
- * тона выдали бы длину за категорию. Цвет статуса несёт плашка рядом, где
- * он всегда стоит вместе с подписью: цветом одним статус не сообщается.
+ * Полосы одного цвета намеренно: строки — разные образы, а не ступени
+ * шкалы, и разные тона выдали бы длину за категорию. Строки уже
+ * отсортированы по убыванию: самое важное читается первым.
  */
-export function StatusChart({
+export function BarList({
   title,
+  note,
   rows,
+  column,
 }: {
   title: string;
-  rows: { status: OrderStatus; value: number }[];
+  note?: string;
+  rows: { label: string; value: number }[];
+  /** Заголовок числового столбца в таблице */
+  column: string;
 }) {
   const max = Math.max(1, ...rows.map((r) => r.value));
-  const total = rows.reduce((sum, r) => sum + r.value, 0);
 
   return (
     <Figure
       title={title}
-      note={`${total} всего`}
+      note={note}
       table={
         <table className="t-caption mt-3 w-full">
+          <thead>
+            <tr className="text-ink-muted">
+              <th className="py-1 text-left font-normal">Образ</th>
+              <th className="py-1 text-right font-normal">{column}</th>
+            </tr>
+          </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.status} className="border-t border-hairline">
-                <td className="py-1">
-                  <StatusChip status={r.status} />
-                </td>
+              <tr key={r.label} className="border-t border-hairline">
+                <td className="py-1">{r.label}</td>
                 <td className="py-1 text-right tabular-nums">{r.value}</td>
               </tr>
             ))}
@@ -214,21 +220,18 @@ export function StatusChart({
         </table>
       }
     >
-      <ul className="mt-5 flex flex-col gap-2.5">
+      <ul aria-hidden="true" className="mt-5 flex flex-col gap-3">
         {rows.map((r) => (
-          <li key={r.status} className="flex items-center gap-3">
-            <span className="w-[13.5rem] shrink-0">
-              <StatusChip status={r.status} />
-            </span>
-            <span className="flex min-w-0 flex-1 items-center gap-2">
+          <li
+            key={r.label}
+            className="grid grid-cols-[minmax(0,8.5rem)_minmax(0,1fr)] items-center gap-3"
+          >
+            <span className="t-body-sm truncate">{r.label}</span>
+            <span className="flex min-w-0 items-center gap-2">
               <span
-                aria-hidden="true"
                 data-chart-bar=""
                 className="h-2.5 min-w-[2px] rounded-r-[4px]"
-                style={{
-                  width: `${(r.value / max) * 100}%`,
-                  opacity: r.value === 0 ? 0.3 : 1,
-                }}
+                style={{ width: `${(r.value / max) * 100}%` }}
               />
               <span className="t-caption shrink-0 tabular-nums">{r.value}</span>
             </span>

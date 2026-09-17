@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/Button";
 import { catalog } from "@/lib/catalog";
+import { productColors, productSizes } from "@/lib/catalog/variants";
 import { readCatalog } from "@/lib/db/catalog-store";
 import { formatMoney } from "@/lib/format";
 
@@ -78,10 +79,12 @@ export default async function AdminProductsPage() {
                   {rent ? `прокат ${formatMoney(rent.price)}` : "—"}
                 </span>
                 <span className="t-caption hidden md:block">
-                  {p.variants
-                    .map((v) => v.size)
-                    .filter(Boolean)
-                    .join(" ") || "OS"}
+                  {/* Варианты — размер × цвет, поэтому размеры берутся
+                      без повторов, а цвета называются числом */}
+                  {productSizes(p).join(" ") || "без размеров"}
+                  {productColors(p).length
+                    ? ` · цветов ${productColors(p).length}`
+                    : ""}
                 </span>
               </Link>
             </li>

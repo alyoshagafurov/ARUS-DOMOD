@@ -1,12 +1,6 @@
 import { catalog } from "@/lib/catalog";
 import { getDb, nowIso } from "@/lib/db/sqlite";
-import {
-  ORDER_STATUSES,
-  type Order,
-  type OrderDraft,
-  type OrderLine,
-  type OrderStatus,
-} from "@/lib/orders/types";
+import type { Order, OrderDraft, OrderLine } from "@/lib/orders/types";
 import type { Money } from "@/types/catalog";
 
 const money = (amount: number): Money => ({ amount, currency: "TJS" });
@@ -179,17 +173,14 @@ export async function createOrder(input: unknown): Promise<Order> {
 
 type Row = { doc: string };
 
-export function listOrders(options: { status?: OrderStatus } = {}): Order[] {
-  const db = getDb();
-  const rows = options.status
-    ? (db
-        .prepare(
-          "SELECT doc FROM orders WHERE status = ? ORDER BY created_at DESC",
-        )
-        .all(options.status) as Row[])
-    : (db
-        .prepare("SELECT doc FROM orders ORDER BY created_at DESC")
-        .all() as Row[]);
+/**
+ * Все заказы, свежие сверху. Фильтра по статусу нет: статусы в админке
+ * не ведутся, у каждого заказа в базе остаётся исходный «new».
+ */
+export function listOrders(): Order[] {
+  const rows = getDb()
+    .prepare("SELECT doc FROM orders ORDER BY created_at DESC")
+    .all() as Row[];
   return rows.map((r) => JSON.parse(r.doc) as Order);
 }
 
@@ -199,33 +190,3 @@ export function getOrder(id: string): Order | null {
   return row ? (JSON.parse(row.doc) as Order) : null;
 }
 
-export function updateOrderStatus(id: string, status: OrderStatus): Order {
-  if (!ORDER_STATUSES.includes(status))
-    throw new OrderError("Неизвестный статус");
-  const order = getOrder(id);
-  if (!order) throw new OrderError("Заказ не найден", 404);
-  const next: Order = { ...order, status, updatedAt: nowIso() };
-  getDb()
-    .prepare(
-      "UPDATE orders SET status = ?, updated_at = ?, doc = ? WHERE id = ?",
-    )
-    .run(status, next.updatedAt, JSON.stringify(next), id);
-  return next;
-}
-
-export function countOrders(): Record<OrderStatus | "all", number> {
-  const rows = getDb()
-    .prepare("SELECT status, COUNT(*) AS n FROM orders GROUP BY status")
-    .all() as { status: OrderStatus; n: number }[];
-  const out = Object.fromEntries(ORDER_STATUSES.map((s) => [s, 0])) as Record<
-    OrderStatus | "all",
-    number
-  >;
-  let all = 0;
-  for (const r of rows) {
-    out[r.status] = r.n;
-    all += r.n;
-  }
-  out.all = all;
-  return out;
-}

@@ -29,6 +29,8 @@ export interface CartLine {
   title: string;
   variantId?: string;
   size?: string;
+  /** Имя цвета — только для подписи строки; цену и наличие несёт вариант */
+  color?: string;
   offerKind: OfferKind;
   quantity: number;
 }

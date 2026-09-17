@@ -157,7 +157,7 @@ export function CheckoutView() {
           <dl className="flex flex-col border-t border-hairline">
             {order.lines.map((line) => (
               <div
-                key={`${line.productId}-${line.size ?? ""}`}
+                key={`${line.productId}-${line.size ?? ""}-${line.color ?? ""}`}
                 className="flex items-baseline justify-between gap-4 border-b border-hairline py-3"
               >
                 <dt className="min-w-0">
@@ -170,6 +170,7 @@ export function CheckoutView() {
                     {line.size
                       ? ` · ${t.product.size.toLowerCase()} ${line.size}`
                       : ""}
+                    {line.color ? ` · ${line.color}` : ""}
                   </span>
                 </dt>
                 <dd className="t-price shrink-0">
@@ -374,6 +375,7 @@ export function CheckoutView() {
                       {line.size
                         ? ` · ${t.product.size.toLowerCase()} ${line.size}`
                         : ""}
+                      {line.color ? ` · ${line.color}` : ""}
                     </span>
                   </span>
                   <span className="t-price shrink-0">{formatMoney(total)}</span>

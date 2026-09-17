@@ -1,17 +1,11 @@
 import Link from "next/link";
-import { SubmitButton } from "@/components/admin/pending";
 import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
-import { Select } from "@/components/admin/form";
 import { contact } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
-import { ORDER_STATUS_LABELS } from "@/lib/orders/labels";
 import { getOrder } from "@/lib/orders/store";
-import { ORDER_STATUSES } from "@/lib/orders/types";
 import { formatOrderMessage, whatsappLink } from "@/lib/orders/whatsapp";
-
-import { setOrderStatus } from "../actions";
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("ru-RU", {
@@ -171,27 +165,34 @@ export default async function AdminOrderPage({
           </section>
         </div>
 
+        {/* Вместо статуса — следующее действие. Увидев новый заказ,
+            владелец звонит или пишет клиенту; переключать статус ему
+            некогда, поэтому панели статуса нет вовсе. */}
         <aside className="lg:sticky lg:top-8 lg:self-start">
-          <form action={setOrderStatus} className="border border-hairline p-5">
-            <input type="hidden" name="id" value={order.id} />
-            <label className="block">
-              <span className="t-label text-ink-muted">Статус</span>
-              <Select
-                name="status"
-                defaultValue={order.status}
-                options={ORDER_STATUSES.map((s) => ({
-                  value: s,
-                  label: ORDER_STATUS_LABELS[s],
-                }))}
-              />
-            </label>
-            <SubmitButton pendingLabel="Сохраняю…" fullWidth className="mt-4">
-              Сохранить статус
-            </SubmitButton>
-            <p className="t-caption mt-3">
-              Обновлён: {fmtDate(order.updatedAt)}
-            </p>
-          </form>
+          <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-hairline p-5">
+            <h2 className="t-label text-ink-muted">Связаться с клиентом</h2>
+            <p className="t-body">{order.customer.name}</p>
+            {/* Звонок — обычная ссылка: Link отнёс бы tel: к маршрутам,
+                а «внешняя» кнопка открыла бы пустую вкладку */}
+            <a
+              href={`tel:${order.customer.phone.replace(/[^\d+]/g, "")}`}
+              className="t-label inline-flex h-11 w-full items-center justify-center rounded-md bg-accent px-5 text-accent-contrast transition-colors duration-[var(--dur-fast)] hover:bg-accent-hover"
+            >
+              Позвонить
+            </a>
+            <Button
+              href={whatsappLink(
+                order.customer.phone,
+                `Здравствуйте, ${order.customer.name}! Это ARUS DOMOD, по вашему заказу ${order.id}.`,
+              )}
+              external
+              variant="secondary"
+              size="sm"
+              fullWidth
+            >
+              Написать в WhatsApp
+            </Button>
+          </div>
         </aside>
       </div>
     </>

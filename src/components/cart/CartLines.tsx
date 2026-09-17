@@ -65,6 +65,7 @@ export function CartLines({ title, note, items }: CartLinesProps) {
                   </h3>
                   <p className="t-caption mt-1.5">
                     {line.size ? t.cart.sizeLine(line.size) : ""}
+                    {line.color ? `${line.color} · ` : ""}
                     {line.variantId
                       ? product.variants.find((v) => v.id === line.variantId)
                           ?.sku

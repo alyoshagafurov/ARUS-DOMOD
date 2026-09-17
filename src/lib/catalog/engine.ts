@@ -1,4 +1,9 @@
 import type { CatalogRepository } from "@/lib/catalog/repository";
+import {
+  compareSizes,
+  productColors,
+  productSizes,
+} from "@/lib/catalog/variants";
 import { getPrimaryOffer } from "@/lib/format";
 import type {
   Availability,
@@ -34,25 +39,10 @@ function priceOf(product: Product): number {
   return getPrimaryOffer(product)?.price.amount ?? 0;
 }
 
-function sizesOf(product: Product): string[] {
-  return [
-    ...new Set(
-      product.variants
-        .map((variant) => variant.size)
-        .filter((size): size is string => Boolean(size)),
-    ),
-  ];
-}
+const sizesOf = productSizes;
 
-function colorsOf(product: Product): string[] {
-  return [
-    ...new Set(
-      product.variants
-        .map((variant) => variant.colorName)
-        .filter((color): color is string => Boolean(color)),
-    ),
-  ];
-}
+const colorsOf = (product: Product): string[] =>
+  productColors(product).map((color) => color.name);
 
 function availabilityOf(product: Product): Availability[] {
   return [...new Set(product.variants.map((variant) => variant.availability))];
@@ -209,8 +199,8 @@ export function createCatalogRepository(
           p.offers.map((offer) => offer.kind),
         ).sort((a, b) => kinds.indexOf(a.value) - kinds.indexOf(b.value)),
         availability: tally(byAvailability, availabilityOf),
-        sizes: tally(bySizes, sizesOf).sort(
-          (a, b) => Number(a.value) - Number(b.value),
+        sizes: tally(bySizes, sizesOf).sort((a, b) =>
+          compareSizes(a.value, b.value),
         ),
         colors: tally(byColors, colorsOf).sort((a, b) =>
           a.value.localeCompare(b.value, "ru"),

@@ -1,29 +1,47 @@
 import Link from "next/link";
-import { DeleteButton, SubmitButton } from "@/components/admin/pending";
 import { notFound } from "next/navigation";
 
-import { ImageField } from "@/components/admin/ImageField";
+import { ColorPicker, type SelectedColor } from "@/components/admin/ColorPicker";
 import {
   Field,
+  Group,
   Section,
   Select,
   Text,
   TextArea,
 } from "@/components/admin/form";
+import { ImageField } from "@/components/admin/ImageField";
+import { DeleteButton, SubmitButton } from "@/components/admin/pending";
+import { SizePicker } from "@/components/admin/SizePicker";
 import { Button } from "@/components/ui/Button";
 import { catalog } from "@/lib/catalog";
+import {
+  COLOR_PRESETS,
+  SIZE_PRESETS,
+  compareSizes,
+  productColors,
+  productSizes,
+} from "@/lib/catalog/variants";
 import { readCatalog } from "@/lib/db/catalog-store";
 
 import { deleteProductAction, saveProductAction } from "../actions";
 
 const ERRORS: Record<string, string> = {
   title: "Укажите название",
-  slug: "Такой адрес уже занят другим товаром",
   price: "Укажите цену покупки или проката",
 };
 
 const toMajor = (minor?: number) => (minor ? String(minor / 100) : "");
 
+/**
+ * Карточка товара.
+ *
+ * Здесь только то, что владелец знает и хочет вписать сам: название,
+ * раздел, описание, цены, наличие, размеры, цвета и фото. Артикул и
+ * адрес страницы сайт присваивает сам — человеку они ничего не дают,
+ * а ошибка в адресе ломала сохранение. Срок проката и залог в карточку
+ * не пишутся: их обсуждают в магазине лично.
+ */
 export default async function AdminProductEditPage({
   params,
   searchParams,
@@ -41,12 +59,22 @@ export default async function AdminProductEditPage({
 
   const buy = product?.offers.find((o) => o.kind === "purchase");
   const rent = product?.offers.find((o) => o.kind === "rental");
-  const sizes = [
-    ...new Set(product?.variants.map((v) => v.size).filter(Boolean)),
-  ].join(", ");
-  const colors = [
-    ...new Set(product?.variants.map((v) => v.colorName).filter(Boolean)),
-  ].join(", ");
+
+  // Варианты выбора — заготовки плюс всё, что уже встречается в каталоге:
+  // размер или цвет, вписанный у одного товара, сам появится у следующего.
+  const sizeOptions = [
+    ...new Set([...SIZE_PRESETS, ...items.flatMap(productSizes)]),
+  ].sort(compareSizes);
+  const colorOptions = [...COLOR_PRESETS, ...items.flatMap(productColors)];
+
+  const initialColors: SelectedColor[] = product
+    ? productColors(product).map((color) => ({
+        ...color,
+        images: product.images.filter((image) => image.color === color.name),
+      }))
+    : [];
+  const commonImages = product?.images.filter((image) => !image.color) ?? [];
+  const title = product?.title ?? "Товар ARUS DOMOD";
   const error = typeof query.error === "string" ? ERRORS[query.error] : null;
 
   return (
@@ -58,6 +86,11 @@ export default async function AdminProductEditPage({
         / {isNew ? "новый" : product!.title}
       </p>
       <h1 className="t-h1 mt-3">{isNew ? "Новый товар" : product!.title}</h1>
+      <p className="t-caption mt-2">
+        {product?.article
+          ? `Артикул ${product.article} · присвоен автоматически`
+          : "Артикул и адрес страницы сайт присвоит сам после сохранения."}
+      </p>
       {query.saved ? (
         <p role="status" className="t-body-sm mt-3 text-success">
           Сохранено
@@ -75,22 +108,9 @@ export default async function AdminProductEditPage({
       >
         {product ? <input type="hidden" name="id" value={product.id} /> : null}
 
-        <Section title="Название">
-          <Field label="Название" className="sm:col-span-2">
+        <Section title="Основное">
+          <Field label="Название">
             <Text name="title" defaultValue={product?.title} required />
-          </Field>
-          <Field label="Артикул" hint="Например AD-022">
-            <Text
-              name="article"
-              defaultValue={product?.article}
-              placeholder="AD-"
-            />
-          </Field>
-          <Field
-            label="Адрес страницы"
-            hint="Латиницей; пусто — из артикула или названия"
-          >
-            <Text name="slug" defaultValue={product?.slug} />
           </Field>
           <Field label="Категория">
             <Select
@@ -102,16 +122,13 @@ export default async function AdminProductEditPage({
               }))}
             />
           </Field>
-          <Field label="Подзаголовок">
-            <Text name="subtitle" defaultValue={product?.subtitle} />
-          </Field>
           <Field label="Описание" className="sm:col-span-2">
             <TextArea name="description" defaultValue={product?.description} />
           </Field>
         </Section>
 
-        <Section title="Покупка">
-          <Field label="Цена, сомони" hint="Пусто — товар не продаётся">
+        <Section title="Цены">
+          <Field label="Цена, сомони" hint="Пусто — образ не продаётся">
             <Text
               name="purchase"
               type="number"
@@ -121,21 +138,9 @@ export default async function AdminProductEditPage({
             />
           </Field>
           <Field
-            label="Старая цена, сомони"
-            hint="Для перечёркивания при скидке"
+            label="Цена проката, сомони"
+            hint="Пусто — прокат недоступен. Срок и залог обсуждаются в магазине"
           >
-            <Text
-              name="compareAt"
-              type="number"
-              step="0.01"
-              min={0}
-              defaultValue={toMajor(buy?.compareAtPrice?.amount)}
-            />
-          </Field>
-        </Section>
-
-        <Section title="Прокат">
-          <Field label="Цена проката, сомони" hint="Пусто — прокат недоступен">
             <Text
               name="rental"
               type="number"
@@ -144,26 +149,9 @@ export default async function AdminProductEditPage({
               defaultValue={toMajor(rent?.price.amount)}
             />
           </Field>
-          <Field label="Срок, дней" hint="Не больше 3">
-            <Text
-              name="rentalDays"
-              type="number"
-              min={1}
-              defaultValue={rent?.rentalPeriodDays ?? 3}
-            />
-          </Field>
-          <Field label="Залог, сомони">
-            <Text
-              name="deposit"
-              type="number"
-              step="0.01"
-              min={0}
-              defaultValue={toMajor(rent?.deposit?.amount)}
-            />
-          </Field>
         </Section>
 
-        <Section title="Наличие и варианты">
+        <Section title="Наличие и размеры">
           <Field label="Наличие">
             <Select
               name="availability"
@@ -176,33 +164,55 @@ export default async function AdminProductEditPage({
               ]}
             />
           </Field>
-          <Field label="Размеры" hint="Через запятую: 38, 40, 42">
-            <Text name="sizes" defaultValue={sizes} />
-          </Field>
-          <Field label="Цвета" hint="Через запятую; пусто — без выбора цвета">
-            <Text name="colors" defaultValue={colors} />
-          </Field>
-          <label className="flex items-center gap-3 sm:col-span-2">
+          <label className="flex min-h-11 items-center gap-3 self-end sm:pb-0.5">
             <input
               type="checkbox"
               name="featured"
               defaultChecked={
                 product ? featuredSlugs.includes(product.slug) : false
               }
-              className="h-4 w-4 accent-[var(--accent)]"
+              className="h-5 w-5 accent-[var(--accent)]"
             />
             <span className="t-body-sm">Показывать на главной</span>
           </label>
+          <Group
+            label="Размеры"
+            hint="Нажмите на размер, чтобы выбрать или снять. Нужного нет — впишите число и нажмите галочку."
+            className="sm:col-span-2"
+          >
+            <SizePicker
+              name="sizes"
+              initial={product ? productSizes(product) : []}
+              options={sizeOptions}
+            />
+          </Group>
         </Section>
 
         <section className="border-t border-hairline pt-6">
-          <h2 className="t-label text-ink-muted">Кадры</h2>
+          <h2 className="t-label text-ink-muted">Цвета</h2>
+          <p className="t-caption mt-2 max-w-[60ch]">
+            Выберите цвета, в которых есть образ. К каждому цвету можно
+            загрузить свои фото — на сайте они покажутся, когда покупатель
+            выберет этот цвет.
+          </p>
           <div className="mt-4">
-            <ImageField
-              name="images"
-              initial={product?.images ?? []}
-              alt={product?.title ?? "Товар ARUS DOMOD"}
+            <ColorPicker
+              name="colors"
+              initial={initialColors}
+              options={colorOptions}
+              alt={title}
             />
+          </div>
+        </section>
+
+        <section className="border-t border-hairline pt-6">
+          <h2 className="t-label text-ink-muted">Кадры</h2>
+          <p className="t-caption mt-2 max-w-[60ch]">
+            Общие фото образа. Первое — главное: его видно в каталоге и на
+            главной.
+          </p>
+          <div className="mt-4">
+            <ImageField name="images" initial={commonImages} alt={title} />
           </div>
         </section>
 
@@ -222,7 +232,7 @@ export default async function AdminProductEditPage({
           <input type="hidden" name="id" value={product.id} />
           <DeleteButton
             label="Удалить товар"
-            confirmText={`Удалить «${product?.title ?? "товар"}» без возможности вернуть?`}
+            confirmText={`Удалить «${product.title}» без возможности вернуть?`}
           />
         </form>
       ) : null}

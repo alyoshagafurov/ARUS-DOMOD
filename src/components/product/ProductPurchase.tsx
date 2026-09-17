@@ -3,7 +3,9 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import { FavoriteButton } from "@/components/product/FavoriteButton";
+import { useProductColor } from "@/components/product/ProductColor";
 import { Button } from "@/components/ui/Button";
+import { productColors, productSizes } from "@/lib/catalog/variants";
 import { cn } from "@/lib/cn";
 import { useDictionary } from "@/lib/i18n/client";
 import { useAddToCart, useCartHas } from "@/lib/cart";
@@ -46,13 +48,18 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
   const purchase = product.offers.find((offer) => offer.kind === "purchase");
   const rental = product.offers.find((offer) => offer.kind === "rental");
 
-  const sized = product.variants.filter((variant) => variant.size);
-  const [variantId, setVariantId] = useState(
-    sized.length > 0 ? sized[0].id : product.variants[0]?.id,
-  );
+  // Размер и цвет — две оси одного варианта. Цвет общий с галереей: его
+  // выбор меняет кадры слева.
+  const sizes = productSizes(product);
+  const colors = productColors(product);
+  const { color, setColor } = useProductColor();
+  const [size, setSize] = useState(sizes[0]);
   const variant =
-    product.variants.find((item) => item.id === variantId) ??
-    product.variants[0];
+    product.variants.find(
+      (item) =>
+        (sizes.length === 0 || item.size === size) &&
+        (colors.length === 0 || item.colorName === color),
+    ) ?? product.variants[0];
 
   const soldOut = product.variants.every((v) => v.availability === "sold_out");
   const inCart = useCartHas(product.id, variant?.id, "purchase");
@@ -115,6 +122,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
       title: product.title,
       variantId: variant?.id,
       size: variant?.size,
+      color: variant?.colorName,
       offerKind: "purchase",
     });
     setFlash((value) => value + 1);
@@ -164,18 +172,75 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
               </p>
             </div>
 
+            {/* Цвета — только если они у изделия есть. Образец без
+                оттенка пишется словом: пустой кружок ничего не сообщает. */}
+            {colors.length > 0 ? (
+              <fieldset className="mt-6">
+                <legend className="t-label float-left w-full pb-4 text-ink-muted">
+                  {t.product.color}
+                  {color ? (
+                    <span className="text-ink"> · {color}</span>
+                  ) : null}
+                </legend>
+                <div className="clear-both flex flex-wrap gap-2">
+                  {colors.map((option) => {
+                    const active = option.name === color;
+                    return (
+                      <label
+                        key={option.name}
+                        title={option.name}
+                        className={cn(
+                          "inline-flex h-11 cursor-pointer items-center justify-center rounded-pill border-2",
+                          "transition-colors duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
+                          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--focus-ring)]",
+                          option.hex ? "w-11" : "t-label min-w-[3.25rem] px-4",
+                          // Цвет рамки — одним выражением: две утилиты
+                          // border-* подряд решались бы порядком в CSS
+                          active
+                            ? "border-accent text-ink"
+                            : option.hex
+                              ? "border-transparent text-ink-secondary hover:border-strong"
+                              : "border-strong text-ink-secondary hover:border-accent",
+                        )}
+                      >
+                        <input
+                          type="radio"
+                          name={`${groupId}-color`}
+                          checked={active}
+                          onChange={() => setColor(option.name)}
+                          className="sr-only"
+                        />
+                        {option.hex ? (
+                          <>
+                            <span
+                              aria-hidden="true"
+                              className="h-8 w-8 rounded-pill border border-strong"
+                              style={{ backgroundColor: option.hex }}
+                            />
+                            <span className="sr-only">{option.name}</span>
+                          </>
+                        ) : (
+                          option.name
+                        )}
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            ) : null}
+
             {/* Размеры — только если они у изделия есть */}
-            {sized.length > 0 ? (
+            {sizes.length > 0 ? (
               <fieldset className="mt-6">
                 <legend className="t-label float-left w-full pb-4 text-ink-muted">
                   {t.product.size}
                 </legend>
                 <div className="clear-both flex flex-wrap gap-2">
-                  {sized.map((item) => {
-                    const active = item.id === variant?.id;
+                  {sizes.map((item) => {
+                    const active = item === size;
                     return (
                       <label
-                        key={item.id}
+                        key={item}
                         className={cn(
                           "t-label inline-flex h-11 min-w-[3.25rem] cursor-pointer items-center justify-center rounded-pill border px-4",
                           "transition-colors duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
@@ -189,10 +254,10 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
                           type="radio"
                           name={`${groupId}-size`}
                           checked={active}
-                          onChange={() => setVariantId(item.id)}
+                          onChange={() => setSize(item)}
                           className="sr-only"
                         />
-                        {item.size}
+                        {item}
                       </label>
                     );
                   })}
@@ -203,7 +268,6 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
             {variant ? (
               <p className="t-caption mt-5">
                 {availabilityLabels[variant.availability]}
-                {variant.colorName ? ` · ${variant.colorName}` : ""}
               </p>
             ) : null}
 

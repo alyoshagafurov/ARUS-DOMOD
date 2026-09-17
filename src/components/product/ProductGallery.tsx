@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDictionary } from "@/lib/i18n/client";
 
+import { useProductColor } from "@/components/product/ProductColor";
 import { ProductViewer } from "@/components/product/ProductViewer";
 import { Media } from "@/components/ui/Media";
+import { imagesForColor } from "@/lib/catalog/variants";
 import { cn } from "@/lib/cn";
 import type { ProductImage } from "@/types/catalog";
 
@@ -27,8 +29,19 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * заодно с видимым. `display: none` от декодирования не спасает, поэтому
  * дубликат убран совсем: контейнер один, переключаются flex-direction и
  * ширины дочерних элементов.
+ *
+ * Кадры следуют за выбранным цветом: сначала снимки этого цвета, за ними
+ * общие. Лента пересобирается по ключу цвета — счётчик, прокрутка и
+ * открытый просмотр начинаются с первого кадра, а не застревают на
+ * номере, которого у нового цвета может не быть.
  */
 export function ProductGallery({ images, title }: ProductGalleryProps) {
+  const { color } = useProductColor();
+  const visible = useMemo(() => imagesForColor(images, color), [images, color]);
+  return <GalleryStrip key={color ?? "all"} images={visible} title={title} />;
+}
+
+function GalleryStrip({ images, title }: ProductGalleryProps) {
   const t = useDictionary();
   const stripRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLElement | null)[]>([]);

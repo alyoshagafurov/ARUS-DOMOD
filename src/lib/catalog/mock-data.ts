@@ -137,9 +137,12 @@ interface LookSeed {
   /** Сколько кадров этого образа есть в съёмке: 1 или 2 */
   frames: 1 | 2;
   purchase?: number;
-  compareAt?: number;
-  /** [цена проката, срок в днях] */
-  rental?: [number, number];
+  /**
+   * Цена проката. Срока и залога в карточке нет: их обсуждают в магазине,
+   * и админка их не ведёт — демо-данные не должны показывать то, чего
+   * владелец не может изменить. По той же причине нет и старой цены.
+   */
+  rental?: number;
   sizes?: string[];
   availability: Availability;
 }
@@ -150,7 +153,7 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 890000,
-    rental: [180000, 3],
+    rental: 180000,
     sizes: ["38", "40", "42"],
     availability: "in_stock",
   },
@@ -159,7 +162,7 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 620000,
-    rental: [130000, 3],
+    rental: 130000,
     sizes: ["38", "40", "42", "44"],
     availability: "in_stock",
   },
@@ -168,7 +171,6 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 740000,
-    compareAt: 920000,
     sizes: ["40", "42"],
     availability: "in_stock",
   },
@@ -177,7 +179,7 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 960000,
-    rental: [210000, 3],
+    rental: 210000,
     sizes: ["38", "40", "42"],
     availability: "made_to_order",
   },
@@ -186,7 +188,7 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 540000,
-    rental: [115000, 3],
+    rental: 115000,
     sizes: ["36", "38", "40"],
     availability: "in_stock",
   },
@@ -203,7 +205,7 @@ const seeds: LookSeed[] = [
     category: "domod",
     frames: 2,
     purchase: 470000,
-    rental: [95000, 3],
+    rental: 95000,
     sizes: ["48", "50", "52"],
     availability: "in_stock",
   },
@@ -212,7 +214,7 @@ const seeds: LookSeed[] = [
     category: "domod",
     frames: 2,
     purchase: 520000,
-    rental: [110000, 3],
+    rental: 110000,
     sizes: ["48", "50", "52", "54"],
     availability: "in_stock",
   },
@@ -220,14 +222,14 @@ const seeds: LookSeed[] = [
     n: 9,
     category: "tuy",
     frames: 2,
-    rental: [240000, 3],
+    rental: 240000,
     availability: "rental_only",
   },
   {
     n: 10,
     category: "tuy",
     frames: 2,
-    rental: [225000, 3],
+    rental: 225000,
     availability: "rental_only",
   },
   {
@@ -235,7 +237,7 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 830000,
-    rental: [170000, 3],
+    rental: 170000,
     sizes: ["38", "40", "42"],
     availability: "in_stock",
   },
@@ -244,7 +246,6 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 910000,
-    compareAt: 1120000,
     sizes: ["38", "40"],
     availability: "in_stock",
   },
@@ -253,7 +254,7 @@ const seeds: LookSeed[] = [
     category: "tuy",
     frames: 2,
     purchase: 390000,
-    rental: [85000, 3],
+    rental: 85000,
     sizes: ["40", "42", "44"],
     availability: "in_stock",
   },
@@ -262,7 +263,7 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 720000,
-    rental: [150000, 3],
+    rental: 150000,
     sizes: ["38", "40", "42"],
     availability: "in_stock",
   },
@@ -279,7 +280,7 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 780000,
-    rental: [165000, 3],
+    rental: 165000,
     sizes: ["38", "40", "42"],
     availability: "made_to_order",
   },
@@ -288,7 +289,7 @@ const seeds: LookSeed[] = [
     category: "lavozimot",
     frames: 2,
     purchase: 165000,
-    rental: [40000, 2],
+    rental: 40000,
     availability: "in_stock",
   },
   {
@@ -296,7 +297,7 @@ const seeds: LookSeed[] = [
     category: "zewar",
     frames: 1,
     purchase: 340000,
-    rental: [70000, 2],
+    rental: 70000,
     availability: "in_stock",
   },
   {
@@ -304,7 +305,7 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 880000,
-    rental: [185000, 3],
+    rental: 185000,
     sizes: ["38", "40", "42"],
     availability: "in_stock",
   },
@@ -313,7 +314,6 @@ const seeds: LookSeed[] = [
     category: "arus",
     frames: 2,
     purchase: 850000,
-    compareAt: 990000,
     sizes: ["40", "42"],
     availability: "sold_out",
   },
@@ -332,20 +332,10 @@ const pad = (n: number) => String(n).padStart(2, "0");
 function offersFor(seed: LookSeed): ProductOffer[] {
   const offers: ProductOffer[] = [];
   if (seed.purchase) {
-    offers.push({
-      kind: "purchase",
-      price: money(seed.purchase),
-      ...(seed.compareAt ? { compareAtPrice: money(seed.compareAt) } : null),
-    });
+    offers.push({ kind: "purchase", price: money(seed.purchase) });
   }
   if (seed.rental) {
-    const [price, days] = seed.rental;
-    offers.push({
-      kind: "rental",
-      price: money(price),
-      rentalPeriodDays: days,
-      deposit: money(Math.round(price * 1.5)),
-    });
+    offers.push({ kind: "rental", price: money(seed.rental) });
   }
   return offers;
 }

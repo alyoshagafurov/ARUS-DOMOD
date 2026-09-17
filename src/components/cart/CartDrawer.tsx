@@ -82,6 +82,7 @@ function CartDrawerBody({ onClose }: { onClose: () => void }) {
                 {line.size
                   ? ` · ${t.product.size.toLowerCase()} ${line.size}`
                   : ""}
+                {line.color ? ` · ${line.color}` : ""}
               </span>
               <span className="flex items-center justify-between gap-3">
                 <QuantityStepper

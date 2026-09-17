@@ -1,8 +1,5 @@
 import type { ReactNode } from "react";
 
-import { ORDER_STATUS_LABELS } from "@/lib/orders/labels";
-import type { OrderStatus } from "@/lib/orders/types";
-
 /**
  * Примитивы форм админки. Нативные элементы, минимум стилей: рабочее место
  * должно быть предсказуемым, а не выразительным. Все они серверные —
@@ -117,55 +114,53 @@ export function Section({
   );
 }
 
+/**
+ * Поле из нескольких кнопок: размеры, цвета. Не <label> — метка вокруг
+ * ряда кнопок перенаправляла бы нажатие на подпись в первую кнопку.
+ * `min-w-0` снимает у fieldset ширину по содержимому, иначе длинный ряд
+ * выдавливает сетку формы за край экрана.
+ */
+export function Group({
+  label,
+  hint,
+  children,
+  className,
+}: {
+  label: string;
+  hint?: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <fieldset className={className ? `min-w-0 ${className}` : "min-w-0"}>
+      <legend className="t-body-sm">{label}</legend>
+      {hint ? <p className="t-caption mt-1">{hint}</p> : null}
+      <div className="mt-3">{children}</div>
+    </fieldset>
+  );
+}
+
 /* -------------------------------------------------------------------------
-   Статус заказа и пустые состояния — то, ради чего в админку заходят.
+   Отметка свежего заказа и пустые состояния.
    ------------------------------------------------------------------------- */
 
+/** Сколько заказ считается новым */
+export const FRESH_MS = 24 * 60 * 60 * 1000;
+
 /**
- * Статус заказа плашкой, а не строкой текста.
+ * Отметка «Новый» у заказа младше суток.
  *
- * В списке из сорока заказов статус — единственное, что сканируют глазами,
- * и девять одинаковых серых слов различаются только чтением. Цвет здесь
- * не украшение, а рабочая группировка: требует внимания / в работе /
- * деньги получены / закрыт / отменён. Точка дублирует цвет формой —
- * при дальтонизме и на солнце цвета одного мало.
+ * Статусов вручную в админке нет: владельцу некогда переключать их у
+ * каждой заявки. Свежесть выводится из времени — ничего нажимать не надо,
+ * а отметка гаснет сама. Точка дублирует золото формой: на солнце цвета
+ * одного мало.
  */
-const statusTone: Record<OrderStatus, string> = {
-  new: "border-gold text-gold-ink",
-  confirming: "border-strong text-ink-secondary",
-  confirmed: "border-strong text-ink-secondary",
-  // Красный здесь по делу: пока деньги не пришли, заказ не двигается.
-  // --state-warning (#c08a2c) для текста не годится — 3.0:1 на белом.
-  awaiting_payment: "border-danger text-danger",
-  paid: "border-success text-success",
-  in_delivery: "border-success text-success",
-  delivered: "border-success text-success",
-  completed: "border-hairline text-ink-muted",
-  cancelled: "border-hairline text-ink-muted line-through",
-};
-
-const statusDot: Record<OrderStatus, string> = {
-  new: "bg-gold",
-  confirming: "bg-ink-muted",
-  confirmed: "bg-ink-muted",
-  awaiting_payment: "bg-danger",
-  paid: "bg-success",
-  in_delivery: "bg-success",
-  delivered: "bg-success",
-  completed: "bg-ink-muted",
-  cancelled: "bg-ink-muted",
-};
-
-export function StatusChip({ status }: { status: OrderStatus }) {
+export function FreshMark({ createdAt, now }: { createdAt: string; now: number }) {
+  if (now - new Date(createdAt).getTime() > FRESH_MS) return null;
   return (
-    <span
-      className={`t-label inline-flex items-center gap-2 whitespace-nowrap rounded-pill border px-3 py-1.5 ${statusTone[status]}`}
-    >
-      <span
-        aria-hidden="true"
-        className={`h-1.5 w-1.5 shrink-0 rounded-pill ${statusDot[status]}`}
-      />
-      {ORDER_STATUS_LABELS[status]}
+    <span className="t-label inline-flex items-center gap-2 whitespace-nowrap rounded-pill border border-gold px-3 py-1.5 text-gold-ink">
+      <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-pill bg-gold" />
+      Новый
     </span>
   );
 }

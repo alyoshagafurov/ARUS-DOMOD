@@ -47,6 +47,13 @@ export interface ProductImage {
   height: number;
   /** base64-заглушка для next/image placeholder="blur" */
   blurDataURL?: string;
+  /**
+   * Имя цвета, к которому относится кадр (совпадает с `colorName` варианта).
+   * Нет — общий кадр образа. Кадры цвета лежат в том же `images`, а не в
+   * отдельном списке: карточка, превью корзины и Open Graph продолжают
+   * брать `images[0]`, ничего не зная о цветах.
+   */
+  color?: string;
 }
 
 export interface ProductVariant {

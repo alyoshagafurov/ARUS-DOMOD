@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
+import { ProductColorProvider } from "@/components/product/ProductColor";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductJsonLd } from "@/components/product/ProductJsonLd";
 import {
@@ -13,6 +14,7 @@ import {
 } from "@/components/product/ProductPurchase";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { catalog } from "@/lib/catalog";
+import { productColors } from "@/lib/catalog/variants";
 import { categoryTitle } from "@/lib/i18n/labels";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 
@@ -109,22 +111,26 @@ export default async function ProductPage({
           ]}
         />
 
-        <div className="mt-6 grid gap-x-[var(--gutter)] gap-y-10 pb-[var(--space-block-y)] lg:mt-8 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <ProductGallery images={product.images} title={product.title} />
-          </div>
+        {/* Цвет выбирается в панели, а кадры меняет галерея — выбор
+            общий для обеих колонок. */}
+        <ProductColorProvider initial={productColors(product)[0]?.name}>
+          <div className="mt-6 grid gap-x-[var(--gutter)] gap-y-10 pb-[var(--space-block-y)] lg:mt-8 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              <ProductGallery images={product.images} title={product.title} />
+            </div>
 
-          {/* Панель покупки — белая плавающая карточка, прилипающая к шапке:
-              подпись к развороту, лежащая поверх страницы, а не колонка. */}
-          <div className="lg:col-span-5 lg:col-start-8">
-            <div
-              data-surface="day"
-              className="card card--float p-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:p-8"
-            >
-              <ProductPurchase product={product} />
+            {/* Панель покупки — белая плавающая карточка, прилипающая к шапке:
+                подпись к развороту, лежащая поверх страницы, а не колонка. */}
+            <div className="lg:col-span-5 lg:col-start-8">
+              <div
+                data-surface="day"
+                className="card card--float p-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:p-8"
+              >
+                <ProductPurchase product={product} />
+              </div>
             </div>
           </div>
-        </div>
+        </ProductColorProvider>
       </Container>
 
       {/* С этой секции липкая панель телефона больше не нужна: дальше идут
