@@ -1,10 +1,8 @@
-import { addDays, dayEnd, dayStart, shopDay } from "@/lib/catalog/discounts";
 import { photo, type PhotoSlug } from "@/lib/photos";
 import type {
   Availability,
   Category,
   Collection,
-  Discount,
   Product,
   ProductOffer,
 } from "@/types/catalog";
@@ -367,9 +365,6 @@ function buildProduct(seed: LookSeed): Product {
     images,
     offers: offersFor(seed),
     variants,
-    description:
-      "Демонстрационная карточка. Описание образа, состав и происхождение " +
-      "заполняются вместе с данными бренда.",
   };
 }
 
@@ -378,42 +373,3 @@ export const products: Product[] = seeds.map(buildProduct);
 /** Порядок витрины на главной — задан вручную, а не сортировкой */
 export const featuredSlugs = ["look-19", "look-15", "look-04", "look-12"];
 
-/**
- * Демо-скидки, чтобы увидеть ленту «Скидка» на витрине и все три состояния
- * в админке. Сроки отсчитываются от момента засева: две скидки уже идут,
- * одна начнётся через три дня. Помечены `demo` и удаляются в админке.
- */
-export function demoDiscounts(now: number): Discount[] {
-  const today = shopDay(now);
-  const createdAt = new Date(now).toISOString();
-  const base = { categorySlugs: [], productIds: [], createdAt, demo: true as const };
-  return [
-    {
-      ...base,
-      id: "demo-sale-looks",
-      percent: 20,
-      scope: "products",
-      productIds: ["look-02", "look-07", "look-19"],
-      startsAt: dayStart(addDays(today, -2)),
-      endsAt: dayEnd(addDays(today, 14)),
-    },
-    {
-      ...base,
-      id: "demo-sale-zewar",
-      percent: 15,
-      scope: "categories",
-      categorySlugs: ["zewar"],
-      startsAt: dayStart(addDays(today, -1)),
-      endsAt: dayEnd(addDays(today, 10)),
-    },
-    {
-      ...base,
-      id: "demo-sale-soon",
-      percent: 30,
-      scope: "products",
-      productIds: ["look-05"],
-      startsAt: dayStart(addDays(today, 3)),
-      endsAt: dayEnd(addDays(today, 10)),
-    },
-  ];
-}

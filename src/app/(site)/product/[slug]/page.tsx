@@ -13,6 +13,8 @@ import {
   ProductPurchase,
 } from "@/components/product/ProductPurchase";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
+import { Button } from "@/components/ui/Button";
+import { isAdmin } from "@/lib/admin/auth";
 import { catalog } from "@/lib/catalog";
 import { productColors } from "@/lib/catalog/variants";
 import { categoryTitle } from "@/lib/i18n/labels";
@@ -70,6 +72,7 @@ export default async function ProductPage({
   const product = await repository.getProductBySlug(slug);
   if (!product) notFound();
 
+  const admin = await isAdmin();
   const [categories, sameCategory] = await Promise.all([
     repository.listCategories(),
     repository.listProducts({
@@ -95,21 +98,34 @@ export default async function ProductPage({
     <>
       <ProductJsonLd product={product} />
       <Container className="pt-4 lg:pt-6">
-        <Breadcrumbs
-          items={[
-            { href: "/", label: t.nav.home },
-            { href: "/catalog", label: t.catalog.title },
-            ...(category
-              ? [
-                  {
-                    href: `/catalog/${category.slug}`,
-                    label: categoryTitle(category, locale),
-                  },
-                ]
-              : []),
-            { label: product.title },
-          ]}
-        />
+        {/* Владелец, вошедший в админку, правит образ прямо со страницы;
+            покупатель этой кнопки не видит */}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <Breadcrumbs
+            items={[
+              { href: "/", label: t.nav.home },
+              { href: "/catalog", label: t.catalog.title },
+              ...(category
+                ? [
+                    {
+                      href: `/catalog/${category.slug}`,
+                      label: categoryTitle(category, locale),
+                    },
+                  ]
+                : []),
+              { label: product.title },
+            ]}
+          />
+          {admin ? (
+            <Button
+              href={`/admin/products/${product.id}`}
+              variant="secondary"
+              size="sm"
+            >
+              Изменить товар
+            </Button>
+          ) : null}
+        </div>
 
         {/* Цвет выбирается в панели, а кадры меняет галерея — выбор
             общий для обеих колонок. */}

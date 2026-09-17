@@ -124,7 +124,6 @@ export default async function AdminDiscountsPage({
                   </span>
                   <span className="t-caption">
                     {targets} {pluralRu(targets, GOODS)} со скидкой
-                    {discount.demo ? " · демо" : ""}
                   </span>
                 </span>
                 <span

@@ -2,11 +2,9 @@ import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-import { buildDemoOrders, demoOrdersEnabled } from "@/lib/orders/demo";
 import {
   categories as seedCategories,
   collections as seedCollections,
-  demoDiscounts,
   featuredSlugs as seedFeatured,
   products as seedProducts,
 } from "@/lib/catalog/mock-data";
@@ -78,32 +76,36 @@ const SCHEMA = `
   );
 `;
 
-/** Отметка «демо-скидки уже засеяны» */
-const DEMO_DISCOUNTS_KEY = "demoDiscountsSeeded";
+/** Заглушка, которой прежние версии засевали описание каждого образа */
+const DEMO_DESCRIPTION =
+  "Демонстрационная карточка. Описание образа, состав и происхождение " +
+  "заполняются вместе с данными бренда.";
 
 /**
- * Демо-скидки — один раз на базу, в том числе на уже работающую: таблица
- * скидок появилась позже товаров, и засев по пустым товарам сюда не дошёл
- * бы. Признак — отметка в settings, а не пустая таблица: иначе, удалив
- * все скидки, владелец получил бы демо обратно при следующем запуске.
+ * Уборка демо-данных прежних версий: выдуманные заказы с клиентами,
+ * демо-скидки и заглушка в описании товаров. Сами товары, цены и кадры
+ * остаются — их владелец правит в админке.
+ *
+ * Идёт при каждом запуске: на чистой базе ничего не находит, а на базе,
+ * засеянной раньше (том на Railway, локальный data/), убирает демо без
+ * ручных скриптов.
+ *
+ * Отметка ищется через json_extract, а не `LIKE '%"demo":true%'`: такую
+ * подстроку мог бы содержать комментарий покупателя, и настоящий заказ
+ * ушёл бы вместе с выдуманными.
  */
-function seedDemoDiscounts(db: DatabaseSync): void {
+function purgeDemoData(db: DatabaseSync): void {
   db.exec("BEGIN IMMEDIATE");
   try {
-    const done = db
-      .prepare("SELECT 1 AS done FROM settings WHERE key = ?")
-      .get(DEMO_DISCOUNTS_KEY);
-    if (!done) {
-      const insert = db.prepare(
-        "INSERT OR IGNORE INTO discounts (id, starts_at, ends_at, doc) VALUES (?, ?, ?, ?)",
-      );
-      for (const d of demoDiscounts(Date.now())) {
-        insert.run(d.id, d.startsAt, d.endsAt, JSON.stringify(d));
-      }
-      db.prepare(
-        "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
-      ).run(DEMO_DISCOUNTS_KEY, "true");
-    }
+    db.prepare("DELETE FROM orders WHERE json_extract(doc, '$.demo') = 1").run();
+    db.prepare(
+      "DELETE FROM discounts WHERE json_extract(doc, '$.demo') = 1",
+    ).run();
+    db.prepare(
+      `UPDATE products SET doc = json_remove(doc, '$.description')
+       WHERE json_extract(doc, '$.description') = ?`,
+    ).run(DEMO_DESCRIPTION);
+    db.prepare("DELETE FROM settings WHERE key = 'demoDiscountsSeeded'").run();
     db.exec("COMMIT");
   } catch (error) {
     db.exec("ROLLBACK");
@@ -153,27 +155,6 @@ function seed(db: DatabaseSync): void {
     insSetting.run("collections", JSON.stringify(seedCollections));
     insSetting.run("featuredSlugs", JSON.stringify(seedFeatured));
 
-    /*
-     * Демо-заказы для показа панели — только при ARUS_DEMO_ORDERS=1.
-     * По умолчанию их нет и быть не может: владелец магазина не отличил бы
-     * выдуманного клиента от настоящего. Переменная — осознанное действие.
-     */
-    if (demoOrdersEnabled()) {
-      const insOrder = db.prepare(
-        "INSERT INTO orders (id, number, status, created_at, updated_at, doc) VALUES (?, ?, ?, ?, ?, ?)",
-      );
-      for (const o of buildDemoOrders(seedProducts, 0)) {
-        insOrder.run(
-          o.id,
-          o.number,
-          o.status,
-          o.createdAt,
-          o.updatedAt,
-          JSON.stringify(o),
-        );
-      }
-    }
-
     db.exec("COMMIT");
   } catch (error) {
     db.exec("ROLLBACK");
@@ -203,7 +184,7 @@ export function getDb(): DatabaseSync {
   db.exec("PRAGMA journal_mode = WAL");
   db.exec(SCHEMA);
   seed(db);
-  seedDemoDiscounts(db);
+  purgeDemoData(db);
 
   globalThis.__arusDb = db;
   return db;

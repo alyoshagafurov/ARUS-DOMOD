@@ -42,7 +42,7 @@ export default async function AdminProductsPage() {
             <li key={p.id} className="border-b border-hairline">
               <Link
                 href={`/admin/products/${p.id}`}
-                className="grid grid-cols-[3rem_1fr] items-center gap-4 py-3 hover:bg-muted md:grid-cols-[3rem_1fr_10rem_8rem_8rem_7rem]"
+                className="group grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-4 py-3 hover:bg-muted md:grid-cols-[3rem_minmax(0,1fr)_10rem_8rem_8rem_7rem_auto]"
               >
                 <span className="relative aspect-[3/4] w-12 overflow-hidden bg-muted">
                   {p.images[0] ? (
@@ -92,6 +92,12 @@ export default async function AdminProductsPage() {
                   {productColors(p).length
                     ? ` · цветов ${productColors(p).length}`
                     : ""}
+                </span>
+                {/* Вся строка — ссылка, но это не очевидно: кнопка
+                    «Изменить» говорит, что по ней делать. Это span, а не
+                    вторая ссылка — вложенные ссылки недопустимы. */}
+                <span className="t-label inline-flex h-10 items-center rounded-md border border-strong px-4 text-ink transition-colors duration-[var(--dur-fast)] group-hover:border-accent group-hover:bg-accent group-hover:text-accent-contrast">
+                  Изменить
                 </span>
               </Link>
             </li>

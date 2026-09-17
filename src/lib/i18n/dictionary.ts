@@ -392,9 +392,9 @@ export const ru = {
     seeLooks: "Смотреть образы",
   },
   alts: {
-    hero: "Невеста в свадебном образе ARUS DOMOD",
+    hero: "Жених и невеста в свадебных образах ARUS DOMOD",
     heritage: "Невеста в свадебном образе ARUS DOMOD на торжестве",
-    closing: "Жених и невеста в светлых свадебных образах ARUS DOMOD",
+    closing: "Жених и невеста в свадебных образах ARUS DOMOD",
     intro: "Крупный план свадебного наряда ARUS DOMOD",
     textile: "Фрагменты таджикского свадебного текстиля",
     catalogDetail: "Фрагмент кадра из коллекции ARUS DOMOD",
@@ -403,7 +403,6 @@ export const ru = {
     collection: "Коллекция",
     house: "Дом",
     contacts: "Контакты",
-    demo: "Названия и цены в каталоге демонстрационные",
   },
 } as const;
 

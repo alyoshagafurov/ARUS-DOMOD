@@ -47,12 +47,6 @@ export default async function AdminDiscountPage({
       <h1 className="t-h1 mt-3">
         {isNew ? "Новая скидка" : `Скидка ${discount!.percent}%`}
       </h1>
-      {discount?.demo ? (
-        <p className="t-caption mt-2">
-          Демонстрационная скидка. Удалите её или сохраните со своими
-          настройками.
-        </p>
-      ) : null}
       {error ? (
         <p role="alert" className="t-body-sm mt-3 text-danger">
           {error}

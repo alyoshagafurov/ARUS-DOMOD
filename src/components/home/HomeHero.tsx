@@ -55,12 +55,19 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
           {/* --- КАДР: среда, а не предмет ------------------------------- */}
           <div aria-hidden="true" className="absolute inset-0 -z-10">
             <Media
-              image={photo("hero-tajik-royal-bride", t.alts.hero)}
+              image={photo("hero-bride-groom", t.alts.hero)}
               ratio="auto"
               radius="none"
               priority
               zoomOnHover={false}
-              imageClassName="object-[68%_16%] lg:object-[70%_20%]"
+              // Пара стоит по центру широкого кадра: узкий айвон телефона
+              // режет его по бокам, и точка 51% держит обоих в кадре.
+              // По вертикали снимок встаёт впритык, и лица (24–52% высоты)
+              // уходили под заголовок, который начинается на ~46% на всех
+              // экранах. Увеличение 1.22 от нижнего края поднимает их над
+              // словом: подбородок невесты — на 41%, голова жениха остаётся
+              // под сводом.
+              imageClassName="origin-bottom scale-[1.22] object-[51%_50%]"
               sizes="100vw"
               className="h-full"
             />

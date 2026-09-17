@@ -6,7 +6,6 @@ import { Container } from "@/components/layout/Container";
 import {
   contact,
   footerNav,
-  isDemoData,
   site,
   socialLinks,
   type NavLink,
@@ -153,7 +152,7 @@ export async function SiteFooter() {
             </p>
 
             <p className="t-caption">
-              {isDemoData ? t.footer.demo : site.role}
+              {t.common.positioning}
             </p>
           </div>
         </Container>

@@ -385,9 +385,9 @@ export const tg: Dictionary = {
     seeLooks: "Дидани либосҳо",
   },
   alts: {
-    hero: "Арӯс дар образи тӯёнаи ARUS DOMOD",
+    hero: "Домод ва арӯс дар образҳои тӯёнаи ARUS DOMOD",
     heritage: "Арӯс дар образи тӯёнаи ARUS DOMOD дар ҷашн",
-    closing: "Домод ва арӯс дар образҳои равшани тӯёнаи ARUS DOMOD",
+    closing: "Домод ва арӯс дар образҳои тӯёнаи ARUS DOMOD",
     intro: "Намои наздики либоси тӯёнаи ARUS DOMOD",
     textile: "Порчаҳои матоъи тӯёнаи тоҷикӣ",
     catalogDetail: "Порчаи кадр аз коллексияи ARUS DOMOD",
@@ -396,6 +396,5 @@ export const tg: Dictionary = {
     collection: "Коллексия",
     house: "Хона",
     contacts: "Тамос",
-    demo: "Номҳо ва нархҳо дар феҳрист намоишӣ мебошанд",
   },
 };

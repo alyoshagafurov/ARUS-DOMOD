@@ -382,9 +382,9 @@ export const en: Dictionary = {
     seeLooks: "See the looks",
   },
   alts: {
-    hero: "Bride in an ARUS DOMOD wedding look",
+    hero: "Groom and bride in ARUS DOMOD wedding looks",
     heritage: "Bride in an ARUS DOMOD wedding look at the celebration",
-    closing: "Groom and bride in light ARUS DOMOD wedding looks",
+    closing: "Groom and bride in ARUS DOMOD wedding looks",
     intro: "Close-up of an ARUS DOMOD wedding dress",
     textile: "Fragments of Tajik wedding textiles",
     catalogDetail: "Detail of a frame from the ARUS DOMOD collection",
@@ -393,6 +393,5 @@ export const en: Dictionary = {
     collection: "Collection",
     house: "House",
     contacts: "Contacts",
-    demo: "Names and prices in the catalogue are for demonstration",
   },
 };

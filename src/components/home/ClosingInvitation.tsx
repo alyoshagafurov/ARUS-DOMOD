@@ -26,7 +26,7 @@ export async function ClosingInvitation() {
                 style={{ "--drift": "-6%" } as never}
               >
                 <Media
-                  image={photo("final-tajik-bridal-editorial", t.alts.closing)}
+                  image={photo("hero-bride-groom", t.alts.closing)}
                   ratio="auto"
                   radius="none"
                   zoomOnHover={false}
@@ -38,7 +38,9 @@ export async function ClosingInvitation() {
 
               <div
                 data-surface="day"
-                className="card card--float absolute inset-x-4 bottom-4 flex flex-col gap-5 p-6 sm:inset-x-auto sm:left-[var(--block-pad)] sm:bottom-[var(--block-pad)] sm:max-w-[26rem] lg:p-8"
+                // На широком экране пара стоит от трети ширины — карточка
+                // уже и ближе к краю, чтобы не закрывать жениха
+                className="card card--float absolute inset-x-4 bottom-4 flex flex-col gap-5 p-6 sm:inset-x-auto sm:left-[var(--block-pad)] sm:bottom-[var(--block-pad)] sm:max-w-[26rem] lg:left-8 lg:max-w-[23rem] lg:p-8"
               >
                 <h2 className="t-h1 text-balance">{t.home.closingTitle}</h2>
                 <div>

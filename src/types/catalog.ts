@@ -123,8 +123,6 @@ export interface Discount {
   startsAt: string;
   endsAt: string;
   createdAt: string;
-  /** Демонстрационная скидка — помечена, чтобы её можно было найти */
-  demo?: true;
 }
 
 export interface Category {
