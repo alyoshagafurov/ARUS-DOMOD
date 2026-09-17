@@ -5,16 +5,28 @@ import {
   sessionSecret,
   verifySessionToken,
 } from "@/lib/admin/session";
+import {
+  isLocale,
+  LOCALE_COOKIE,
+  LOCALE_HEADER,
+  LOCALE_PARAM,
+} from "@/lib/i18n/locales";
 
 /**
- * Защита админки на входе в приложение.
+ * Вход в приложение: язык из адреса и защита админки.
  *
- * Проверяется только подпись куки — базы здесь нет и быть не должно.
- * Страницы без сессии уходят на вход, API-запросы получают 401: редирект
- * для fetch бессмыслен.
+ * `?lang=tg` переносится в заголовок запроса — сервер отрисует страницу на
+ * этом языке — и заодно в куку: человек, пришедший из поиска по
+ * таджикской ссылке, остаётся на таджикском, переходя по сайту.
+ *
+ * В админке проверяется только подпись куки — базы здесь нет и быть не
+ * должно. Страницы без сессии уходят на вход, API-запросы получают 401.
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const isAdminPath =
+    pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
+  if (!isAdminPath) return withUrlLocale(request);
   if (pathname === "/admin/login") return NextResponse.next();
 
   const secret = sessionSecret();
@@ -33,6 +45,24 @@ export async function proxy(request: NextRequest) {
   return NextResponse.redirect(login);
 }
 
+function withUrlLocale(request: NextRequest) {
+  const lang = request.nextUrl.searchParams.get(LOCALE_PARAM);
+  if (!isLocale(lang)) return NextResponse.next();
+
+  const headers = new Headers(request.headers);
+  headers.set(LOCALE_HEADER, lang);
+  const response = NextResponse.next({ request: { headers } });
+  response.cookies.set(LOCALE_COOKIE, lang, {
+    path: "/",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 365,
+  });
+  return response;
+}
+
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  // Всё, кроме статики: кадры, шрифты и сборка языка не имеют
+  matcher: [
+    "/((?!_next/static|_next/image|photo/|brand/|uploads/|favicon.ico|icon.png).*)",
+  ],
 };

@@ -5,24 +5,47 @@ import {
   dictionaries,
   isLocale,
   LOCALE_COOKIE,
+  LOCALE_HEADER,
   type Dictionary,
   type Locale,
 } from "@/lib/i18n";
 
 /**
- * Локаль на сервере: кука, иначе Accept-Language, иначе русский.
+ * Поисковые и ИИ-боты. По основному адресу они всегда получают русскую
+ * версию: иначе бот с `Accept-Language: en` увидел бы английскую страницу
+ * там, где разметка обещает русскую, и счёл бы версии перепутанными.
+ * Остальные языки у ботов — по своим адресам `?lang=tg` и `?lang=en`.
+ */
+const CRAWLER =
+  /bot|crawl|spider|slurp|yandex|bingpreview|facebookexternalhit|embedly|whatsapp|telegram|preview/i;
+
+/** Язык, явно заданный адресом (`?lang=`), или null */
+export async function getUrlLocale(): Promise<Locale | null> {
+  const fromUrl = (await headers()).get(LOCALE_HEADER);
+  return isLocale(fromUrl) ? fromUrl : null;
+}
+
+/**
+ * Локаль на сервере: адрес (`?lang=`), иначе кука, иначе Accept-Language
+ * (кроме ботов), иначе русский.
  *
- * Локаль живёт в куке, а не в адресе: так ни один существующий URL не
- * меняется, а переключение — одно действие без перезагрузки маршрутов.
- * Ценой этого страницы рендерятся динамически (чтение куки), и hreflang
- * для поисковиков не выставляется — адресные локали (/tg/…, /en/…)
- * останутся следующим шагом, если SEO по языкам станет приоритетом.
+ * Основные адреса не меняются: русская версия живёт без параметра, а у
+ * таджикской и английской есть свои адреса с `?lang=` — их видят поисковики
+ * через hreflang и карту сайта. Выбор человека по-прежнему хранит кука.
  */
 export async function getLocale(): Promise<Locale> {
+  const fromUrl = await getUrlLocale();
+  if (fromUrl) return fromUrl;
+
   const fromCookie = (await cookies()).get(LOCALE_COOKIE)?.value;
   if (isLocale(fromCookie)) return fromCookie;
 
-  const accept = (await headers()).get("accept-language") ?? "";
+  const requestHeaders = await headers();
+  if (CRAWLER.test(requestHeaders.get("user-agent") ?? "")) {
+    return DEFAULT_LOCALE;
+  }
+
+  const accept = requestHeaders.get("accept-language") ?? "";
   for (const part of accept.split(",")) {
     const tag = part.trim().slice(0, 2).toLowerCase();
     if (tag === "tg" || tag === "tj") return "tg";

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 
 import { slugify } from "@/lib/admin/slug";
 import {
@@ -9,6 +10,7 @@ import {
   removeCategory,
   saveCategory,
 } from "@/lib/db/catalog-store";
+import { notifySearchEngines } from "@/lib/seo/indexnow";
 import type { Category, ProductImage } from "@/types/catalog";
 
 export async function saveCategoryAction(formData: FormData): Promise<void> {
@@ -54,6 +56,7 @@ export async function saveCategoryAction(formData: FormData): Promise<void> {
   };
   saveCategory(category);
   revalidatePath("/", "layout");
+  after(() => notifySearchEngines([`/catalog/${slug}`, "/catalog", "/"]));
   redirect(`/admin/categories/${category.id}?saved=1`);
 }
 
@@ -67,5 +70,6 @@ export async function deleteCategoryAction(formData: FormData): Promise<void> {
   }
   removeCategory(id);
   revalidatePath("/", "layout");
+  after(() => notifySearchEngines(["/catalog", "/"]));
   redirect("/admin/categories");
 }

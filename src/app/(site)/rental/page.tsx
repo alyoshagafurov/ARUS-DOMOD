@@ -2,15 +2,21 @@ import { Aivan } from "@/components/layout/Aivan";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
-import { getDictionary } from "@/lib/i18n/server";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { Button } from "@/components/ui/Button";
 import { contact, rental } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
 import { whatsappLink } from "@/lib/orders/whatsapp";
+import { seoCopy } from "@/lib/seo/copy";
+import { seoMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata() {
-  const t = await getDictionary();
-  return { title: t.meta.rental, description: t.meta.siteDescription };
+  const { rental: copy } = seoCopy[await getLocale()];
+  return seoMetadata({
+    path: "/rental",
+    title: copy.title,
+    description: copy.description,
+  });
 }
 
 /**

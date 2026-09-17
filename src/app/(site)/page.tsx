@@ -6,9 +6,22 @@ import { HeritageStory } from "@/components/home/HeritageStory";
 import { HomeHero } from "@/components/home/HomeHero";
 import { StoreBlock } from "@/components/home/StoreBlock";
 import { TwoWays } from "@/components/home/TwoWays";
+import { HomeFaq } from "@/components/home/HomeFaq";
 import { catalog } from "@/lib/catalog";
 import { categoryTitle } from "@/lib/i18n/labels";
 import { getLocale } from "@/lib/i18n/server";
+import { seoCopy } from "@/lib/seo/copy";
+import { seoMetadata } from "@/lib/seo/metadata";
+
+export async function generateMetadata() {
+  const { home } = seoCopy[await getLocale()];
+  return seoMetadata({
+    path: "/",
+    title: home.title,
+    description: home.description,
+    absoluteTitle: true,
+  });
+}
 
 /**
  * Главная — путь по двору дома.
@@ -60,6 +73,7 @@ export default async function HomePage() {
         sectionCount={categories.length}
       />
       <StoreBlock />
+      <HomeFaq />
       <ClosingInvitation />
     </>
   );

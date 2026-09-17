@@ -8,10 +8,14 @@ import {
   queryKey,
   toQuery,
 } from "@/components/catalog/filters";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { Divider } from "@/components/ui/Divider";
 import { catalog } from "@/lib/catalog";
 import { categoryTitle as localizedCategoryTitle } from "@/lib/i18n/labels";
 import { getLocale } from "@/lib/i18n/server";
+import { seoCopy } from "@/lib/seo/copy";
+import { seoMetadata } from "@/lib/seo/metadata";
+import { breadcrumbSchema, collectionSchema, graph } from "@/lib/seo/schema";
 
 /*
  * generateStaticParams здесь НЕТ намеренно.
@@ -29,14 +33,24 @@ export async function generateMetadata({
   params,
 }: PageProps<"/catalog/[category]">) {
   const { category: slug } = await params;
-  const category = await catalog().getCategoryBySlug(slug);
-  const locale = await getLocale();
+  const repository = catalog();
+  const [category, locale, products] = await Promise.all([
+    repository.getCategoryBySlug(slug),
+    getLocale(),
+    repository.listProducts({ categorySlug: slug, pageSize: 1 }),
+  ]);
   if (!category) return {};
 
-  return {
-    title: localizedCategoryTitle(category, locale),
-    description: category.description,
-  };
+  const copy = seoCopy[locale].category(
+    localizedCategoryTitle(category, locale),
+    products.total,
+  );
+  return seoMetadata({
+    path: `/catalog/${slug}`,
+    title: copy.title,
+    description: copy.description,
+    images: category.image ? [category.image] : undefined,
+  });
 }
 
 /**
@@ -58,14 +72,33 @@ export default async function CatalogCategoryPage({
     CATALOG_PAGE_SIZE,
   );
 
-  const [categories, page, facets] = await Promise.all([
+  const [categories, page, facets, all] = await Promise.all([
     repository.listCategories(),
     repository.listProducts(query),
     repository.listFacets(query),
+    repository.listProducts({ categorySlug: slug, pageSize: 1000 }),
   ]);
+  const copy = seoCopy[locale];
+  const title = localizedCategoryTitle(category, locale);
+  const pageCopy = copy.category(title, all.total);
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          breadcrumbSchema([
+            { name: copy.breadcrumbs.home, path: "/" },
+            { name: copy.breadcrumbs.catalog, path: "/catalog" },
+            { name: title, path: `/catalog/${slug}` },
+          ]),
+          collectionSchema({
+            name: pageCopy.title,
+            description: pageCopy.description,
+            path: `/catalog/${slug}`,
+            products: all.items,
+          }),
+        )}
+      />
       <CatalogHeader
         categoryTitle={localizedCategoryTitle(category, locale)}
         categoryTitleTg={locale === "tg" ? category.title : category.titleTg}

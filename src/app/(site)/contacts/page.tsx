@@ -1,14 +1,21 @@
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
-import { getDictionary } from "@/lib/i18n/server";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { Button } from "@/components/ui/Button";
 import { contact, site, socialLinks } from "@/lib/config/site";
 import { whatsappLink } from "@/lib/orders/whatsapp";
+import { seoCopy } from "@/lib/seo/copy";
+import { contactPhones, seoMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata() {
-  const t = await getDictionary();
-  return { title: t.meta.contacts, description: t.meta.siteDescription };
+  const locale = await getLocale();
+  const copy = seoCopy[locale].contacts(contactPhones(locale));
+  return seoMetadata({
+    path: "/contacts",
+    title: copy.title,
+    description: copy.description,
+  });
 }
 
 /** Только подтверждённое: два номера, город, соцсети. Адреса и часов нет. */

@@ -11,10 +11,16 @@ import { Media } from "@/components/ui/Media";
 import { catalog } from "@/lib/catalog";
 import { contact, socialLinks } from "@/lib/config/site";
 import { photo } from "@/lib/photos";
+import { seoCopy } from "@/lib/seo/copy";
+import { seoMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata() {
-  const t = await getDictionary();
-  return { title: t.meta.about, description: t.meta.siteDescription };
+  const { about } = seoCopy[await getLocale()];
+  return seoMetadata({
+    path: "/about",
+    title: about.title,
+    description: about.description,
+  });
 }
 
 /**

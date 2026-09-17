@@ -4,7 +4,10 @@ import { Cormorant, Golos_Text } from "next/font/google";
 import { themeScript } from "@/components/layout/ThemeToggle";
 import { site } from "@/lib/config/site";
 import { LocaleProvider } from "@/lib/i18n/client";
-import { getDictionary, getLocale } from "@/lib/i18n/server";
+import { getLocale } from "@/lib/i18n/server";
+import { OG_LOCALE, seoCopy } from "@/lib/seo/copy";
+import { DEFAULT_OG_IMAGE } from "@/lib/seo/metadata";
+import { siteUrl } from "@/lib/seo/url";
 
 import "./globals.css";
 
@@ -64,19 +67,34 @@ const golos = Golos_Text({
   display: "swap",
 });
 
+/**
+ * Метаданные по умолчанию. Страницы уточняют их через `seoMetadata`;
+ * здесь — адрес сайта для абсолютных ссылок, шаблон заголовка и коды
+ * подтверждения владения для Google, Яндекса и Bing. Коды задаются в
+ * окружении: пустая переменная — тега нет.
+ */
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getDictionary();
+  const locale = await getLocale();
+  const copy = seoCopy[locale];
+  const bing = process.env.BING_SITE_VERIFICATION?.trim();
   return {
-    metadataBase: new URL(site.url),
-    title: { default: t.meta.siteTitle, template: `%s · ${site.name}` },
-    description: t.meta.siteDescription,
+    metadataBase: new URL(siteUrl()),
+    applicationName: site.name,
+    title: { default: copy.home.title, template: `%s · ${site.name}` },
+    description: copy.home.description,
     openGraph: {
       type: "website",
-      locale: { ru: "ru_RU", tg: "tg_TJ", en: "en_US" }[await getLocale()],
+      locale: OG_LOCALE[locale],
       siteName: site.name,
-      title: t.meta.siteTitle,
-      description: t.meta.siteDescription,
-      images: [{ url: "/brand/arus-domod-og.jpg", width: 1200, height: 900 }],
+      title: copy.home.title,
+      description: copy.home.description,
+      images: [DEFAULT_OG_IMAGE],
+    },
+    twitter: { card: "summary_large_image" },
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION?.trim() || undefined,
+      yandex: process.env.YANDEX_VERIFICATION?.trim() || undefined,
+      ...(bing ? { other: { "msvalidate.01": bing } } : null),
     },
   };
 }

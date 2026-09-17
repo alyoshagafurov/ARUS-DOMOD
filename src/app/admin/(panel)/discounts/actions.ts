@@ -2,12 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+
+import { notifySearchEngines } from "@/lib/seo/indexnow";
 
 import {
   MAX_PERCENT,
   MIN_PERCENT,
   dayEnd,
   dayStart,
+  discountTargets,
   isDay,
 } from "@/lib/catalog/discounts";
 import {
@@ -93,13 +97,31 @@ export async function saveDiscountAction(formData: FormData): Promise<void> {
   saveDiscount(discount);
 
   revalidatePath("/", "layout");
+  // Цена со скидкой — изменение страниц этих товаров
+  after(() =>
+    notifySearchEngines([
+      ...discountTargets(discount, products).map((p) => `/product/${p.slug}`),
+      "/catalog",
+    ]),
+  );
   redirect("/admin/discounts?saved=1");
 }
 
 export async function deleteDiscountAction(formData: FormData): Promise<void> {
   const id = String(formData.get("id") ?? "");
   if (!id) return;
+  const removed = getDiscount(id);
   removeDiscount(id);
   revalidatePath("/", "layout");
+  after(() =>
+    notifySearchEngines([
+      ...(removed
+        ? discountTargets(removed, readCatalog().products).map(
+            (p) => `/product/${p.slug}`,
+          )
+        : []),
+      "/catalog",
+    ]),
+  );
   redirect("/admin/discounts?deleted=1");
 }

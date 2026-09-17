@@ -25,7 +25,15 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     data.set("locale", locale);
     start(async () => {
       await setLocaleAction(data);
-      router.refresh();
+      // Язык из адреса (?lang=) сильнее куки: не снять его — и кнопка
+      // вернула бы тот же язык. Поэтому параметр убирается из адреса.
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("lang")) {
+        url.searchParams.delete("lang");
+        router.replace(`${url.pathname}${url.search}${url.hash}`);
+      } else {
+        router.refresh();
+      }
     });
   };
 

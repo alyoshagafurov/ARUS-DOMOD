@@ -93,20 +93,26 @@ export async function HomeHero({ lookCount }: HomeHeroProps) {
 
           {/* --- СЛОВО --------------------------------------------------- */}
           <div className="relative flex min-h-[76svh] flex-col items-center justify-end px-[var(--block-pad)] pb-[var(--block-pad)] pt-[calc(var(--block-pad)+2rem)] text-center lg:min-h-[min(86svh,900px)]">
-            <h1
-              className="motion-enter t-display-2 max-w-[16ch] text-balance"
-              style={delay(120)}
-            >
-              {t.home.heroLine}
-            </h1>
+            {/* Обещание и пояснение — один заголовок h1: во второй строке
+                стоят слова, по которым ищут («свадебные наряды», «прокат»,
+                «Душанбе»). Выглядит так же, как раньше, — две строки двумя
+                гарнитурами. */}
+            <h1 className="flex flex-col items-center">
+              <span
+                className="motion-enter t-display-2 block max-w-[16ch] text-balance"
+                style={delay(120)}
+              >
+                {t.home.heroLine}
+              </span>
 
-            {/* Рабочая гарнитура против витринной антиквы заголовка */}
-            <p
-              className="motion-enter t-lead mt-5 max-w-[42ch] text-balance font-sans text-ink-primary lg:mt-6"
-              style={delay(260)}
-            >
-              {t.home.heroSub}
-            </p>
+              {/* Рабочая гарнитура против витринной антиквы заголовка */}
+              <span
+                className="motion-enter t-lead mt-5 block max-w-[42ch] text-balance font-sans text-ink-primary lg:mt-6"
+                style={delay(260)}
+              >
+                {t.home.heroSub}
+              </span>
+            </h1>
 
             <div className="motion-enter mt-8 lg:mt-10" style={delay(380)}>
               <Button href="/catalog" size="lg" arrow>

@@ -19,6 +19,7 @@ import { catalog } from "@/lib/catalog";
 import { productColors } from "@/lib/catalog/variants";
 import { categoryTitle } from "@/lib/i18n/labels";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
+import { productPageCopy, seoMetadata } from "@/lib/seo/metadata";
 
 const RELATED_COUNT = 4;
 
@@ -38,18 +39,32 @@ export async function generateMetadata({
   params,
 }: PageProps<"/product/[slug]">) {
   const { slug } = await params;
-  const t = await getDictionary();
-  const product = await catalog().getProductBySlug(slug);
+  const repository = catalog();
+  const [product, categories, locale, t] = await Promise.all([
+    repository.getProductBySlug(slug),
+    repository.listCategories(),
+    getLocale(),
+    getDictionary(),
+  ]);
   if (!product) return { title: t.meta.notFound };
 
-  return {
-    title: product.title,
-    description: t.meta.productDescription(product.title),
-    openGraph: {
-      title: `${product.title} · ARUS DOMOD`,
-      images: product.images[0] ? [product.images[0].url] : undefined,
-    },
-  };
+  const category = categories.find((c) => c.slug === product.categorySlug);
+  const copy = productPageCopy(
+    product,
+    category ? categoryTitle(category, locale) : undefined,
+    locale,
+  );
+  return seoMetadata({
+    path: `/product/${slug}`,
+    title: copy.title,
+    description: copy.description,
+    images: product.images.slice(0, 1).map((image) => ({
+      url: image.url,
+      width: image.width,
+      height: image.height,
+      alt: image.alt,
+    })),
+  });
 }
 
 /**
@@ -96,7 +111,15 @@ export default async function ProductPage({
 
   return (
     <>
-      <ProductJsonLd product={product} />
+      <ProductJsonLd
+        product={product}
+        locale={locale}
+        category={
+          category
+            ? { slug: category.slug, title: categoryTitle(category, locale) }
+            : undefined
+        }
+      />
       <Container className="pt-4 lg:pt-6">
         {/* Владелец, вошедший в админку, правит образ прямо со страницы;
             покупатель этой кнопки не видит */}

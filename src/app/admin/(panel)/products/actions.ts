@@ -2,6 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+
+import { notifySearchEngines } from "@/lib/seo/indexnow";
 
 import { slugify } from "@/lib/admin/slug";
 import { catalog } from "@/lib/catalog";
@@ -158,7 +161,7 @@ export async function saveProductAction(formData: FormData): Promise<void> {
   const title = String(formData.get("title") ?? "").trim();
   if (!title) redirect(`/admin/products/${existingId || "new"}?error=title`);
 
-  const { products } = readCatalog();
+  const { products, categories } = readCatalog();
   const existing = existingId
     ? products.find((p) => p.id === existingId)
     : undefined;
@@ -218,9 +221,18 @@ export async function saveProductAction(formData: FormData): Promise<void> {
     }
   }
 
+  // Подпись к кадру — для поиска по картинкам и скринридера: название и
+  // раздел («Образ 22 — наряды для невесты, ARUS DOMOD»), а не одно имя
+  const categoryName = categories.find(
+    (c) => c.slug === String(formData.get("categorySlug") ?? ""),
+  )?.title;
+  const imageAlt = categoryName
+    ? `${title} — ${categoryName.toLocaleLowerCase("ru")}, ARUS DOMOD`
+    : `${title}, ARUS DOMOD`;
+
   // Общие кадры первыми: первый из них — обложка карточки в каталоге
   const common = jsonArray(formData.get("images"))
-    .map((image) => toImage(image, title))
+    .map((image) => toImage(image, imageAlt))
     .filter((image): image is ProductImage => image !== null);
   const description = String(formData.get("description") ?? "").trim();
 
@@ -246,6 +258,15 @@ export async function saveProductAction(formData: FormData): Promise<void> {
     setFeaturedSlugs(featuredSlugs.filter((s) => s !== slug));
 
   revalidateStorefront(slug);
+  // Поисковикам — после ответа, чтобы сохранение не ждало их сервера
+  after(() =>
+    notifySearchEngines([
+      `/product/${slug}`,
+      `/catalog/${product.categorySlug}`,
+      "/catalog",
+      "/",
+    ]),
+  );
   redirect(`/admin/products/${id}?saved=1`);
 }
 
@@ -262,5 +283,10 @@ export async function deleteProductAction(formData: FormData): Promise<void> {
       setFeaturedSlugs(featuredSlugs.filter((s) => s !== product.slug));
   }
   revalidateStorefront(product?.slug);
+  after(() =>
+    notifySearchEngines(
+      product ? [`/product/${product.slug}`, "/catalog"] : ["/catalog"],
+    ),
+  );
   redirect("/admin/products");
 }
