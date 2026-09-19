@@ -258,11 +258,17 @@ export async function saveProductAction(formData: FormData): Promise<void> {
     setFeaturedSlugs(featuredSlugs.filter((s) => s !== slug));
 
   revalidateStorefront(slug);
-  // Поисковикам — после ответа, чтобы сохранение не ждало их сервера
+  // Поисковикам — после ответа, чтобы сохранение не ждало их сервера.
+  // Раздел, из которого товар ушёл, изменился тоже: там стало на образ меньше
+  const movedFrom =
+    existing && existing.categorySlug !== product.categorySlug
+      ? [`/catalog/${existing.categorySlug}`]
+      : [];
   after(() =>
     notifySearchEngines([
       `/product/${slug}`,
       `/catalog/${product.categorySlug}`,
+      ...movedFrom,
       "/catalog",
       "/",
     ]),
@@ -283,9 +289,18 @@ export async function deleteProductAction(formData: FormData): Promise<void> {
       setFeaturedSlugs(featuredSlugs.filter((s) => s !== product.slug));
   }
   revalidateStorefront(product?.slug);
+  // Удаление меняет не только страницу образа: он пропал из своего раздела,
+  // из каталога и, если был избранным, с главной
   after(() =>
     notifySearchEngines(
-      product ? [`/product/${product.slug}`, "/catalog"] : ["/catalog"],
+      product
+        ? [
+            `/product/${product.slug}`,
+            `/catalog/${product.categorySlug}`,
+            "/catalog",
+            "/",
+          ]
+        : ["/catalog", "/"],
     ),
   );
   redirect("/admin/products");

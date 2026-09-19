@@ -56,7 +56,18 @@ export async function saveCategoryAction(formData: FormData): Promise<void> {
   };
   saveCategory(category);
   revalidatePath("/", "layout");
-  after(() => notifySearchEngines([`/catalog/${slug}`, "/catalog", "/"]));
+  // Адрес раздела пересчитывается из названия при каждом сохранении:
+  // переименовали — прежняя страница перестала существовать
+  const renamedFrom =
+    existing && existing.slug !== slug ? [`/catalog/${existing.slug}`] : [];
+  after(() =>
+    notifySearchEngines([
+      `/catalog/${slug}`,
+      ...renamedFrom,
+      "/catalog",
+      "/",
+    ]),
+  );
   redirect(`/admin/categories/${category.id}?saved=1`);
 }
 
@@ -70,6 +81,13 @@ export async function deleteCategoryAction(formData: FormData): Promise<void> {
   }
   removeCategory(id);
   revalidatePath("/", "layout");
-  after(() => notifySearchEngines(["/catalog", "/"]));
+  // Сам удалённый адрес — главное, что изменилось: он теперь отдаёт 404
+  after(() =>
+    notifySearchEngines([
+      ...(cat ? [`/catalog/${cat.slug}`] : []),
+      "/catalog",
+      "/",
+    ]),
+  );
   redirect("/admin/categories");
 }

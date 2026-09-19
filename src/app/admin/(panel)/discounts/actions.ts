@@ -11,6 +11,7 @@ import {
   MIN_PERCENT,
   dayEnd,
   dayStart,
+  discountState,
   discountTargets,
   isDay,
 } from "@/lib/catalog/discounts";
@@ -97,12 +98,21 @@ export async function saveDiscountAction(formData: FormData): Promise<void> {
   saveDiscount(discount);
 
   revalidatePath("/", "layout");
-  // Цена со скидкой — изменение страниц этих товаров
+  // Цена со скидкой — изменение страниц этих товаров. Но только если
+  // скидка уже идёт: у запланированной на будущее цены пока прежние, и
+  // звать поисковик не на что.
+  const started = discountState(discount, Date.now()) === "active";
   after(() =>
-    notifySearchEngines([
-      ...discountTargets(discount, products).map((p) => `/product/${p.slug}`),
-      "/catalog",
-    ]),
+    notifySearchEngines(
+      started
+        ? [
+            ...discountTargets(discount, products).map(
+              (p) => `/product/${p.slug}`,
+            ),
+            "/catalog",
+          ]
+        : [],
+    ),
   );
   redirect("/admin/discounts?saved=1");
 }
@@ -113,15 +123,22 @@ export async function deleteDiscountAction(formData: FormData): Promise<void> {
   const removed = getDiscount(id);
   removeDiscount(id);
   revalidatePath("/", "layout");
+  // Цены вернулись к прежним — но только у той скидки, что шла сейчас:
+  // снятие запланированной или уже истёкшей витрину не меняет
+  const wasActive = removed
+    ? discountState(removed, Date.now()) === "active"
+    : false;
   after(() =>
-    notifySearchEngines([
-      ...(removed
-        ? discountTargets(removed, readCatalog().products).map(
-            (p) => `/product/${p.slug}`,
-          )
-        : []),
-      "/catalog",
-    ]),
+    notifySearchEngines(
+      wasActive && removed
+        ? [
+            ...discountTargets(removed, readCatalog().products).map(
+              (p) => `/product/${p.slug}`,
+            ),
+            "/catalog",
+          ]
+        : [],
+    ),
   );
   redirect("/admin/discounts?deleted=1");
 }
