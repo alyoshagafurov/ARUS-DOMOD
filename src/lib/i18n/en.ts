@@ -48,7 +48,7 @@ export const en: Dictionary = {
       languages: (n: number) => `${n} ${n === 1 ? "language" : "languages"}`,
     },
     storeLabel: "Store",
-    storeTitle: "We are in Dushanbe",
+    storeTitle: "We are in Dushanbe, Tajikistan",
     storeLead:
       "Ask for the address and opening hours by phone or WhatsApp — we will answer and tell you how to get here.",
     buyTitle: "Order online",
@@ -338,7 +338,7 @@ export const en: Dictionary = {
     aboutTitle: "For the most beautiful brides",
     aboutWhat: "What you will find here",
     aboutWhatNote:
-      "Looks can be bought or rented. Rental is arranged in the store.",
+      "Tajik wedding and national attire: looks can be bought or rented. Rental is arranged in the store.",
     aboutBuy: "Purchase",
     aboutBuyNote:
       "Order on the site, confirmation by the manager, payment after confirmation.",

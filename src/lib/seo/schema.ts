@@ -1,7 +1,7 @@
 import { productColors, productSizes } from "@/lib/catalog/variants";
 import { contact, site, socialLinks } from "@/lib/config/site";
 import { seoCopy } from "@/lib/seo/copy";
-import { absoluteUrl, siteUrl } from "@/lib/seo/url";
+import { absoluteUrl, localizedPath, siteUrl } from "@/lib/seo/url";
 import type { Locale, Product } from "@/types/catalog";
 
 /* -------------------------------------------------------------------------
@@ -23,6 +23,14 @@ type Node = Record<string, unknown>;
 const storeId = () => `${siteUrl()}/#store`;
 const websiteId = () => `${siteUrl()}/#website`;
 
+/**
+ * Адрес страницы на её языке. Разметка на таджикской версии ссылалась на
+ * русские адреса: получалось, что страница описывает не себя. Постоянный
+ * `@id` при этом остаётся русским — вещь одна, языков у неё три.
+ */
+const pageUrl = (path: string, locale: Locale = "ru") =>
+  absoluteUrl(localizedPath(path, locale));
+
 export const graph = (...nodes: Node[]) => ({
   "@context": "https://schema.org",
   "@graph": nodes,
@@ -30,7 +38,7 @@ export const graph = (...nodes: Node[]) => ({
 
 const AVAILABILITY = {
   in_stock: "https://schema.org/InStock",
-  made_to_order: "https://schema.org/PreOrder",
+  made_to_order: "https://schema.org/BackOrder",
   rental_only: "https://schema.org/InStoreOnly",
   sold_out: "https://schema.org/SoldOut",
 } as const;
@@ -94,14 +102,17 @@ export function websiteSchema(): Node {
   };
 }
 
-export function breadcrumbSchema(items: { name: string; path: string }[]): Node {
+export function breadcrumbSchema(
+  items: { name: string; path: string }[],
+  locale: Locale = "ru",
+): Node {
   return {
     "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: absoluteUrl(item.path),
+      item: pageUrl(item.path, locale),
     })),
   };
 }
@@ -117,13 +128,15 @@ export function productSchema({
   category,
   path,
   description,
+  locale = "ru",
 }: {
   product: Product;
   category?: string;
   path: string;
   description: string;
+  locale?: Locale;
 }): Node {
-  const url = absoluteUrl(path);
+  const url = pageUrl(path, locale);
   const purchase = product.offers.find((o) => o.kind === "purchase");
   const rental = product.offers.find((o) => o.kind === "rental");
   const availability =
@@ -161,9 +174,10 @@ export function productSchema({
 
   return {
     "@type": "Product",
-    "@id": `${url}#product`,
+    "@id": `${absoluteUrl(path)}#product`,
     name: product.title,
     url,
+    inLanguage: locale,
     description: product.description ?? description,
     ...(product.article ? { sku: product.article } : null),
     ...(category ? { category } : null),
@@ -183,19 +197,22 @@ export function collectionSchema({
   description,
   path,
   products,
+  locale = "ru",
 }: {
   name: string;
   description: string;
   path: string;
   products: Product[];
+  locale?: Locale;
 }): Node {
-  const url = absoluteUrl(path);
+  const url = pageUrl(path, locale);
   return {
     "@type": "CollectionPage",
-    "@id": `${url}#page`,
+    "@id": `${absoluteUrl(path)}#page`,
     url,
     name,
     description,
+    inLanguage: locale,
     isPartOf: { "@id": websiteId() },
     mainEntity: {
       "@type": "ItemList",
@@ -213,9 +230,48 @@ export function collectionSchema({
   };
 }
 
-export function faqSchema(items: { q: string; a: string }[]): Node {
+/**
+ * Страница о доме, о прокате, о доставке, контакты.
+ *
+ * Тип берётся по смыслу страницы (AboutPage, ContactPage, WebPage), а
+ * mainEntity ведёт на узел магазина: так поисковик понимает, что страница
+ * описывает именно ARUS DOMOD, а не абстрактную тему. Новых утверждений
+ * о бизнесе здесь не появляется — имя и описание те же, что в заголовке
+ * и описании страницы.
+ */
+export function infoPageSchema({
+  type,
+  name,
+  description,
+  path,
+  locale = "ru",
+}: {
+  type: "AboutPage" | "ContactPage" | "WebPage";
+  name: string;
+  description: string;
+  path: string;
+  locale?: Locale;
+}): Node {
+  return {
+    "@type": type,
+    "@id": `${absoluteUrl(path)}#page`,
+    url: pageUrl(path, locale),
+    name,
+    description,
+    inLanguage: locale,
+    isPartOf: { "@id": websiteId() },
+    about: { "@id": storeId() },
+    mainEntity: { "@id": storeId() },
+  };
+}
+
+export function faqSchema(
+  items: { q: string; a: string }[],
+  locale: Locale = "ru",
+): Node {
   return {
     "@type": "FAQPage",
+    inLanguage: locale,
     mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.q,

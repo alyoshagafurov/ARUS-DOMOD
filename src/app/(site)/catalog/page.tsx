@@ -61,15 +61,19 @@ export default async function CatalogPage({
           не нажимает */}
       <JsonLd
         data={graph(
-          breadcrumbSchema([
-            { name: copy.breadcrumbs.home, path: "/" },
-            { name: copy.breadcrumbs.catalog, path: "/catalog" },
-          ]),
+          breadcrumbSchema(
+            [
+              { name: copy.breadcrumbs.home, path: "/" },
+              { name: copy.breadcrumbs.catalog, path: "/catalog" },
+            ],
+            locale,
+          ),
           collectionSchema({
             name: copy.catalog.title,
             description: copy.catalog.description,
             path: "/catalog",
             products: all.items,
+            locale,
           }),
         )}
       />

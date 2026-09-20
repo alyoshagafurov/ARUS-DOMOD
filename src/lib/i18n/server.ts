@@ -37,13 +37,18 @@ export async function getLocale(): Promise<Locale> {
   const fromUrl = await getUrlLocale();
   if (fromUrl) return fromUrl;
 
-  const fromCookie = (await cookies()).get(LOCALE_COOKIE)?.value;
-  if (isLocale(fromCookie)) return fromCookie;
-
+  // Проверка на бота стоит раньше куки, а не после. Краулеры хранят куки
+  // между запросами: зайдя один раз по `?lang=tg`, бот получал таджикскую
+  // страницу по русскому каноническому адресу — и видел на ней разметку,
+  // которая обещает русский. Адресный `?lang=` выше остаётся сильнее
+  // всего, поэтому языковые версии у ботов по-прежнему доступны.
   const requestHeaders = await headers();
   if (CRAWLER.test(requestHeaders.get("user-agent") ?? "")) {
     return DEFAULT_LOCALE;
   }
+
+  const fromCookie = (await cookies()).get(LOCALE_COOKIE)?.value;
+  if (isLocale(fromCookie)) return fromCookie;
 
   const accept = requestHeaders.get("accept-language") ?? "";
   for (const part of accept.split(",")) {

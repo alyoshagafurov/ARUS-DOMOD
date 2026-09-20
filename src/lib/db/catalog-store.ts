@@ -63,6 +63,35 @@ export function readCatalog(): CatalogData {
 
 export function invalidateCatalog(): void {
   globalThis.__arusCatalogCache = null;
+  // Отметка нужна карте сайта: без неё lastmod приходилось ставить
+  // временем запроса, и при каждом обходе все адреса заявляли, что
+  // только что изменились. Поисковик такому lastmod перестаёт верить.
+  // Пишется здесь, а не в каждой мутации: забыть невозможно.
+  getDb()
+    .prepare("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)")
+    .run("catalogUpdatedAt", JSON.stringify(new Date().toISOString()));
+}
+
+/**
+ * Когда каталог менялся в последний раз — для карты сайта.
+ *
+ * У базы, которую ещё ни разу не правили из админки, отметки нет. Тогда
+ * она ставится один раз при первом чтении и дальше не меняется до первой
+ * правки: карта сайта должна отдавать дату, которая стоит на месте, пока
+ * стоит каталог. Время запроса, которое было здесь раньше, означало
+ * «всё изменилось секунду назад» при каждом обходе — такому lastmod
+ * поисковик перестаёт верить.
+ */
+export function catalogUpdatedAt(): Date {
+  const stored = setting<string | null>("catalogUpdatedAt", null);
+  const date = stored ? new Date(stored) : null;
+  if (date && !Number.isNaN(date.getTime())) return date;
+
+  const now = new Date();
+  getDb()
+    .prepare("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)")
+    .run("catalogUpdatedAt", JSON.stringify(now.toISOString()));
+  return now;
 }
 
 /* ---------- Товары ------------------------------------------------------- */

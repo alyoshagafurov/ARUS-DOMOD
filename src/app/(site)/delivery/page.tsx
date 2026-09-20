@@ -5,6 +5,8 @@ import { Reveal } from "@/components/motion/Reveal";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { seoCopy } from "@/lib/seo/copy";
 import { seoMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, graph, infoPageSchema } from "@/lib/seo/schema";
 import { Button } from "@/components/ui/Button";
 import { HowItWorksSteps } from "@/components/home/HowItWorks";
 import { contact } from "@/lib/config/site";
@@ -24,8 +26,22 @@ export async function generateMetadata() {
  */
 export default async function DeliveryPage() {
   const t = await getDictionary();
+  const locale = await getLocale();
+  const copy = seoCopy[locale];
+  const crumbs = [
+    { name: copy.breadcrumbs.home, path: "/" },
+    { name: copy.delivery.title, path: "/delivery" },
+  ];
+  const page = infoPageSchema({
+    type: "WebPage",
+    name: copy.delivery.title,
+    description: copy.delivery.description,
+    path: "/delivery",
+    locale,
+  });
   return (
     <>
+      <JsonLd data={graph(breadcrumbSchema(crumbs, locale), page)} />
       <Section rhythm="block">
         <Container width="narrow">
           <Reveal>

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { catalog } from "@/lib/catalog";
+import { catalogUpdatedAt } from "@/lib/db/catalog-store";
 import { LOCALES } from "@/lib/i18n/locales";
 import { absoluteUrl, localizedPath } from "@/lib/seo/url";
 
@@ -27,14 +28,17 @@ function localized(
   priority: number,
   changeFrequency: Entry["changeFrequency"],
   images?: string[],
+  lastModified?: Date,
 ): MetadataRoute.Sitemap {
-  const languages = Object.fromEntries(
+  const languages: Record<string, string> = Object.fromEntries(
     LOCALES.map((locale) => [locale, absoluteUrl(localizedPath(path, locale))]),
   );
-  const lastModified = new Date();
+  // Тот же x-default, что стоит в <head>: наборы языков в двух местах
+  // должны описывать страницу одинаково
+  languages["x-default"] = absoluteUrl(path);
   return LOCALES.map((locale) => ({
     url: absoluteUrl(localizedPath(path, locale)),
-    lastModified,
+    ...(lastModified ? { lastModified } : null),
     changeFrequency,
     // Русская версия основная — остальным чуть меньший приоритет
     priority: locale === "ru" ? priority : Math.round(priority * 8) / 10,
@@ -50,16 +54,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     repo.listCategories(),
   ]);
 
+  // Настоящее время правки каталога, а не время запроса
+  const changed = catalogUpdatedAt();
+
+  // Раздел без образов в карту не идёт: его страница честно говорит, что
+  // ничего не нашлось, и вести на неё поисковик незачем. Появится товар —
+  // раздел вернётся сам, карта собирается по запросу.
+  const filled = new Set(products.items.map((p) => p.categorySlug));
+
   return [
-    ...localized("/", 1, "weekly"),
-    ...localized("/catalog", 0.9, "daily"),
-    ...categories.flatMap((c) => localized(`/catalog/${c.slug}`, 0.8, "weekly")),
+    ...localized("/", 1, "weekly", undefined, changed),
+    ...localized("/catalog", 0.9, "daily", undefined, changed),
+    ...categories
+      .filter((c) => filled.has(c.slug))
+      .flatMap((c) =>
+        localized(`/catalog/${c.slug}`, 0.8, "weekly", undefined, changed),
+      ),
     ...products.items.flatMap((p) =>
       localized(
         `/product/${p.slug}`,
         0.8,
         "weekly",
         p.images.map((image) => absoluteUrl(image.url)),
+        changed,
       ),
     ),
     ...localized("/rental", 0.7, "monthly"),

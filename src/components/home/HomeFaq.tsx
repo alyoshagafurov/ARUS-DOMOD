@@ -2,6 +2,7 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { catalog } from "@/lib/catalog";
+import { formatMoney } from "@/lib/format";
 import { categoryTitle } from "@/lib/i18n/labels";
 import { getLocale } from "@/lib/i18n/server";
 import { seoCopy } from "@/lib/seo/copy";
@@ -30,17 +31,38 @@ export async function HomeFaq() {
   ]);
 
   const filled = new Set(products.items.map((p) => p.categorySlug));
+
+  // Диапазон цен считается по каталогу, а не вписывается: ассистент,
+  // которому диапазон не назвали, называет его сам — и ошибается
+  const amounts = products.items
+    .map((p) => p.offers.find((offer) => offer.kind === "purchase")?.price)
+    .filter((price) => price !== undefined);
+
   const items = copy.faq({
     categories: categories
       .filter((category) => filled.has(category.slug))
       .map((category) => categoryTitle(category, locale).toLocaleLowerCase())
       .join(", "),
     phones: contactPhones(locale),
+    priceFrom: amounts.length
+      ? formatMoney(
+          amounts.reduce((min, price) =>
+            price.amount < min.amount ? price : min,
+          ),
+        )
+      : "",
+    priceTo: amounts.length
+      ? formatMoney(
+          amounts.reduce((max, price) =>
+            price.amount > max.amount ? price : max,
+          ),
+        )
+      : "",
   });
 
   return (
     <Section rhythm="block">
-      <JsonLd data={graph(faqSchema(items))} />
+      <JsonLd data={graph(faqSchema(items, locale))} />
       <Container width="narrow">
         <h2 className="t-h1 text-balance">{copy.faqTitle}</h2>
         <span aria-hidden="true" className="hoshiya-line mt-6 max-w-[5rem]" />

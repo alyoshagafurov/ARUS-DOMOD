@@ -42,12 +42,18 @@ export async function generateMetadata() {
 export default async function HomePage() {
   const repository = catalog();
 
-  const [featured, categories, collections, firstPage] = await Promise.all([
+  const [featured, allCategories, collections, allProducts] = await Promise.all([
     repository.listFeatured(),
     repository.listCategories(),
     repository.listCollections(),
-    repository.listProducts({ pageSize: 1 }),
+    repository.listProducts({ pageSize: 1000 }),
   ]);
+
+  // Раздел без единого образа на главную не выходит и в счёт не идёт:
+  // плитка вела бы на страницу «ничего не нашлось», а цифра обещала бы
+  // больше, чем есть в каталоге. Так же считает блок вопросов-ответов.
+  const filled = new Set(allProducts.items.map((p) => p.categorySlug));
+  const categories = allCategories.filter((c) => filled.has(c.slug));
 
   const locale = await getLocale();
   const categoryLabels = Object.fromEntries(
@@ -59,7 +65,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <HomeHero lookCount={firstPage.total} />
+      <HomeHero lookCount={allProducts.total} />
       <CollectionIntro />
       <CategoryNavigation categories={categories} />
       <FeaturedCollection
@@ -69,7 +75,7 @@ export default async function HomePage() {
       />
       <TwoWays />
       <HeritageStory
-        lookCount={firstPage.total}
+        lookCount={allProducts.total}
         sectionCount={categories.length}
       />
       <StoreBlock />

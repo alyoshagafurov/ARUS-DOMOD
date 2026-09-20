@@ -27,19 +27,23 @@ export function ProductJsonLd({
   return (
     <JsonLd
       data={graph(
-        breadcrumbSchema([
-          { name: breadcrumbs.home, path: "/" },
-          { name: breadcrumbs.catalog, path: "/catalog" },
-          ...(category
-            ? [{ name: category.title, path: `/catalog/${category.slug}` }]
-            : []),
-          { name: product.title, path },
-        ]),
+        breadcrumbSchema(
+          [
+            { name: breadcrumbs.home, path: "/" },
+            { name: breadcrumbs.catalog, path: "/catalog" },
+            ...(category
+              ? [{ name: category.title, path: `/catalog/${category.slug}` }]
+              : []),
+            { name: product.title, path },
+          ],
+          locale,
+        ),
         productSchema({
           product,
           category: category?.title,
           path,
           description: page.description,
+          locale,
         }),
       )}
     />

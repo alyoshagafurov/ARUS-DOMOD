@@ -50,6 +50,10 @@ export async function generateMetadata({
     title: copy.title,
     description: copy.description,
     images: category.image ? [category.image] : undefined,
+    // Пустой раздел в индекс не берём: заголовок обещал бы наряды, а
+    // страница честно говорит, что ничего не нашлось. Появится образ —
+    // запрет снимется сам, метаданные считаются на каждый запрос
+    noindex: products.total === 0,
   });
 }
 
@@ -86,17 +90,27 @@ export default async function CatalogCategoryPage({
     <>
       <JsonLd
         data={graph(
-          breadcrumbSchema([
-            { name: copy.breadcrumbs.home, path: "/" },
-            { name: copy.breadcrumbs.catalog, path: "/catalog" },
-            { name: title, path: `/catalog/${slug}` },
-          ]),
-          collectionSchema({
-            name: pageCopy.title,
-            description: pageCopy.description,
-            path: `/catalog/${slug}`,
-            products: all.items,
-          }),
+          breadcrumbSchema(
+            [
+              { name: copy.breadcrumbs.home, path: "/" },
+              { name: copy.breadcrumbs.catalog, path: "/catalog" },
+              { name: title, path: `/catalog/${slug}` },
+            ],
+            locale,
+          ),
+          // Список на ноль позиций — утверждение о пустоте; пока образов
+          // нет, раздел описывается только цепочкой крошек
+          ...(all.total
+            ? [
+                collectionSchema({
+                  name: pageCopy.title,
+                  description: pageCopy.description,
+                  path: `/catalog/${slug}`,
+                  products: all.items,
+                  locale,
+                }),
+              ]
+            : []),
         )}
       />
       <CatalogHeader

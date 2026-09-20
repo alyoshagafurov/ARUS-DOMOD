@@ -37,6 +37,20 @@ export async function GET() {
     currency: "TJS",
   });
 
+  // Диапазон цен покупки — по каталогу. Без него ассистент называет свой:
+  // проверка показала, что модель уверенно выдумывает цены, если их не
+  // заявить прямо.
+  const purchases = products.items
+    .map((p) => p.offers.find((o) => o.kind === "purchase")?.price)
+    .filter((price) => price !== undefined);
+  const priceRange = purchases.length
+    ? `Покупка — от ${formatMoney(
+        purchases.reduce((min, price) => (price.amount < min.amount ? price : min)),
+      )} до ${formatMoney(
+        purchases.reduce((max, price) => (price.amount > max.amount ? price : max)),
+      )}; прокат — от ${minRental}`
+    : null;
+
   const lines: string[] = [
     `# ${site.name}`,
     "",
@@ -45,6 +59,9 @@ export async function GET() {
     `English: ${seoCopy.en.home.description}`,
     "",
     `${site.name} (Instagram @${site.handle}) — «${site.tagline}». ${site.positioning}. Город: ${site.city}, Таджикистан. Цены в сомони (TJS). Сайт на русском, таджикском (?lang=tg) и английском (?lang=en).`,
+    "",
+    `Сайт: ${absoluteUrl("/")}`,
+    ...(priceRange ? [priceRange] : []),
     "",
     "## Контакты",
     `- ${contact.phoneName} — главный номер, заказы: ${contact.phoneDisplay} (телефон и WhatsApp)`,

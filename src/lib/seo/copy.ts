@@ -32,6 +32,10 @@ export interface FaqContext {
   categories: string;
   /** Телефоны с именами */
   phones: string;
+  /** Самая низкая цена покупки в каталоге — настоящая, из данных */
+  priceFrom: string;
+  /** Самая высокая цена покупки в каталоге */
+  priceTo: string;
 }
 
 export interface SeoCopy {
@@ -80,10 +84,10 @@ const ru: SeoCopy = {
   home: {
     title: "Свадебные платья и национальные наряды в Душанбе — ARUS DOMOD",
     description:
-      "ARUS DOMOD — свадебные платья и наряды для невесты, чапаны для жениха, украшения и аксессуары в национальном стиле. Продажа и прокат в Душанбе, заказ на сайте и в WhatsApp.",
+      "ARUS DOMOD — свадебные платья и наряды для невесты, чапаны для жениха, украшения и аксессуары. Продажа и прокат в Душанбе, заказ на сайте и в WhatsApp.",
   },
   catalog: {
-    title: "Каталог свадебных нарядов — купить или взять напрокат в Душанбе",
+    title: "Свадебные наряды — купить или взять напрокат в Душанбе",
     description:
       "Свадебные платья и наряды для невесты, чапаны для жениха, чодар, украшения и парные образы ARUS DOMOD. Цены в сомони, продажа и прокат в Душанбе.",
   },
@@ -92,7 +96,10 @@ const ru: SeoCopy = {
     description: `${title} в ARUS DOMOD: ${count} ${lookRu(count)} с ценами в сомони. Продажа и прокат свадебных нарядов в Душанбе, заказ на сайте и в WhatsApp.`,
   }),
   product: ({ title, category, price, rental, sizes, sale }) => ({
-    title: [title, category?.toLocaleLowerCase("ru"), price]
+    // Город вместо цены: заголовок не должен меняться при каждой правке
+    // цены в админке, а «Душанбе» — то слово, которым ищут. Цена осталась
+    // в описании и в разметке товара
+    title: [title, category?.toLocaleLowerCase("ru"), "Душанбе"]
       .filter(Boolean)
       .join(" — "),
     description:
@@ -127,7 +134,7 @@ const ru: SeoCopy = {
   }),
   breadcrumbs: { home: "Главная", catalog: "Каталог" },
   faqTitle: "Вопросы и ответы",
-  faq: ({ categories, phones }) => [
+  faq: ({ categories, phones, priceFrom, priceTo }) => [
     {
       q: "Где купить или взять напрокат свадебное платье в Душанбе?",
       a: `В ARUS DOMOD. Здесь продают и сдают напрокат свадебные наряды в национальном стиле: ${categories}. Образ можно заказать на сайте или взять напрокат в магазине в Душанбе.`,
@@ -146,8 +153,18 @@ const ru: SeoCopy = {
     },
     {
       q: "Как взять свадебный наряд напрокат?",
-      a: "Прокат оформляется в магазине: срок до 3 дней, цена от 100 сомони, залог — деньги, паспорт или золото. Залог возвращается после возврата образа в сохранности. Узнать о наличии на вашу дату можно в WhatsApp.",
+      a: "Наряд можно взять напрокат — арендовать — на срок до 3 дней: цена от 100 сомони, залог деньги, паспорт или золото. Прокат оформляется в магазине, залог возвращается после возврата образа в сохранности. Узнать о наличии на вашу дату можно в WhatsApp.",
     },
+    // Вопрос появляется, только когда в каталоге есть цены: пустой
+    // диапазон был бы утверждением ни о чём
+    ...(priceFrom && priceTo
+      ? [
+          {
+            q: "Сколько стоит свадебный наряд?",
+            a: `Покупка — от ${priceFrom} до ${priceTo} по нынешней коллекции; цена каждого образа стоит в его карточке. Прокат — от 100 сомони на срок до 3 дней, оформляется в магазине.`,
+          },
+        ]
+      : []),
     {
       q: "Как связаться с ARUS DOMOD?",
       a: `Телефон и WhatsApp: ${phones}. Instagram: @arus.domod.tj.`,
@@ -163,7 +180,7 @@ const tg: SeoCopy = {
       "ARUS DOMOD — либосҳои арӯсӣ, ҷомаи домод, зеварҳо ва аксессуарҳо дар услуби миллӣ. Фурӯш ва иҷора дар Душанбе, фармоиш дар сайт ва WhatsApp.",
   },
   catalog: {
-    title: "Феҳристи либосҳои тӯёна — харид ва иҷора дар Душанбе",
+    title: "Либосҳои тӯёна — харид ва иҷора дар Душанбе",
     description:
       "Либосҳои арӯс, ҷомаи домод, чодар, зеварҳо ва образҳои ҷуфтии ARUS DOMOD. Нархҳо бо сомонӣ, фурӯш ва иҷора дар Душанбе.",
   },
@@ -172,7 +189,7 @@ const tg: SeoCopy = {
     description: `${title} дар ARUS DOMOD: ${count} образ бо нарх бо сомонӣ. Фурӯш ва иҷораи либосҳои тӯёна дар Душанбе, фармоиш дар сайт ва WhatsApp.`,
   }),
   product: ({ title, category, price, rental, sizes, sale }) => ({
-    title: [title, category, price].filter(Boolean).join(" — "),
+    title: [title, category, "Душанбе"].filter(Boolean).join(" — "),
     description:
       `${category ? `${category}: ` : ""}${title}.` +
       offerSentence(
@@ -205,7 +222,7 @@ const tg: SeoCopy = {
   }),
   breadcrumbs: { home: "Асосӣ", catalog: "Феҳрист" },
   faqTitle: "Саволу ҷавобҳо",
-  faq: ({ categories, phones }) => [
+  faq: ({ categories, phones, priceFrom, priceTo }) => [
     {
       q: "Либоси арӯсиро дар Душанбе аз куҷо харидан ё ба иҷора гирифтан мумкин аст?",
       a: `Дар ARUS DOMOD. Дар ин ҷо либосҳои тӯёнаро дар услуби миллӣ мефурӯшанд ва ба иҷора медиҳанд: ${categories}. Образро дар сайт фармоиш додан ё дар мағоза дар Душанбе ба иҷора гирифтан мумкин аст.`,
@@ -226,6 +243,14 @@ const tg: SeoCopy = {
       q: "Либоси тӯёнаро чӣ тавр ба иҷора гирифтан мумкин аст?",
       a: "Иҷора дар мағоза расмӣ карда мешавад: мӯҳлат то 3 рӯз, нарх аз 100 сомонӣ, гарав — пул, шиноснома ё тилло. Гарав пас аз бозгардонидани либос дар ҳолати солим баргардонида мешавад. Дар бораи мавҷудият дар санаи худ дар WhatsApp пурсед.",
     },
+    ...(priceFrom && priceTo
+      ? [
+          {
+            q: "Либоси арӯсӣ чанд арзиш дорад?",
+            a: `Харид — аз ${priceFrom} то ${priceTo} аз рӯи маҷмӯаи ҳозира; нархи ҳар образ дар корти он навишта шудааст. Иҷора — аз 100 сомонӣ то 3 рӯз, дар мағоза расмӣ карда мешавад.`,
+          },
+        ]
+      : []),
     {
       q: "Бо ARUS DOMOD чӣ тавр тамос гирифтан мумкин аст?",
       a: `Телефон ва WhatsApp: ${phones}. Instagram: @arus.domod.tj.`,
@@ -241,7 +266,7 @@ const en: SeoCopy = {
       "ARUS DOMOD — wedding dresses and bridal outfits, groom's chapans, jewellery and accessories in the national style. Sale and rental in Dushanbe, order online or via WhatsApp.",
   },
   catalog: {
-    title: "Wedding attire catalogue — buy or rent in Dushanbe",
+    title: "Wedding attire — buy or rent in Dushanbe",
     description:
       "Bridal outfits, groom's chapans, chodar, jewellery and couple looks from ARUS DOMOD. Prices in somoni, sale and rental in Dushanbe.",
   },
@@ -250,7 +275,7 @@ const en: SeoCopy = {
     description: `${title} at ARUS DOMOD: ${count} ${count === 1 ? "look" : "looks"} with prices in somoni. Wedding attire sale and rental in Dushanbe, order online or via WhatsApp.`,
   }),
   product: ({ title, category, price, rental, sizes, sale }) => ({
-    title: [title, category, price].filter(Boolean).join(" — "),
+    title: [title, category, "Dushanbe"].filter(Boolean).join(" — "),
     description:
       `${category ? `${category}: ` : ""}${title}.` +
       offerSentence(
@@ -283,7 +308,7 @@ const en: SeoCopy = {
   }),
   breadcrumbs: { home: "Home", catalog: "Catalogue" },
   faqTitle: "Questions and answers",
-  faq: ({ categories, phones }) => [
+  faq: ({ categories, phones, priceFrom, priceTo }) => [
     {
       q: "Where can I buy or rent a wedding dress in Dushanbe?",
       a: `At ARUS DOMOD. Wedding attire in the national style is sold and rented here: ${categories}. You can order a look online or rent one in the store in Dushanbe.`,
@@ -304,6 +329,14 @@ const en: SeoCopy = {
       q: "How do I rent wedding attire?",
       a: "Rentals are arranged in the store: up to 3 days, from 100 somoni, deposit in cash, passport or gold. The deposit is returned when the look comes back undamaged. Ask about availability for your date on WhatsApp.",
     },
+    ...(priceFrom && priceTo
+      ? [
+          {
+            q: "How much does wedding attire cost?",
+            a: `Purchase — from ${priceFrom} to ${priceTo} in the current collection; every look shows its own price. Rental — from 100 somoni for up to 3 days, arranged in the store.`,
+          },
+        ]
+      : []),
     {
       q: "How do I contact ARUS DOMOD?",
       a: `Phone and WhatsApp: ${phones}. Instagram: @arus.domod.tj.`,

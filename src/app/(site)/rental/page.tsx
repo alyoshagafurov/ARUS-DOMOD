@@ -9,6 +9,8 @@ import { formatMoney } from "@/lib/format";
 import { whatsappLink } from "@/lib/orders/whatsapp";
 import { seoCopy } from "@/lib/seo/copy";
 import { seoMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, graph, infoPageSchema } from "@/lib/seo/schema";
 
 export async function generateMetadata() {
   const { rental: copy } = seoCopy[await getLocale()];
@@ -25,6 +27,19 @@ export async function generateMetadata() {
  */
 export default async function RentalPage() {
   const t = await getDictionary();
+  const locale = await getLocale();
+  const copy = seoCopy[locale];
+  const crumbs = [
+    { name: copy.breadcrumbs.home, path: "/" },
+    { name: copy.rental.title, path: "/rental" },
+  ];
+  const page = infoPageSchema({
+    type: "WebPage",
+    name: copy.rental.title,
+    description: copy.rental.description,
+    path: "/rental",
+    locale,
+  });
   const inquiry = whatsappLink(contact.phone, t.rental.inquiry);
   const terms: [string, string][] = [
     [t.rental.term, t.rental.days(rental.maxDays)],
@@ -40,6 +55,7 @@ export default async function RentalPage() {
 
   return (
     <>
+      <JsonLd data={graph(breadcrumbSchema(crumbs, locale), page)} />
       <Section rhythm="block">
         <Container width="narrow">
           <Reveal>

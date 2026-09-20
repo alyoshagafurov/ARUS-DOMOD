@@ -7,6 +7,8 @@ import { contact, site, socialLinks } from "@/lib/config/site";
 import { whatsappLink } from "@/lib/orders/whatsapp";
 import { seoCopy } from "@/lib/seo/copy";
 import { contactPhones, seoMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, graph, infoPageSchema } from "@/lib/seo/schema";
 
 export async function generateMetadata() {
   const locale = await getLocale();
@@ -15,12 +17,27 @@ export async function generateMetadata() {
     path: "/contacts",
     title: copy.title,
     description: copy.description,
+    // Бренд уже есть в заголовке — второй раз не нужен
+    absoluteTitle: true,
   });
 }
 
 /** Только подтверждённое: два номера, город, соцсети. Адреса и часов нет. */
 export default async function ContactsPage() {
   const t = await getDictionary();
+  const locale = await getLocale();
+  const pageCopy = seoCopy[locale].contacts(contactPhones(locale));
+  const crumbs = [
+    { name: seoCopy[locale].breadcrumbs.home, path: "/" },
+    { name: pageCopy.title, path: "/contacts" },
+  ];
+  const page = infoPageSchema({
+    type: "ContactPage",
+    name: pageCopy.title,
+    description: pageCopy.description,
+    path: "/contacts",
+    locale,
+  });
   const people = [
     {
       name: contact.phoneName,
@@ -37,6 +54,7 @@ export default async function ContactsPage() {
   ];
   return (
     <>
+      <JsonLd data={graph(breadcrumbSchema(crumbs, locale), page)} />
       <Section rhythm="block">
         <Container width="narrow">
           <Reveal>

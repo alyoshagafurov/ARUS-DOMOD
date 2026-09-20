@@ -13,6 +13,8 @@ import { contact, socialLinks } from "@/lib/config/site";
 import { photo } from "@/lib/photos";
 import { seoCopy } from "@/lib/seo/copy";
 import { seoMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, graph, infoPageSchema } from "@/lib/seo/schema";
 
 export async function generateMetadata() {
   const { about } = seoCopy[await getLocale()];
@@ -20,6 +22,9 @@ export async function generateMetadata() {
     path: "/about",
     title: about.title,
     description: about.description,
+    // Бренд уже стоит первым словом заголовка — приписка «· ARUS DOMOD»
+    // повторила бы его второй раз
+    absoluteTitle: true,
   });
 }
 
@@ -35,9 +40,22 @@ export default async function AboutPage() {
     catalog().listCategories(),
     getDictionary(),
   ]);
+  const copy = seoCopy[locale];
+  const crumbs = [
+    { name: copy.breadcrumbs.home, path: "/" },
+    { name: copy.about.title, path: "/about" },
+  ];
+  const page = infoPageSchema({
+    type: "AboutPage",
+    name: copy.about.title,
+    description: copy.about.description,
+    path: "/about",
+    locale,
+  });
 
   return (
     <>
+      <JsonLd data={graph(breadcrumbSchema(crumbs, locale), page)} />
       <Section rhythm="block">
         <Container>
           <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-[var(--gutter)]">

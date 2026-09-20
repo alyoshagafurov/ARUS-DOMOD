@@ -46,7 +46,8 @@ export async function proxy(request: NextRequest) {
 }
 
 function withUrlLocale(request: NextRequest) {
-  const lang = request.nextUrl.searchParams.get(LOCALE_PARAM);
+  // Регистр не важен: `?lang=TG` — тот же таджикский
+  const lang = request.nextUrl.searchParams.get(LOCALE_PARAM)?.toLowerCase();
   if (!isLocale(lang)) return NextResponse.next();
 
   const headers = new Headers(request.headers);
