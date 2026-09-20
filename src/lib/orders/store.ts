@@ -183,10 +183,24 @@ export async function createOrder(input: unknown): Promise<Order> {
 
   db.exec("BEGIN IMMEDIATE");
   try {
+    // Номер не возвращается назад, даже если заявку убрали из списка:
+    // его называют покупателю по телефону, и две разные заявки с одним
+    // номером владелец уже не различит. Наибольший выданный лежит рядом
+    // с каталожными счётчиками, в settings.
     const last = db.prepare("SELECT MAX(number) AS m FROM orders").get() as {
       m: number | null;
     };
-    const number = (last.m ?? 0) + 1;
+    const stored = db
+      .prepare("SELECT value FROM settings WHERE key = 'orderCounter'")
+      .get() as { value: string } | undefined;
+    const previous = Math.max(
+      last.m ?? 0,
+      stored ? (JSON.parse(stored.value) as number) : 0,
+    );
+    const number = previous + 1;
+    db.prepare(
+      "INSERT OR REPLACE INTO settings (key, value) VALUES ('orderCounter', ?)",
+    ).run(JSON.stringify(number));
     const order: Order = {
       id: `AD-${pad4(number)}`,
       number,
@@ -229,6 +243,17 @@ export function listOrders(): Order[] {
     .prepare("SELECT doc FROM orders ORDER BY created_at DESC")
     .all() as Row[];
   return rows.map((r) => JSON.parse(r.doc) as Order);
+}
+
+/**
+ * Убрать заявку.
+ *
+ * Нужно для ошибочных и тестовых заказов: без этого список копился без
+ * возможности вынуть оттуда хоть что-нибудь. Номер убранной заявки
+ * повторно не выдаётся — следующий считается по наибольшему выданному.
+ */
+export function removeOrder(id: string): void {
+  getDb().prepare("DELETE FROM orders WHERE id = ?").run(id);
 }
 
 export function getOrder(id: string): Order | null {

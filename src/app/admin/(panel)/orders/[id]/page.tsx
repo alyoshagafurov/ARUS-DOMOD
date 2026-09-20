@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { deleteOrderAction } from "@/app/admin/(panel)/orders/actions";
+import { DeleteButton } from "@/components/admin/pending";
 import { Button } from "@/components/ui/Button";
 import { contact } from "@/lib/config/site";
 import { formatMoney } from "@/lib/format";
@@ -198,6 +200,20 @@ export default async function AdminOrderPage({
               Написать в WhatsApp
             </Button>
           </div>
+
+          {/* Убрать заявку. Нужно для ошибочных и тестовых заказов:
+              отвечать владелец идёт в телефон, а список заявок без этого
+              копился навсегда. Номер повторно не выдаётся. */}
+          <form
+            action={deleteOrderAction}
+            className="mt-6 border-t border-hairline pt-6"
+          >
+            <input type="hidden" name="id" value={order.id} />
+            <DeleteButton
+              label="Убрать заявку"
+              confirmText={`Убрать заявку ${order.id} от ${order.customer.name}? Вернуть её будет нельзя.`}
+            />
+          </form>
         </aside>
       </div>
     </>
