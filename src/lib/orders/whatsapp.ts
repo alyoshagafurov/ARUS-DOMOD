@@ -16,6 +16,16 @@ const CREATED = new Intl.DateTimeFormat("ru-RU", {
  * жирным), а каждый товар — отдельным пунктом с размером, цветом и ценой.
  * Итог выделен последним, чтобы сумму не искать.
  */
+/**
+ * Звёздочки и подчёркивания из того, что набрал покупатель.
+ *
+ * WhatsApp показывает `*текст*` жирным, а `_текст_` курсивом. Имя вида
+ * «*Азиза*» приходило Рустаму размеченным наравне с подписями самого
+ * сообщения — чужой текст выглядел частью нашего. Знаки убираются только
+ * из пользовательских строк; подписи сообщения размечаются как прежде.
+ */
+const plain = (value: string) => value.replace(/[*_~`]/g, "");
+
 export function formatOrderMessage(order: Order): string {
   const lines: string[] = [];
   const push = (s = "") => lines.push(s);
@@ -23,13 +33,13 @@ export function formatOrderMessage(order: Order): string {
   push(`*Новый заказ ${order.id}*`);
   push(`С сайта ARUS DOMOD · ${CREATED.format(new Date(order.createdAt))}`);
   push();
-  push(`*Клиент:* ${order.customer.name}`);
+  push(`*Клиент:* ${plain(order.customer.name)}`);
   push(`*Телефон:* ${order.customer.phone}`);
   push(
     `*Получение:* ${order.delivery.method === "courier" ? "доставка" : "самовывоз"}`,
   );
   if (order.delivery.method === "courier" && order.delivery.address) {
-    push(`*Адрес:* ${order.delivery.address}`);
+    push(`*Адрес:* ${plain(order.delivery.address)}`);
   }
   if (order.weddingDate) {
     push(`*Дата свадьбы:* ${formatDate(order.weddingDate)}`);
@@ -59,7 +69,7 @@ export function formatOrderMessage(order: Order): string {
   if (order.comment) {
     push();
     push(`*Комментарий:*`);
-    push(order.comment);
+    push(plain(order.comment));
   }
 
   return lines.join("\n");

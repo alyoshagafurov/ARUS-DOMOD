@@ -103,16 +103,24 @@ export function addToCart(line: Omit<CartLine, "id" | "quantity">): void {
   lines.set(id, {
     ...line,
     id,
-    quantity: existing ? existing.quantity + 1 : 1,
+    quantity: existing ? Math.min(MAX_QUANTITY, existing.quantity + 1) : 1,
   });
   emit();
 }
 
-/** Меньше единицы количество не опускается: для этого есть удаление */
+/**
+ * Предел тот же, что на сервере (src/lib/orders/store.ts): раньше сервер
+ * молча урезал количество до 20, и покупатель подтверждал одну сумму, а в
+ * заказ уходила другая. Меньше единицы количество не опускается — для
+ * этого есть удаление.
+ */
+export const MAX_QUANTITY = 20;
+
 export function setQuantity(id: string, quantity: number): void {
   const line = lines.get(id);
   if (!line) return;
-  lines.set(id, { ...line, quantity: Math.max(1, Math.round(quantity)) });
+  const next = Math.min(MAX_QUANTITY, Math.max(1, Math.round(quantity)));
+  lines.set(id, { ...line, quantity: next });
   emit();
 }
 

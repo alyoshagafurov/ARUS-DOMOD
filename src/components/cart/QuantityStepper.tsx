@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_QUANTITY } from "@/lib/cart";
 import { cn } from "@/lib/cn";
 import { useDictionary } from "@/lib/i18n/client";
 
@@ -42,6 +43,9 @@ export function QuantityStepper({
       <button
         type="button"
         onClick={() => onChange(value + 1)}
+        // Тот же предел, что в корзине и на сервере: кнопка гаснет там,
+        // где количество перестаёт расти, а не молча ничего не делает
+        disabled={value >= MAX_QUANTITY}
         aria-label={t.misc.increase(label)}
         className={button}
       >

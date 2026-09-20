@@ -213,7 +213,6 @@ export function CatalogView({
           categories={categories}
           counts={data.facets.categories}
           value={filters.categorySlug}
-          onChange={(slug) => update({ categorySlug: slug })}
           total={data.facets.categories.reduce((sum, c) => sum + c.count, 0)}
         />
       </Container>

@@ -33,7 +33,10 @@ export async function CatalogHeader({
           <h1 className="t-display-2 max-w-[16ch] text-balance">
             {categoryTitle ?? t.misc.catalogTitle}
           </h1>
-          {categoryTitleTg ? (
+          {/* Подпись на другом языке — только когда она другая. У разделов
+              вроде «Чодар» таджикское название совпадает с русским, и под
+              заголовком капсом повторялось то же слово */}
+          {categoryTitleTg && categoryTitleTg !== categoryTitle ? (
             <p className="t-label-wide mt-5 text-ink-muted">
               {categoryTitleTg}
             </p>

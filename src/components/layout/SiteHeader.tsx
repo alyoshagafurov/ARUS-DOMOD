@@ -101,7 +101,7 @@ export function SiteHeader() {
           <Link
             href="/"
             aria-label={`${site.name} — ${t.nav.home}`}
-            className="flex h-11 shrink-0 items-center text-[0.85rem] xs:text-[0.95rem] sm:text-[1.05rem]"
+            className="flex h-11 min-w-11 shrink-0 items-center text-[0.85rem] xs:text-[0.95rem] sm:text-[1.05rem]"
           >
             {/* Ниже 360px имя дома рядом с четырьмя иконками не помещается:
                 лупа наезжала на последнюю букву, и нажатие по хвосту

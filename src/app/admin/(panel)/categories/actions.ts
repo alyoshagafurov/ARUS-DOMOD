@@ -9,6 +9,7 @@ import {
   readCatalog,
   removeCategory,
   saveCategory,
+  saveProduct,
 } from "@/lib/db/catalog-store";
 import { notifySearchEngines } from "@/lib/seo/indexnow";
 import type { Category, ProductImage } from "@/types/catalog";
@@ -18,7 +19,7 @@ export async function saveCategoryAction(formData: FormData): Promise<void> {
   const title = String(formData.get("title") ?? "").trim();
   if (!title) redirect(`/admin/categories/${existingId || "new"}?error=title`);
   const slug = slugify(String(formData.get("slug") ?? "").trim() || title);
-  const { categories } = readCatalog();
+  const { categories, products } = readCatalog();
   if (categories.some((c) => c.slug === slug && c.id !== existingId)) {
     redirect(`/admin/categories/${existingId || "new"}?error=slug`);
   }
@@ -55,6 +56,21 @@ export async function saveCategoryAction(formData: FormData): Promise<void> {
     order: Math.round(Number(formData.get("order")) || categories.length + 1),
   };
   saveCategory(category);
+
+  // Адрес раздела пересчитывается из названия, а товары хранят его
+  // строкой. Переименовали раздел — и все его товары оставались
+  // привязанными к прежнему адресу: раздел становился пустым, а товары
+  // теряли категорию и пропадали из фильтров. Переносим их следом.
+  const moved: string[] = [];
+  if (existing && existing.slug !== slug) {
+    for (const product of products.filter(
+      (p) => p.categorySlug === existing.slug,
+    )) {
+      saveProduct({ ...product, categorySlug: slug });
+      moved.push(`/product/${product.slug}`);
+    }
+  }
+
   revalidatePath("/", "layout");
   // Адрес раздела пересчитывается из названия при каждом сохранении:
   // переименовали — прежняя страница перестала существовать
@@ -64,6 +80,7 @@ export async function saveCategoryAction(formData: FormData): Promise<void> {
     notifySearchEngines([
       `/catalog/${slug}`,
       ...renamedFrom,
+      ...moved,
       "/catalog",
       "/",
     ]),

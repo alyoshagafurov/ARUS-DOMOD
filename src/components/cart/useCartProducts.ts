@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { catalog } from "@/lib/catalog/client";
-import { useCartLines, type CartLine } from "@/lib/cart";
+import { removeLine, useCartLines, type CartLine } from "@/lib/cart";
 import { getPrimaryOffer } from "@/lib/format";
 import type { Money, Product, ProductOffer } from "@/types/catalog";
 
@@ -63,6 +63,25 @@ export function useCartProducts(): { ready: boolean; totals: CartTotals } {
       cancelled = true;
     };
   }, [slugs]);
+
+  /*
+   * Товар убрали из каталога, пока он лежал в корзине.
+   *
+   * Строку надо убрать, а не просто не показывать: иначе счётчик в шапке
+   * считает позиции, которых на экране нет, а «Оформить заказ» упирается
+   * в отказ сервера — покупатель видит пустую корзину с цифрой над
+   * иконкой и кнопку, ведущую в тупик.
+   *
+   * Отсутствие товара в карте означает именно отсутствие: обрыв сети
+   * роняет весь запрос и сюда не доходит (client.ts бросает исключение,
+   * Promise.all отклоняется, setProducts не вызывается).
+   */
+  useEffect(() => {
+    if (!products) return;
+    for (const line of lines) {
+      if (!products.has(line.slug)) removeLine(line.id);
+    }
+  }, [products, lines]);
 
   const resolved: ResolvedLine[] = [];
   if (products) {

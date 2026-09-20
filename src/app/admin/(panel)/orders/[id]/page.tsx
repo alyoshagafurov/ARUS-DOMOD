@@ -11,8 +11,12 @@ import {
   whatsappLink,
 } from "@/lib/orders/whatsapp";
 
+// Время по Душанбе, как во всех остальных форматтерах проекта: на
+// Railway часы сервера идут по UTC, и карточка заказа показывала время
+// на пять часов раньше, чем список заказов рядом
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("ru-RU", {
+    timeZone: "Asia/Dushanbe",
     dateStyle: "long",
     timeStyle: "short",
   });

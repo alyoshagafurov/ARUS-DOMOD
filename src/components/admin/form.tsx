@@ -36,6 +36,8 @@ export function Text({
   type = "text",
   step,
   min,
+  value,
+  onChange,
 }: {
   name: string;
   defaultValue?: string | number;
@@ -44,12 +46,20 @@ export function Text({
   type?: "text" | "number" | "date";
   step?: string;
   min?: string | number;
+  /** Управляемое поле — только из клиентских компонентов */
+  value?: string;
+  onChange?: (next: string) => void;
 }) {
+  // Либо управляемое поле, либо обычное: value без onChange React считает
+  // ошибкой, а обе пары сразу спорят между собой
+  const controlled = onChange !== undefined;
   return (
     <input
       name={name}
       type={type}
-      defaultValue={defaultValue}
+      {...(controlled
+        ? { value: value ?? "", onChange: (e) => onChange(e.target.value) }
+        : { defaultValue })}
       required={required}
       placeholder={placeholder}
       step={step}

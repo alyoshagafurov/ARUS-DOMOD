@@ -180,6 +180,23 @@ export function removeDiscount(id: string): void {
   globalThis.__arusDiscountCache = null;
 }
 
+/**
+ * Следующий номер артикула — счётчик, который не откатывается назад.
+ *
+ * Номер считался по товарам: удалили последний — и следующий новый товар
+ * получал его номер. Артикул называют по телефону и пишут в заявке, а две
+ * разные вещи с одним номером владелец различить уже не сможет. Счётчик
+ * помнит максимум, который когда-либо выдавали.
+ */
+export function nextArticleNumber(highestInCatalog: number): number {
+  const stored = setting<number>("articleCounter", 0);
+  const next = Math.max(stored, highestInCatalog) + 1;
+  getDb()
+    .prepare("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)")
+    .run("articleCounter", JSON.stringify(next));
+  return next;
+}
+
 /* ---------- Витрина ------------------------------------------------------ */
 
 export function setFeaturedSlugs(slugs: string[]): void {

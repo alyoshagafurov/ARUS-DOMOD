@@ -328,7 +328,10 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
                 {t.rental.term} — {t.rental.days(rentalTerms.maxDays)}.
               </li>
               <li>
-                {t.rental.deposit}: {rentalTerms.depositKinds.join(" / ")}.
+                {/* Виды залога берутся из словаря, а не из конфигурации:
+                    в конфигурации они записаны по-русски, и на таджикской
+                    и английской странице оставались русской строкой */}
+                {t.rental.deposit}: {t.rental.depositKindsText}.
               </li>
               <li>{t.rental.depositReturn}</li>
               <li>{t.rental.noDelivery}</li>

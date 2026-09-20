@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { cn } from "@/lib/cn";
 import { useDictionary, useLocale } from "@/lib/i18n/client";
 import { categoryTitle } from "@/lib/i18n/labels";
@@ -9,7 +11,6 @@ interface CategoryTabsProps {
   categories: Category[];
   counts: FacetValue<string>[];
   value?: string;
-  onChange: (slug: string | undefined) => void;
   total: number;
 }
 
@@ -23,12 +24,18 @@ interface CategoryTabsProps {
  * Это <nav> с aria-current, а не role="tablist": вкладки обязывают к панелям
  * и навигации стрелками, а здесь ни того, ни другого нет. Обещать роль,
  * которую не отработал, хуже, чем не обещать её вовсе.
+ *
+ * Разделы — ССЫЛКИ, а не кнопки. Кнопки меняли только выдачу: на странице
+ * раздела нажатие «Все» показывало весь каталог под заголовком раздела и
+ * его же описанием в метаданных — страница начинала врать о себе. Ссылки
+ * ведут на собственный адрес раздела, поэтому адрес, заголовок, метаданные
+ * и кнопка «Назад» в браузере всегда говорят одно и то же. Заодно
+ * поисковик видит разделы: до этого на два из них не вела ни одна ссылка.
  */
 export function CategoryTabs({
   categories,
   counts,
   value,
-  onChange,
   total,
 }: CategoryTabsProps) {
   const t = useDictionary();
@@ -61,11 +68,10 @@ export function CategoryTabs({
         {tabs.map((tab) => {
           const active = tab.slug === value;
           return (
-            <button
+            <Link
               key={tab.slug ?? "all"}
-              type="button"
-              aria-current={active ? "true" : undefined}
-              onClick={() => onChange(tab.slug)}
+              href={tab.slug ? `/catalog/${tab.slug}` : "/catalog"}
+              aria-current={active ? "page" : undefined}
               className={cn(
                 "inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-pill border px-4",
                 "transition-[background-color,color,border-color,transform] duration-[var(--dur-fast)] ease-[var(--ease-quiet)]",
@@ -83,7 +89,7 @@ export function CategoryTabs({
               >
                 {tab.count}
               </span>
-            </button>
+            </Link>
           );
         })}
       </nav>

@@ -10,6 +10,7 @@ import { slugify } from "@/lib/admin/slug";
 import { catalog } from "@/lib/catalog";
 import { colorKey, compareSizes } from "@/lib/catalog/variants";
 import {
+  nextArticleNumber,
   readCatalog,
   removeProduct,
   saveProduct,
@@ -141,13 +142,18 @@ function uniqueSlug(title: string, products: Product[], id: string): string {
   }
 }
 
-/** Следующий артикул по порядку: после AD-21 идёт AD-22 */
+/**
+ * Следующий артикул по порядку: после AD-21 идёт AD-22.
+ *
+ * Счётчик хранится отдельно и не откатывается: считать по товарам
+ * нельзя — удалив последний, следующий новый получал бы его номер.
+ */
 function nextArticle(products: Product[]): string {
   const last = products.reduce((max, p) => {
     const match = /^AD-(\d+)$/i.exec(p.article ?? "");
     return match ? Math.max(max, Number(match[1])) : max;
   }, 0);
-  return `AD-${String(last + 1).padStart(2, "0")}`;
+  return `AD-${String(nextArticleNumber(last)).padStart(2, "0")}`;
 }
 
 /** Все, кто ходит в базу, обязаны сбросить статику витрины */

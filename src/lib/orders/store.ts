@@ -5,6 +5,30 @@ import type { Money } from "@/types/catalog";
 
 const money = (amount: number): Money => ({ amount, currency: "TJS" });
 
+/** Длины, дальше которых строка не несёт смысла, а место в базе занимает */
+const MAX = { name: 120, phone: 32, address: 300, comment: 1000 } as const;
+
+/**
+ * Телефон к виду 992XXXXXXXXX.
+ *
+ * Покупатель набирает как привык: «907 66 60 00», «0907666000»,
+ * «+992 90 766 60 00». Ссылка wa.me принимает только цифры со страной, и
+ * кнопка «Написать в WhatsApp» в админке вела в никуда у каждого, кто
+ * набрал номер без кода страны.
+ */
+function normalisePhone(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  if (digits.startsWith("992")) return digits;
+  if (digits.length === 9) return `992${digits}`;
+  if (digits.length === 10 && digits.startsWith("0")) {
+    return `992${digits.slice(1)}`;
+  }
+  return digits;
+}
+
+/** Обрезка по длине: длинную строку отбрасывать жалко, хранить целиком незачем */
+const clamp = (value: string, limit: number) => value.slice(0, limit);
+
 export class OrderError extends Error {
   constructor(
     message: string,
@@ -26,24 +50,34 @@ function validate(input: unknown): OrderDraft {
   const customer = d.customer as Record<string, unknown> | undefined;
   const delivery = d.delivery as Record<string, unknown> | undefined;
 
-  const name = String(customer?.name ?? "").trim();
-  const phone = String(customer?.phone ?? "").trim();
+  const name = clamp(String(customer?.name ?? "").trim(), MAX.name);
+  const rawPhone = String(customer?.phone ?? "").trim();
   if (name.length < 2) throw new OrderError("Укажите имя");
-  if (phone.replace(/\D/g, "").length < 9)
+  if (rawPhone.replace(/\D/g, "").length < 9)
     throw new OrderError("Укажите телефон");
+  // Номер приводится к единому виду один раз, здесь: дальше его берут и
+  // ссылка tel:, и wa.me, и текст сообщения — все три из одного места
+  const phone = clamp(normalisePhone(rawPhone), MAX.phone);
 
   const method = delivery?.method;
   if (method !== "pickup" && method !== "courier") {
     throw new OrderError("Выберите способ получения");
   }
-  const address = String(delivery?.address ?? "").trim();
+  const address = clamp(String(delivery?.address ?? "").trim(), MAX.address);
   if (method === "courier" && address.length < 4) {
     throw new OrderError("Укажите адрес доставки");
   }
 
   const weddingDate = String(d.weddingDate ?? "").trim();
-  if (weddingDate && !/^\d{4}-\d{2}-\d{2}$/.test(weddingDate)) {
-    throw new OrderError("Дата свадьбы в неверном формате");
+  if (weddingDate) {
+    // Мало проверить форму: «0000-99-99» ей соответствует. Дата должна
+    // существовать и быть похожей на свадьбу, а не на опечатку
+    const parsed = new Date(`${weddingDate}T00:00:00Z`);
+    const ok =
+      /^\d{4}-\d{2}-\d{2}$/.test(weddingDate) &&
+      !Number.isNaN(parsed.getTime()) &&
+      parsed.toISOString().slice(0, 10) === weddingDate;
+    if (!ok) throw new OrderError("Дата свадьбы в неверном формате");
   }
 
   const locale = d.locale === "tg" || d.locale === "en" ? d.locale : "ru";
@@ -78,7 +112,7 @@ function validate(input: unknown): OrderDraft {
     delivery: method === "courier" ? { method, address } : { method },
     ...(weddingDate ? { weddingDate } : null),
     ...(String(d.comment ?? "").trim()
-      ? { comment: String(d.comment).trim().slice(0, 1000) }
+      ? { comment: clamp(String(d.comment).trim(), MAX.comment) }
       : null),
     locale,
     lines,

@@ -112,7 +112,7 @@ export default async function AdminCategoryEditPage({
           <input type="hidden" name="id" value={category.id} />
           <DeleteButton
             label="Удалить раздел"
-            confirmText={`Удалить раздел «${category?.title ?? "раздел"}»? Товары в нём останутся без раздела.`}
+            confirmText={`Удалить раздел «${category?.title ?? "раздел"}»? Удалить можно только пустой раздел — если в нём есть образы, удаление не пройдёт.`}
           />
         </form>
       ) : null}

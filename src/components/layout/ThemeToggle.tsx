@@ -96,11 +96,12 @@ export function ThemeToggle({ className }: { className?: string }) {
       type="button"
       onClick={() => setTheme(next)}
       aria-label={next === "dark" ? t.nav.themeDark : t.nav.themeLight}
-      aria-pressed={theme === "dark"}
       className={className}
     >
       {/* Знак показывает, КУДА переключит нажатие, а не текущее состояние:
-          у кнопки-действия и подпись, и значок называют результат. */}
+          у кнопки-действия и подпись, и значок называют результат.
+          По той же причине здесь нет aria-pressed: скринридер читал
+          «Дневная тема, нажато» — подпись обещала одно, состояние другое. */}
       <ThemeIcon theme={next} />
     </button>
   );
@@ -116,7 +117,6 @@ export function ThemeMenuItem({ className }: { className?: string }) {
     <button
       type="button"
       onClick={() => setTheme(next)}
-      aria-pressed={theme === "dark"}
       className={cn(
         "tap-row gap-2 text-ink-secondary hover:text-ink",
         className,

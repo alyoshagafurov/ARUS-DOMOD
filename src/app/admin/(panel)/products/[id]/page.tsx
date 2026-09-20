@@ -11,6 +11,7 @@ import {
   TextArea,
 } from "@/components/admin/form";
 import { ImageField } from "@/components/admin/ImageField";
+import { PriceFields } from "@/components/admin/PriceFields";
 import { DeleteButton, SubmitButton } from "@/components/admin/pending";
 import { SizePicker } from "@/components/admin/SizePicker";
 import { Button } from "@/components/ui/Button";
@@ -127,27 +128,10 @@ export default async function AdminProductEditPage({
         </Section>
 
         <Section title="Цены">
-          <Field label="Цена, сомони" hint="Пусто — образ не продаётся">
-            <Text
-              name="purchase"
-              type="number"
-              step="0.01"
-              min={0}
-              defaultValue={toMajor(buy?.price.amount)}
-            />
-          </Field>
-          <Field
-            label="Цена проката, сомони"
-            hint="Пусто — прокат недоступен. Срок и залог обсуждаются в магазине"
-          >
-            <Text
-              name="rental"
-              type="number"
-              step="0.01"
-              min={0}
-              defaultValue={toMajor(rent?.price.amount)}
-            />
-          </Field>
+          <PriceFields
+            purchase={toMajor(buy?.price.amount)}
+            rental={toMajor(rent?.price.amount)}
+          />
         </Section>
 
         <Section title="Наличие и размеры">

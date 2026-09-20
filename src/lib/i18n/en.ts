@@ -225,7 +225,7 @@ export const en: Dictionary = {
     comment: "Order comment",
     payment: "Payment",
     paymentSteps: [
-      "You send the order — it is saved and goes to the manager on WhatsApp.",
+      "You send the order — it is saved and gets a number.",
       "The manager contacts you and confirms availability and price.",
       "You receive payment details and pay the manager directly.",
       "The order goes out for delivery or waits for you in the store.",
@@ -236,7 +236,7 @@ export const en: Dictionary = {
     submit: "Order",
     submitting: "Sending…",
     submitNote:
-      "By pressing the button you send the order to the manager. Payment follows confirmation.",
+      "The order is saved and gets a number. On the next step press «Send to WhatsApp» — the message is already written. Payment follows confirmation.",
     noPurchases: "No purchases in the order",
     noPurchasesHint:
       "Rental is arranged in the store, not online. Pick looks to buy to place an order.",
@@ -296,6 +296,14 @@ export const en: Dictionary = {
   misc: {
     notFoundHint:
       "It may no longer be in the collection, or the address was mistyped.",
+    skipToContent: "Skip to content",
+    pageNotFound: "Page not found",
+    pageNotFoundHint:
+      "The address was mistyped, or the page is gone. The collection is still here — take a look at the catalogue.",
+    errorTitle: "The site is temporarily unavailable",
+    errorHint:
+      "We already know about the failure. Try reloading the page — or call us, we will answer.",
+    errorRetry: "Reload",
     backToCollection: "Back to the collection",
     toHome: "Go to the homepage",
     lookLabel: "The whole look",
