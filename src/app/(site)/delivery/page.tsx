@@ -30,7 +30,7 @@ export default async function DeliveryPage() {
   const copy = seoCopy[locale];
   const crumbs = [
     { name: copy.breadcrumbs.home, path: "/" },
-    { name: copy.delivery.title, path: "/delivery" },
+    { name: t.nav.delivery, path: "/delivery" },
   ];
   const page = infoPageSchema({
     type: "WebPage",

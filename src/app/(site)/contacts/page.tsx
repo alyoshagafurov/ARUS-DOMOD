@@ -29,7 +29,7 @@ export default async function ContactsPage() {
   const pageCopy = seoCopy[locale].contacts(contactPhones(locale));
   const crumbs = [
     { name: seoCopy[locale].breadcrumbs.home, path: "/" },
-    { name: pageCopy.title, path: "/contacts" },
+    { name: t.nav.contacts, path: "/contacts" },
   ];
   const page = infoPageSchema({
     type: "ContactPage",

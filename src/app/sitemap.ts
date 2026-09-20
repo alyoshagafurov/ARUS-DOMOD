@@ -16,10 +16,15 @@ import { absoluteUrl, localizedPath } from "@/lib/seo/url";
  * приложены их кадры — так фото попадают в поиск по картинкам.
  *
  * Карта строится по запросу, а не при сборке: в чистом контейнере базы во
- * время `next build` ещё нет. Кэш на час снимает нагрузку с диска.
+ * время `next build` ещё нет. Кэша нет намеренно — каталог лежит на диске
+ * рядом, а `revalidate` рядом с `force-dynamic` всё равно не действовал и
+ * только обещал в комментарии час, которого не было.
+ *
+ * У информационных страниц (/rental, /delivery, /about, /contacts)
+ * `lastmod` не проставляется: их правит не каталог, а выкатка кода, и
+ * дата правки каталога была бы о них неправдой.
  */
 export const dynamic = "force-dynamic";
-export const revalidate = 3600;
 
 type Entry = MetadataRoute.Sitemap[number];
 

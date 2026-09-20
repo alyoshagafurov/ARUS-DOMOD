@@ -220,7 +220,7 @@ export function collectionSchema({
       itemListElement: products.map((product, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        url: absoluteUrl(`/product/${product.slug}`),
+        url: pageUrl(`/product/${product.slug}`, locale),
         name: product.title,
         ...(product.images[0]
           ? { image: absoluteUrl(product.images[0].url) }

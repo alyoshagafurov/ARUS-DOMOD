@@ -36,14 +36,20 @@ export async function generateMetadata() {
  */
 export default async function AboutPage() {
   const locale = await getLocale();
-  const [categories, t] = await Promise.all([
+  const [allCategories, products, t] = await Promise.all([
     catalog().listCategories(),
+    catalog().listProducts({ pageSize: 1000 }),
     getDictionary(),
   ]);
+
+  // Раздел без образов не показываем — как на главной, в вопросах-ответах
+  // и в карте сайта: ссылка вела бы на страницу «ничего не нашлось»
+  const filled = new Set(products.items.map((p) => p.categorySlug));
+  const categories = allCategories.filter((c) => filled.has(c.slug));
   const copy = seoCopy[locale];
   const crumbs = [
     { name: copy.breadcrumbs.home, path: "/" },
-    { name: copy.about.title, path: "/about" },
+    { name: t.nav.about, path: "/about" },
   ];
   const page = infoPageSchema({
     type: "AboutPage",

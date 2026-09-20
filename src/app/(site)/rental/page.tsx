@@ -31,7 +31,7 @@ export default async function RentalPage() {
   const copy = seoCopy[locale];
   const crumbs = [
     { name: copy.breadcrumbs.home, path: "/" },
-    { name: copy.rental.title, path: "/rental" },
+    { name: t.nav.rental, path: "/rental" },
   ];
   const page = infoPageSchema({
     type: "WebPage",

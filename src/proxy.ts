@@ -48,9 +48,14 @@ export async function proxy(request: NextRequest) {
 function withUrlLocale(request: NextRequest) {
   // Регистр не важен: `?lang=TG` — тот же таджикский
   const lang = request.nextUrl.searchParams.get(LOCALE_PARAM)?.toLowerCase();
-  if (!isLocale(lang)) return NextResponse.next();
 
+  // Заголовок языка ставит только proxy. Пришедший снаружи удаляется:
+  // сервер читает его раньше проверки на бота, и подделанный заголовок
+  // обошёл бы правило «бот по основному адресу получает русскую версию».
   const headers = new Headers(request.headers);
+  headers.delete(LOCALE_HEADER);
+  if (!isLocale(lang)) return NextResponse.next({ request: { headers } });
+
   headers.set(LOCALE_HEADER, lang);
   const response = NextResponse.next({ request: { headers } });
   response.cookies.set(LOCALE_COOKIE, lang, {

@@ -161,7 +161,7 @@ const ru: SeoCopy = {
       ? [
           {
             q: "Сколько стоит свадебный наряд?",
-            a: `Покупка — от ${priceFrom} до ${priceTo} по нынешней коллекции; цена каждого образа стоит в его карточке. Прокат — от 100 сомони на срок до 3 дней, оформляется в магазине.`,
+            a: `Покупка — от ${priceFrom} до ${priceTo} по нынешней коллекции; цена каждого образа стоит в его карточке. Прокат — цена указана в карточке тех образов, где он доступен, и оформляется в магазине.`,
           },
         ]
       : []),
@@ -247,7 +247,7 @@ const tg: SeoCopy = {
       ? [
           {
             q: "Либоси арӯсӣ чанд арзиш дорад?",
-            a: `Харид — аз ${priceFrom} то ${priceTo} аз рӯи маҷмӯаи ҳозира; нархи ҳар образ дар корти он навишта шудааст. Иҷора — аз 100 сомонӣ то 3 рӯз, дар мағоза расмӣ карда мешавад.`,
+            a: `Харид — аз ${priceFrom} то ${priceTo} аз рӯи маҷмӯаи ҳозира; нархи ҳар образ дар корти он навишта шудааст. Иҷора — нарх дар корти образҳое, ки иҷора доранд, навишта шудааст ва дар мағоза расмӣ карда мешавад.`,
           },
         ]
       : []),
@@ -263,7 +263,7 @@ const en: SeoCopy = {
   home: {
     title: "Wedding dresses and national wedding attire in Dushanbe — ARUS DOMOD",
     description:
-      "ARUS DOMOD — wedding dresses and bridal outfits, groom's chapans, jewellery and accessories in the national style. Sale and rental in Dushanbe, order online or via WhatsApp.",
+      "ARUS DOMOD — wedding dresses and bridal outfits, groom's chapans, jewellery and accessories. Sale and rental in Dushanbe, order online or via WhatsApp.",
   },
   catalog: {
     title: "Wedding attire — buy or rent in Dushanbe",
@@ -333,7 +333,7 @@ const en: SeoCopy = {
       ? [
           {
             q: "How much does wedding attire cost?",
-            a: `Purchase — from ${priceFrom} to ${priceTo} in the current collection; every look shows its own price. Rental — from 100 somoni for up to 3 days, arranged in the store.`,
+            a: `Purchase — from ${priceFrom} to ${priceTo} in the current collection; every look shows its own price. Rental — the price is shown on each look that offers it, and rental is arranged in the store.`,
           },
         ]
       : []),

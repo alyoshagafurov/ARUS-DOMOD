@@ -40,15 +40,20 @@ export async function GET() {
   // Диапазон цен покупки — по каталогу. Без него ассистент называет свой:
   // проверка показала, что модель уверенно выдумывает цены, если их не
   // заявить прямо.
-  const purchases = products.items
-    .map((p) => p.offers.find((o) => o.kind === "purchase")?.price)
-    .filter((price) => price !== undefined);
+  const priced = (kind: "purchase" | "rental") =>
+    products.items
+      .map((p) => p.offers.find((o) => o.kind === kind)?.price)
+      .filter((price) => price !== undefined);
+  const purchases = priced("purchase");
+  const rentals = priced("rental");
+  const cheapest = (list: typeof purchases) =>
+    formatMoney(list.reduce((min, price) => (price.amount < min.amount ? price : min)));
+  // Прокат считается по каталогу, а не по условию «от 100 сомони»: рядом с
+  // посчитанным диапазоном покупки условие читалось бы как такой же расчёт
   const priceRange = purchases.length
-    ? `Покупка — от ${formatMoney(
-        purchases.reduce((min, price) => (price.amount < min.amount ? price : min)),
-      )} до ${formatMoney(
+    ? `Покупка — от ${cheapest(purchases)} до ${formatMoney(
         purchases.reduce((max, price) => (price.amount > max.amount ? price : max)),
-      )}; прокат — от ${minRental}`
+      )}${rentals.length ? `; прокат — от ${cheapest(rentals)} по образам, где он доступен` : ""}`
     : null;
 
   const lines: string[] = [
