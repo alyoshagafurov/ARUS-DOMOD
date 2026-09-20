@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 
 import { Logo } from "@/components/brand/Logo";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { ThemeMenuItem } from "@/components/layout/ThemeToggle";
 import { OrnamentField } from "@/components/ornament/Ornament";
 import { CloseIcon, MenuIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
@@ -108,7 +109,8 @@ export function MobileNav({ className }: { className?: string }) {
             </Link>
           ))}
 
-          {/* В шапке телефона места под пятую иконку нет — вход живёт здесь */}
+          {/* В шапке телефона места под пятую иконку нет — вход и смена
+              темы живут здесь */}
           <Link
             href="/admin"
             rel="nofollow"
@@ -117,6 +119,7 @@ export function MobileNav({ className }: { className?: string }) {
           >
             <span className="t-label motion-underline">{t.nav.admin}</span>
           </Link>
+          <ThemeMenuItem />
         </div>
 
         <div className="mt-auto flex flex-wrap items-end justify-between gap-6 pt-10">

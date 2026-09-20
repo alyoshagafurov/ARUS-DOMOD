@@ -104,6 +104,16 @@ async function enrich(draft: OrderDraft): Promise<OrderLine[]> {
     const variant = item.variantId
       ? product.variants.find((v) => v.id === item.variantId)
       : product.variants[0];
+
+    // Корзина назвала вариант, а в каталоге его нет: товар правили в
+    // админке, и размеры пересобрались. Молчать нельзя — заказ ушёл бы
+    // без размера, и проверка «продан» не сработала бы, потому что
+    // проверять было бы нечего.
+    if (item.variantId && !variant) {
+      throw new OrderError(
+        `«${product.title}» изменился — откройте образ и выберите размер заново`,
+      );
+    }
     if (variant?.availability === "sold_out") {
       throw new OrderError(`«${product.title}» продан`);
     }

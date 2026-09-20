@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { absoluteUrl, siteUrl } from "@/lib/seo/url";
+import { absoluteUrl } from "@/lib/seo/url";
 
 /**
  * Боты ИИ-ассистентов и их поиска. Правила для «*» к ним и так относятся,
@@ -50,6 +50,5 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: AI_BOTS, allow: "/", disallow: DISALLOW },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),
-    host: siteUrl(),
   };
 }

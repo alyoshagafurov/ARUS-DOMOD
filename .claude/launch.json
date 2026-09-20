@@ -4,8 +4,20 @@
     {
       "name": "arus-domod",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000
+    },
+    {
+      "name": "arus-verify",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "SITE_URL=https://example-verify.test ADMIN_PASSWORD=verify-only ADMIN_SESSION_SECRET=verify-only-secret-not-a-real-one ARUS_DATA_DIR=/private/tmp/claude-501/-Users-mobisop-ARUS-DOMOD/c708f1c7-d5b0-41e4-9132-0a655e6741e9/scratchpad/final-db npx next start -p 3600"
+      ],
+      "port": 3600
     }
   ]
 }

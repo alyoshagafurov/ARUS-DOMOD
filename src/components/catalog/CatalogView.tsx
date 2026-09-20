@@ -244,6 +244,9 @@ export function CatalogView({
           ) : items.length === 0 ? (
             <CatalogEmpty
               onReset={() => update({ ...emptyFilters, sort: filters.sort })}
+              filtered={
+                activeFilterCount(filters) > 0 || filters.search.trim() !== ""
+              }
             />
           ) : (
             <div

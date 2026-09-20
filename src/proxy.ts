@@ -45,6 +45,14 @@ export async function proxy(request: NextRequest) {
   return NextResponse.redirect(login);
 }
 
+/**
+ * Содержимое страницы зависит от куки языка, от Accept-Language и от
+ * того, бот перед нами или человек. Пока ответы отдаются без кэша, это
+ * ни на что не влияет; появится кэширующий слой — без Vary он раздал бы
+ * одному языку страницу другого. Заголовок описывает это заранее.
+ */
+const VARY = "Cookie, Accept-Language, User-Agent";
+
 function withUrlLocale(request: NextRequest) {
   // Регистр не важен: `?lang=TG` — тот же таджикский
   const lang = request.nextUrl.searchParams.get(LOCALE_PARAM)?.toLowerCase();
@@ -54,10 +62,16 @@ function withUrlLocale(request: NextRequest) {
   // обошёл бы правило «бот по основному адресу получает русскую версию».
   const headers = new Headers(request.headers);
   headers.delete(LOCALE_HEADER);
-  if (!isLocale(lang)) return NextResponse.next({ request: { headers } });
+
+  if (!isLocale(lang)) {
+    const plain = NextResponse.next({ request: { headers } });
+    plain.headers.set("vary", VARY);
+    return plain;
+  }
 
   headers.set(LOCALE_HEADER, lang);
   const response = NextResponse.next({ request: { headers } });
+  response.headers.set("vary", VARY);
   response.cookies.set(LOCALE_COOKIE, lang, {
     path: "/",
     sameSite: "lax",

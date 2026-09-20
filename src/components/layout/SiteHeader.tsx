@@ -103,7 +103,20 @@ export function SiteHeader() {
             aria-label={`${site.name} — ${t.nav.home}`}
             className="flex h-11 shrink-0 items-center text-[0.85rem] xs:text-[0.95rem] sm:text-[1.05rem]"
           >
-            <Logo variant="lockup" />
+            {/* Ниже 360px имя дома рядом с четырьмя иконками не помещается:
+                лупа наезжала на последнюю букву, и нажатие по хвосту
+                логотипа попадало в поиск. Там остаётся только знак — имя
+                дома читается в меню и в подвале.
+
+                display стоит на обёртках, а не на самом Logo: у `hidden` и
+                `inline-flex` внутри компонента одинаковый вес, и победил бы
+                порядок в собранном CSS, а не порядок в атрибуте. */}
+            <span className="min-[360px]:hidden">
+              <Logo variant="mark" />
+            </span>
+            <span className="hidden min-[360px]:inline-flex">
+              <Logo variant="lockup" />
+            </span>
           </Link>
 
           <nav
@@ -135,12 +148,13 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center justify-end text-[1rem]">
-            {/* Вход в админку — для владельца, поэтому иконкой и без
-                подписи. На телефоне строку иконок занимать нечем: логотип
-                и четыре иконки уже занимают 388px из 390, — там пункт
-                стоит в меню. display задаётся здесь, а не в iconBox:
-                у `hidden` и `inline-flex` одинаковый вес. */}
-            <ThemeToggle className={cn("inline-flex", iconBox)} />
+            {/* Вход в админку и переключатель темы — для владельца и
+                редкого случая, поэтому иконкой и без подписи. На телефоне
+                строку иконок занимать нечем: логотип и четыре иконки уже
+                занимают 388px из 390, пятая наезжала на логотип — там оба
+                пункта стоят в меню. display задаётся здесь, а не в
+                iconBox: у `hidden` и `inline-flex` одинаковый вес. */}
+            <ThemeToggle className={cn("hidden lg:inline-flex", iconBox)} />
             <Link
               href="/admin"
               rel="nofollow"
