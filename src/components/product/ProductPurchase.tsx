@@ -101,7 +101,13 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
     const stopObserver = stop
       ? new IntersectionObserver(
           ([entry]) => {
-            stopReached = entry.isIntersecting;
+            // Не «секция на экране», а «до секции уже дошли»: пока стояло
+            // первое, панель возвращалась, стоило прокрутить ниже секции —
+            // и закрывала нижнюю строку подвала, чего комментарий выше
+            // обещает не допускать. Отрицательный top значит, что секция
+            // ушла вверх, то есть читатель уже ниже неё.
+            stopReached =
+              entry.isIntersecting || entry.boundingClientRect.top < 0;
             apply();
           },
           { threshold: 0 },
