@@ -8,6 +8,7 @@ import {
   featuredSlugs as seedFeatured,
   products as seedProducts,
 } from "@/lib/catalog/mock-data";
+import { dataDir } from "@/lib/db/data-dir";
 
 /**
  * База ARUS DOMOD — SQLite через встроенный node:sqlite (Node 22.5+).
@@ -32,7 +33,8 @@ import {
  * бутика на это рассчитан. Заказы, напротив, разложены по колонкам там, где
  * по ним ищут: номер, статус, дата.
  */
-const DATA_DIR = process.env.ARUS_DATA_DIR ?? path.join(process.cwd(), "data");
+// Каталог данных — на томе Railway, если он есть: см. data-dir.ts
+const DATA_DIR = dataDir();
 const DB_PATH = path.join(DATA_DIR, "arus.sqlite");
 
 declare global {
